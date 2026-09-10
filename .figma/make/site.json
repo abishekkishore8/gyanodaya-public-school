@@ -1,0 +1,10 @@
+{
+  "description": "This web application serves as an informative landing page for educational institutions, offering easy navigation to key sections like Careers, Alumni, and Smart Classroom.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
