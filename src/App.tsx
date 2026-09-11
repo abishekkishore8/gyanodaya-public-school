@@ -678,7 +678,7 @@ export default function App() {
         <div className="max-w-[1240px] mx-auto px-3 sm:px-4 py-1.5 flex items-center justify-between gap-x-2">
           {/* Left Contact Details */}
           {/* Left Contact & Location Info */}
-          <div className="flex items-center gap-x-2.5 sm:gap-x-4 md:gap-x-5 text-gray-200 truncate">
+          <div className="flex items-center gap-x-2.5 sm:gap-x-4 text-gray-200 truncate">
             <a
               href="tel:+919431377488"
               className="flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group shrink-0"
@@ -700,7 +700,7 @@ export default function App() {
               <span className="truncate">info@gpsbagodar.edu.in</span>
             </a>
 
-            <span className="hidden xl:flex items-center gap-1.5 text-gray-300 text-xs">
+            <span className="hidden 2xl:flex items-center gap-1.5 text-gray-300 text-xs">
               <svg className="w-3.5 h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -710,14 +710,14 @@ export default function App() {
           </div>
 
           {/* Right Links & Gold CTA */}
-          <div className="flex items-center gap-x-2 sm:gap-x-3 md:gap-x-4 shrink-0">
+          <div className="flex items-center gap-x-2 sm:gap-x-3.5 shrink-0">
             {TOP_NAV.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
                 target={item.isExternal ? "_blank" : undefined}
                 rel={item.isExternal ? "noopener noreferrer" : undefined}
-                className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 text-[11px] lg:text-xs hidden md:inline-block cursor-pointer"
+                className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 text-xs hidden xl:inline-block cursor-pointer"
               >
                 {item.label}
               </a>
@@ -759,35 +759,35 @@ export default function App() {
       {/* ======================================================== */}
       {/* 2. MAIN NAVBAR WITH LOGO, PARENTS LOGIN AND SEARCH */}
       {/* ======================================================== */}
-      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 w-full ${scrolled ? "shadow-md py-1.5 sm:py-2" : "border-b border-gray-100 py-2 sm:py-2.5 md:py-3"}`}>
-        <div className="max-w-[1280px] mx-auto px-2.5 sm:px-4 flex items-center justify-between gap-1 sm:gap-2 md:gap-3">
+      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 w-full ${scrolled ? "shadow-md py-1.5 sm:py-2" : "border-b border-gray-100 py-2 sm:py-2.5"}`}>
+        <div className="max-w-[1360px] mx-auto px-3 sm:px-5 flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Logo & School Name */}
-          <a href="#home" className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 group shrink-0 min-w-0">
-            <SchoolLogo className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 group-hover:scale-105 transition-transform duration-300 shrink-0" />
+          <a href="#home" className="flex items-center gap-2 sm:gap-2.5 group shrink-0 min-w-0">
+            <SchoolLogo className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 group-hover:scale-105 transition-transform duration-300 shrink-0" />
             <div className="flex flex-col truncate">
               <span
                 style={{ color: GREEN }}
-                className="font-serif font-bold text-sm sm:text-base md:text-lg lg:text-2xl leading-none tracking-tight group-hover:opacity-90 truncate"
+                className="font-serif font-bold text-base sm:text-lg md:text-xl lg:text-2xl leading-none tracking-tight group-hover:opacity-90 truncate"
               >
                 GYANODAYA
               </span>
               <span
                 style={{ color: GREEN }}
-                className="text-[7px] sm:text-[8px] md:text-[9.5px] lg:text-[11px] font-semibold tracking-[0.14em] sm:tracking-[0.18em] uppercase leading-tight mt-0.5 truncate"
+                className="text-[8px] sm:text-[9px] md:text-[10px] lg:text-[11px] font-semibold tracking-[0.16em] sm:tracking-[0.18em] uppercase leading-tight mt-0.5 truncate"
               >
                 PUBLIC SCHOOL • BAGODAR
               </span>
             </div>
           </a>
 
-          {/* Desktop & Tablet Navigation Links with Dropdown Menu */}
-          <nav className="hidden md:flex items-center gap-1 md:gap-2 lg:gap-4 xl:gap-6">
+          {/* Desktop Navigation Links (Visible on xl+ screens: 1200px+) */}
+          <nav className="hidden xl:flex items-center gap-4 2xl:gap-6">
             {MAIN_NAV.map((item) => (
-              <div key={item.label} className="relative group/menu py-1.5">
+              <div key={item.label} className="relative group/menu py-2">
                 <a
                   href={item.href}
-                  className={`flex items-center gap-0.5 md:gap-1 text-[11px] md:text-[11.5px] lg:text-[13px] font-semibold tracking-wider transition-all py-1 px-1 md:px-1.5 relative whitespace-nowrap ${
+                  className={`flex items-center gap-1 text-[13px] font-semibold tracking-wider transition-all py-1 px-1.5 relative whitespace-nowrap ${
                     item.active
                       ? "text-[#14452f] border-b-2 border-[#14452f]"
                       : "text-gray-700 hover:text-[#14452f]"
@@ -795,7 +795,7 @@ export default function App() {
                 >
                   <span>{item.label}</span>
                   {item.hasDropdown && (
-                    <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-gray-400 mt-0.5 group-hover/menu:rotate-180 transition-transform duration-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-3 h-3 text-gray-400 mt-0.5 group-hover/menu:rotate-180 transition-transform duration-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                     </svg>
                   )}
@@ -803,7 +803,7 @@ export default function App() {
 
                 {/* Dropdown flyout */}
                 {item.subItems && (
-                  <div className="absolute top-full left-0 w-52 bg-white border border-gray-100 rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all duration-200 z-50 animate-slide-down">
+                  <div className="absolute top-full left-0 w-56 bg-white border border-gray-100 rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all duration-200 z-50 animate-slide-down">
                     {item.subItems.map((sub) => (
                       <a
                         key={sub.label}
@@ -819,8 +819,8 @@ export default function App() {
             ))}
           </nav>
 
-          {/* Right Action Icons & Buttons (Search, Parents Login, Enquire, Mobile Menu) */}
-          <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0">
+          {/* Right Action Icons & Buttons (Search, Parents Login, Enquire, Tablet/Mobile Menu) */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3 shrink-0">
             {/* Search Icon */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
@@ -837,7 +837,7 @@ export default function App() {
               href={PLAYSTORE_PARENT_APP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[9.5px] sm:text-[10.5px] md:text-xs font-bold px-2 sm:px-2.5 lg:px-3 py-1 sm:py-1.5 rounded transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
+              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[10px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-lg transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
               aria-label="Parents Login Play Store App"
             >
               {/* Google Play / Android Icon */}
@@ -851,61 +851,78 @@ export default function App() {
             <button
               onClick={() => setAdmissionModalOpen(true)}
               style={{ backgroundColor: GREEN }}
-              className="hidden sm:inline-flex items-center gap-1 sm:gap-1.5 text-white text-[10.5px] sm:text-[11.5px] md:text-xs font-semibold px-2.5 sm:px-3 lg:px-3.5 py-1 sm:py-1.5 rounded hover:brightness-110 transition-all shadow-sm uppercase tracking-wider cursor-pointer shrink-0"
+              className="hidden sm:inline-flex items-center gap-1.5 text-white text-xs font-semibold px-3 sm:px-3.5 py-1.5 rounded-lg hover:brightness-110 transition-all shadow-sm uppercase tracking-wider cursor-pointer shrink-0"
             >
               <span>Enquire</span>
-              <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3.5 h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </button>
 
-            {/* Mobile Hamburger toggle (only for < md mobile screens) */}
+            {/* Mobile & Tablet Hamburger toggle button (visible on < xl) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={mobileMenuOpen ? "Close menu" : "Open mobile menu"}
-              className="md:hidden p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100 shrink-0"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open navigation menu"}
+              className="xl:hidden flex items-center gap-1 p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100 shrink-0 border border-gray-200"
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 sm:w-5.5 sm:h-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {mobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider hidden sm:inline text-gray-700">Menu</span>
             </button>
           </div>
         </div>
 
         {/* ======================================================== */}
-        {/* MOBILE SLIDE-IN OVERLAY DRAWER (< md) */}
+        {/* MOBILE & TABLET SLIDE-IN OVERLAY DRAWER (< xl screens) */}
         {/* ======================================================== */}
         {mobileMenuOpen && (
           <div
-            className="md:hidden fixed inset-0 top-[70px] sm:top-[78px] z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-start animate-fade-in"
+            className="xl:hidden fixed inset-0 top-[70px] sm:top-[76px] z-50 bg-black/60 backdrop-blur-xs flex justify-end animate-fade-in"
             onClick={() => setMobileMenuOpen(false)}
           >
             <div
-              className="bg-white max-h-[82vh] overflow-y-auto w-full p-4 shadow-2xl border-b border-gray-200 animate-slide-down flex flex-col gap-2.5"
+              className="bg-white w-full sm:max-w-md h-[calc(100vh-70px)] sm:h-[calc(100vh-76px)] overflow-y-auto p-4 sm:p-5 shadow-2xl border-l border-gray-200 animate-slide-down flex flex-col gap-3"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <SchoolLogo className="w-6 h-6" />
+                  <span className="font-serif font-bold text-sm text-[#14452f]">Navigation Menu</span>
+                </div>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-1 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
               {/* Quick Parent Portal Banner in Drawer */}
               <a
                 href={PLAYSTORE_PARENT_APP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setMobileMenuOpen(false)}
-                className="bg-[#f0faf5] border border-[#14452f]/20 rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-[#e4f5ed] transition-colors"
+                className="bg-[#f0faf5] border border-[#14452f]/20 rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-[#e4f5ed] transition-colors shadow-xs"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#14452f] text-[#dfb455] flex items-center justify-center font-bold text-xs shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-[#14452f] text-[#dfb455] flex items-center justify-center font-bold text-sm shrink-0">
                     📱
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-[#14452f] uppercase tracking-wider">Parents Login App</h4>
-                    <p className="text-[10.5px] text-gray-500">Download Official GPS Mobile App on Google Play</p>
+                    <p className="text-[10.5px] text-gray-500">Official GPS Mobile App on Play Store</p>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-[#14452f] bg-white px-2.5 py-1 rounded-lg shadow-xs border border-gray-200 whitespace-nowrap">Open App ↗</span>
+                <span className="text-[11px] font-bold text-[#14452f] bg-white px-2.5 py-1 rounded-md shadow-xs border border-gray-200 whitespace-nowrap">Open App ↗</span>
               </a>
 
               {/* Quick Search */}
@@ -934,7 +951,7 @@ export default function App() {
                       <a
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="py-2 px-1 hover:text-[#14452f] flex-1"
+                        className="py-2.5 px-1 hover:text-[#14452f] flex-1 text-xs sm:text-sm tracking-wide"
                       >
                         {item.label}
                       </a>
@@ -976,7 +993,7 @@ export default function App() {
               </div>
 
               {/* Quick Contact & Action Buttons */}
-              <div className="pt-2.5 mt-1 border-t border-gray-100 flex flex-col gap-2">
+              <div className="pt-2.5 mt-auto border-t border-gray-100 flex flex-col gap-2">
                 <div className="grid grid-cols-2 gap-2">
                   <a
                     href="tel:+919431377488"
