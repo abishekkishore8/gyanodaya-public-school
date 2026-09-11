@@ -247,113 +247,6 @@ export function SchoolLogo({ className = "w-12 h-12" }: { className?: string }) 
   );
 }
 
-// Minimalist High-End SVG Icons for Academic Pillars
-function AcademicIcon({ type, className = "w-5 h-5 text-[#14452f]" }: { type: string; className?: string }) {
-  switch (type) {
-    case "book":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-          <path d="M8 7h8M8 11h6" />
-        </svg>
-      );
-    case "teacher":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-      );
-    case "stem":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="2" />
-          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-        </svg>
-      );
-    case "trophy":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-          <path d="M4 22h16M10 14.66V17c0 .55-.45 1-1 1H8v4h8v-4h-1c-.55 0-1-.45-1-1v-2.34" />
-          <path d="M18 2H6v7a6 6 0 0 0 12 0V2z" />
-        </svg>
-      );
-    case "art":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
-          <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
-          <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
-          <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
-          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z" />
-        </svg>
-      );
-    case "language":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          <path d="M8 9h8M8 13h5" />
-        </svg>
-      );
-    case "science":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0" />
-          <path d="M8.5 16h7" />
-        </svg>
-      );
-    case "sports":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 2a14.5 14.5 0 0 0 0 20M12 2a14.5 14.5 0 0 1 0 20M2 12h20" />
-        </svg>
-      );
-    case "code":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="16 18 22 12 16 6" />
-          <polyline points="8 6 2 12 8 18" />
-          <line x1="14" y1="4" x2="10" y2="20" />
-        </svg>
-      );
-    case "globe":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="2" y1="12" x2="22" y2="12" />
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-        </svg>
-      );
-    case "grad":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-          <path d="M6 12v5c3 3 9 3 12 0v-5" />
-        </svg>
-      );
-    case "rocket":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
-          <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
-          <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
-          <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
-        </svg>
-      );
-    default:
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="10" />
-        </svg>
-      );
-  }
-}
-
 // Announcements / News Ticker items
 const ANNOUNCEMENTS = [
   "📢 Admissions Open for Academic Session 2025–26 (Nursery to Class XII) at GPS Bagodar",
@@ -480,201 +373,172 @@ const HIGHLIGHT_CARDS = [
   },
 ];
 
-// Academics tab categories & detailed curriculum data
-interface AcademicFeature {
-  title: string;
-  desc: string;
-  badge: string;
-  iconType: "book" | "teacher" | "stem" | "trophy" | "art" | "language" | "science" | "sports" | "code" | "globe" | "grad" | "rocket";
-}
+// Academics tab categories & data
+const ACADEMIC_TABS = [
+  { id: "all", label: "Core Pillars", count: "01" },
+  { id: "pre-primary", label: "Pre-Primary (Nursery - KG)", count: "02" },
+  { id: "primary", label: "Primary Wing (Class I - V)", count: "03" },
+  { id: "middle", label: "Middle School (VI - VIII)", count: "04" },
+  { id: "senior", label: "Senior Secondary (IX - XII)", count: "05" },
+];
 
-interface AcademicStageData {
-  id: string;
-  tabLabel: string;
-  stageName: string;
-  gradeSpan: string;
-  ageGroup: string;
-  headline: string;
-  overview: string;
-  image: string;
-  tags: string[];
-  outcomes: string[];
-  features: AcademicFeature[];
-}
-
-const ACADEMIC_STAGES: Record<string, AcademicStageData> = {
-  all: {
-    id: "all",
-    tabLabel: "Core Pillars",
-    stageName: "Whole-Child Development Framework",
-    gradeSpan: "Nursery to Grade XII",
-    ageGroup: "Ages 3 – 18 Years",
-    headline: "A Harmonious Blend of Academic Rigor & Character Building",
-    overview:
-      "Our pedagogical architecture is rooted in NCERT guidelines and NEP 2020 principles. We cultivate critical inquiry, conceptual clarity, digital fluency, and moral fortitude across every grade level.",
-    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=900&h=650&fit=crop&auto=format&q=80",
-    tags: ["CBSE Curriculum", "STEM & Robotics", "Experiential Labs", "Values & Leadership", "Sports & Arts"],
-    outcomes: [
-      "Individualized mentoring with a strict 1:20 educator-to-learner ratio",
-      "Experiential, activity-driven concept mastery over rote memorization",
-      "Seamless integration of digital smart classrooms and hands-on laboratory discovery",
-      "Holistic personality development through debate, martial arts, vocal music & athletics",
-    ],
-    features: [
-      {
-        title: "CBSE National Curriculum",
-        desc: "Structured, standards-aligned syllabus designed for intellectual rigor, analytical thinking, and board excellence.",
-        badge: "Foundational to Advanced",
-        iconType: "book",
-      },
-      {
-        title: "Distinguished Mentors",
-        desc: "Passionate, subject-certified educators committed to differentiated learning and individual guidance.",
-        badge: "1:20 Mentor Ratio",
-        iconType: "teacher",
-      },
-      {
-        title: "Next-Gen STEM & Robotics",
-        desc: "Hands-on robotics kits, computational problem-solving, science practicals, and creative inquiry.",
-        badge: "Future-Ready",
-        iconType: "stem",
-      },
-      {
-        title: "Holistic Character & Athletics",
-        desc: "Daily sporting discipline, performing arts, yoga, moral science, and inter-school championship training.",
-        badge: "All-Round Growth",
-        iconType: "trophy",
-      },
-    ],
-  },
-  "pre-primary": {
-    id: "pre-primary",
-    tabLabel: "Pre-Primary (Nursery - KG)",
-    stageName: "Foundational Stage",
-    gradeSpan: "Nursery • LKG • UKG",
-    ageGroup: "Ages 3 – 5 Years",
-    headline: "Play-Based Discovery & Early Childhood Wonder",
-    overview:
-      "The early years nurture innate curiosity. Through sensory play, interactive circle time, phonic storytelling, and colorful activity zones, we ignite a lifelong love for exploration and joyous learning.",
-    image: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=900&h=650&fit=crop&auto=format&q=80",
-    tags: ["Phonics & Literacy", "Sensory Play", "Fine Motor Skills", "Social Harmony", "Creative Expression"],
-    outcomes: [
-      "Jolly Phonics foundation for fluent English reading and confident speaking",
-      "Montessori-inspired manipulatives for early number sense and geometric shapes",
-      "Creative development through finger-painting, clay modeling, and musical rhythm",
-      "Safe, caring, and joyful environment fostering social warmth and empathy",
-    ],
-    features: [
-      {
-        title: "Sensory & Activity Discovery",
-        desc: "Interactive play corners and guided exploratory games that develop fine motor control and spatial reasoning.",
-        badge: "Montessori-Inspired",
-        iconType: "art",
-      },
-      {
-        title: "Early Literacy & Phonics",
-        desc: "Story-led phonetic reading, vocabulary enrichment, bilingual conversational poise, and expressive speech.",
-        badge: "Early Language",
-        iconType: "language",
-      },
-    ],
-  },
-  primary: {
-    id: "primary",
-    tabLabel: "Primary Wing (Class I - V)",
-    stageName: "Preparatory Stage",
-    gradeSpan: "Grades I to V",
-    ageGroup: "Ages 6 – 10 Years",
-    headline: "Building Conceptual Mastery & Inquisitive Thinking",
-    overview:
-      "Transitioning from play to structured academic disciplines. Students explore fundamental mathematics, environmental science, linguistic competence, and digital literacy through engaging classroom activities.",
-    image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&h=650&fit=crop&auto=format&q=80",
-    tags: ["Conceptual Math", "Environmental Science", "Language Immersion", "Digital Skills", "Team Athletics"],
-    outcomes: [
-      "Strong mathematical reasoning through visual models and problem-solving puzzles",
-      "Bilingual fluency in English and Hindi with strong creative writing skills",
-      "Hands-on science experiments connecting classroom theory to everyday nature",
-      "Structured physical education, team sportsmanship, and performing arts",
-    ],
-    features: [
-      {
-        title: "Applied Science & Math Lab",
-        desc: "Visualizing mathematical proofs and observing biological and physical phenomena through tangible lab models.",
-        badge: "Experiential Learning",
-        iconType: "science",
-      },
-      {
-        title: "Physical Fitness & Co-Curriculars",
-        desc: "Structured sports routines, martial arts, classical music, drama, and school choir ensembles.",
-        badge: "Creative Arts",
-        iconType: "sports",
-      },
-    ],
-  },
-  middle: {
-    id: "middle",
-    tabLabel: "Middle School (VI - VIII)",
-    stageName: "Middle Stage",
-    gradeSpan: "Grades VI to VIII",
-    ageGroup: "Ages 11 – 13 Years",
-    headline: "Deepening Analytical Disciplines & Practical Inquiry",
-    overview:
-      "Fostering independent research, abstract thinking, and collaborative projects. Students engage in formal laboratory practicals, computer coding, history excursions, and public discourse.",
-    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=900&h=650&fit=crop&auto=format&q=80",
-    tags: ["STEM Labs", "Computer Coding", "Model UN & Debates", "Social Sciences", "Leadership Clubs"],
-    outcomes: [
-      "Individual science lab experimentation in Physics, Chemistry, and Biology",
-      "Introductory Python coding, algorithmic reasoning, and web design basics",
-      "Articulate public speaking, elocution, and Model United Nations participation",
-      "Development of ethical reasoning, environmental stewardship, and leadership",
-    ],
-    features: [
-      {
-        title: "Coding & Digital Innovation",
-        desc: "Algorithmic thinking, block and text-based coding, robotics automation, and digital design literacy.",
-        badge: "Tech Immersion",
-        iconType: "code",
-      },
-      {
-        title: "Debate, MUN & Global Studies",
-        desc: "Fostering analytical critique, public speaking confidence, world geography, and historical inquiry.",
-        badge: "Leadership & Voice",
-        iconType: "globe",
-      },
-    ],
-  },
-  senior: {
-    id: "senior",
-    tabLabel: "Senior Secondary (IX - XII)",
-    stageName: "Secondary & Senior Stage",
-    gradeSpan: "Grades IX to XII",
-    ageGroup: "Ages 14 – 18 Years",
-    headline: "CBSE Board Mastery & National Competitive Exam Success",
-    overview:
-      "A rigorous pre-university curriculum with specialized tracks in Science (PCM/PCB) and Commerce. Tailored mentorship, mock board assessments, and integrated coaching for JEE, NEET, CUET, and NDA.",
-    image: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=900&h=650&fit=crop&auto=format&q=80",
-    tags: ["Board Exam Track", "Science & Commerce", "JEE / NEET Guidance", "Career Counseling", "Distinction Record"],
-    outcomes: [
-      "Consistent 100% CBSE board pass rate with high distinction percentages",
-      "Integrated conceptual coaching for JEE Main/Advanced, NEET, CUET & NDA",
-      "Advanced science laboratories with university-grade apparatus and digital simulators",
-      "One-on-one career mapping, psychometric profiling, and college admissions support",
-    ],
-    features: [
-      {
-        title: "Board Examination Excellence",
-        desc: "Chapter-wise mastery, previous-decade question drilling, and regular diagnostic assessments with detailed feedback.",
-        badge: "Class X & XII Track",
-        iconType: "grad",
-      },
-      {
-        title: "Competitive Exam Acceleration",
-        desc: "Specialized problem-solving modules, speed-test series, and expert faculty mentorship for JEE, NEET & CUET.",
-        badge: "Entrance Mentorship",
-        iconType: "rocket",
-      },
-    ],
-  },
+const ACADEMICS_CARDS_DATA: Record<string, Array<{ title: string; desc: string; badge: string; icon: React.ReactNode }>> = {
+  all: [
+    {
+      title: "CBSE Curriculum",
+      desc: "Comprehensive national curriculum designed for intellectual vigor and critical conceptual mastery.",
+      badge: "Foundational & Advanced",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          <path d="M8 7h8M8 11h5" strokeWidth="1.5" />
+        </svg>
+      ),
+    },
+    {
+      title: "Experienced Faculty",
+      desc: "Passionate mentors fostering personalized growth, curiosity, and character refinement in every learner.",
+      badge: "1:20 Ratio",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      ),
+    },
+    {
+      title: "Innovative STEM Learning",
+      desc: "Hands-on experiential learning, robotics, interactive simulations, and modern problem-solving methodologies.",
+      badge: "Future-Ready",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="2.5" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          <path d="M2 12a15.3 15.3 0 0 1 10-4 15.3 15.3 0 0 1 10 4 15.3 15.3 0 0 1-10 4 15.3 15.3 0 0 1-10-4z" />
+        </svg>
+      ),
+    },
+    {
+      title: "Excellence Driven",
+      desc: "A harmonious integration of sports, fine arts, public speaking, and leadership building.",
+      badge: "All-Round Growth",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+          <path d="M4 22h16" />
+          <path d="M10 14.66V17c0 .55-.45 1-1 1H8v4h8v-4h-1c-.55 0-1-.45-1-1v-2.34" />
+          <path d="M18 4H6v7a6 6 0 0 0 12 0V4z" />
+        </svg>
+      ),
+    },
+  ],
+  "pre-primary": [
+    {
+      title: "Play-Based Discovery",
+      desc: "Montessori-inspired interactive activity zones promoting sensory development, motor skills, and creative joy.",
+      badge: "Nursery - UKG",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      ),
+    },
+    {
+      title: "Foundational Literacy & Phonics",
+      desc: "Engaging storytelling, phonetic sounds, multilingual conversational confidence, and social bonding.",
+      badge: "Early Years",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          <path d="M8 9h8M8 13h5" strokeWidth="1.5" />
+        </svg>
+      ),
+    },
+  ],
+  primary: [
+    {
+      title: "Conceptual Mathematics & Science",
+      desc: "Activity-based mathematical reasoning, environmental awareness, and foundational curiosity.",
+      badge: "Class I - V",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="6" cy="6" r="3" />
+          <circle cx="18" cy="18" r="3" />
+          <path d="M6 9v12M18 3v12M9 6h12M3 18h12" />
+        </svg>
+      ),
+    },
+    {
+      title: "Creative Arts & Physical Fitness",
+      desc: "Daily sports training, martial arts, vocal music, dance, and creative theatrical expression.",
+      badge: "Holistic Core",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+          <path d="M2 12h20" />
+        </svg>
+      ),
+    },
+  ],
+  middle: [
+    {
+      title: "Analytical Science & Technology",
+      desc: "Applied physics, chemistry, biology practicals, computer coding, and algorithmic thinking.",
+      badge: "Class VI - VIII",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+          <line x1="8" y1="21" x2="16" y2="21" />
+          <line x1="12" y1="17" x2="12" y2="21" />
+          <path d="M8 9l2 2-2 2M13 13h3" strokeWidth="1.6" />
+        </svg>
+      ),
+    },
+    {
+      title: "Debating & Global Awareness",
+      desc: "Model UN, inter-school declamations, history, geography excursions, and social ethics projects.",
+      badge: "Leadership Skills",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          <path d="M2 12h20" />
+        </svg>
+      ),
+    },
+  ],
+  senior: [
+    {
+      title: "Board Exam Mastery (Class IX - XII)",
+      desc: "Specialized streams in Science, Commerce, and Humanities with rigorous concept drilling and mentorship.",
+      badge: "Class IX - XII",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+          <path d="M6 12v5c3 3 9 3 12 0v-5" />
+        </svg>
+      ),
+    },
+    {
+      title: "Competitive Exam Preparation",
+      desc: "Dedicated guidance for JEE, NEET, CUET, and NDA along with comprehensive career counseling.",
+      badge: "Success Guarantee",
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+          <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+          <path d="M9 12H4s.55-3.03 2-4.5c1.45-1.47 4.5-2 4.5-2" />
+          <path d="M15 12v5s3.03-.55 4.5-2c1.47-1.45 2-4.5 2-4.5" />
+        </svg>
+      ),
+    },
+  ],
 };
 
 // World-Class Infrastructure Facilities
@@ -1402,23 +1266,21 @@ export default function App() {
       {/* ======================================================== */}
       {/* 4. FIVE FEATURE HIGHLIGHTS FLOATING CARD (RESPONSIVE GRID) */}
       {/* ======================================================== */}
-      <div className="relative z-20 max-w-[1200px] mx-auto px-3 sm:px-4 -mt-8 sm:-mt-10 md:-mt-12">
-        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200/80 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 overflow-hidden">
+      <div className="relative z-20 max-w-[1140px] mx-auto px-3 sm:px-4 -mt-8 sm:-mt-10 md:-mt-14">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 overflow-hidden">
           {HIGHLIGHT_CARDS.map((card, cIdx) => (
             <div
               key={card.title}
-              className={`p-4 sm:p-5 md:p-6 flex flex-col items-center text-center group hover:bg-[#f0faf5]/50 transition-all duration-300 cursor-pointer hover:-translate-y-0.5 ${
+              className={`p-3.5 sm:p-4 md:p-6 flex flex-col items-center text-center group hover:bg-[#f9fbf9] transition-all duration-300 cursor-pointer hover:-translate-y-1 ${
                 cIdx === 4 ? "col-span-2 sm:col-span-1 border-t sm:border-t-0" : ""
               }`}
             >
-              <div className="w-12 h-12 rounded-2xl bg-[#f0faf5] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-[#14452f] transition-all duration-300 ring-1 ring-[#14452f]/10 shadow-xs">
-                <div className="group-hover:brightness-200 group-hover:contrast-200 transition-all">
-                  {card.icon}
-                </div>
+              <div className="mb-2 transform group-hover:scale-110 transition-transform duration-300">
+                {card.icon}
               </div>
               <h2
                 style={{ color: GREEN }}
-                className="font-bold text-xs sm:text-sm leading-snug mb-1 font-serif group-hover:text-[#c59a3f] transition-colors"
+                className="font-semibold text-xs sm:text-sm leading-snug mb-1 group-hover:text-[#c59a3f] transition-colors"
               >
                 {card.title}
               </h2>
@@ -1529,264 +1391,225 @@ export default function App() {
       </section>
 
       {/* ======================================================== */}
-      {/* 6. ACADEMICS SECTION (MODERN EDITORIAL BENTO & STAGE SHOWCASE) */}
+      {/* 6. ACADEMICS SECTION (BESPOKE EDITORIAL CURRICULUM SHOWCASE) */}
       {/* ======================================================== */}
-      <section id="academics" className="py-16 sm:py-24 bg-linear-to-b from-[#f8faf9] via-white to-[#f4f7f5] border-t border-gray-100 relative overflow-hidden">
-        {/* Subtle Decorative Background Mesh */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-100/40 rounded-full blur-3xl -z-10 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-100/30 rounded-full blur-3xl -z-10 pointer-events-none" />
-
+      <section id="academics" className="py-16 sm:py-24 bg-[#fcfdfc] border-t border-gray-100 relative">
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-900/5 border border-emerald-900/10 text-[#14452f] text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-3">
-              <span className="w-2 h-2 rounded-full bg-[#dfb455] animate-ping" />
-              <span>Academic Architecture &amp; Pedagogy</span>
+          {/* Section Header & Subtitle */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f0faf5] border border-[#14452f]/10 mb-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#c59a3f]" />
+                <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#14452f]">
+                  ACADEMICS
+                </span>
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-tight">
+                Explore. Learn. Excel.
+              </h2>
             </div>
-            <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl font-bold text-gray-900 tracking-tight leading-tight mb-4">
-              Forming Inquiring Minds, Inspiring Lifelong Mastery
-            </h2>
-            <p className="text-gray-600 text-xs sm:text-sm md:text-base leading-relaxed">
-              Rooted in the CBSE national framework and NEP 2020 guidelines, our multi-stage curriculum balances intellectual rigor with creative inquiry, moral grounding, and digital dexterity.
-            </p>
-          </div>
 
-          {/* Modern Segmented Stage Tabs */}
-          <div className="flex justify-center mb-8 sm:mb-12">
-            <div className="inline-flex items-center gap-1.5 p-1.5 bg-gray-100/80 backdrop-blur-md rounded-2xl border border-gray-200/80 overflow-x-auto no-scrollbar max-w-full">
-              {Object.values(ACADEMIC_STAGES).map((stage) => {
-                const isActive = activeTab === stage.id;
-                return (
-                  <button
-                    key={stage.id}
-                    onClick={() => setActiveTab(stage.id)}
-                    className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 shrink-0 cursor-pointer flex items-center gap-2 ${
-                      isActive
-                        ? "bg-[#14452f] text-white shadow-md scale-[1.02]"
-                        : "text-gray-600 hover:text-[#14452f] hover:bg-white/60"
+            {/* Segmented Tab Navigation Control */}
+            <div className="bg-gray-100/90 p-1.5 rounded-2xl flex items-center gap-1.5 overflow-x-auto no-scrollbar border border-gray-200/70 shadow-inner w-full lg:w-auto -mx-4 px-4 sm:mx-0 sm:px-1.5">
+              {ACADEMIC_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-[13px] font-semibold transition-all duration-200 shrink-0 flex items-center gap-2 cursor-pointer ${
+                    activeTab === tab.id
+                      ? "bg-white text-[#14452f] shadow-md font-bold ring-1 ring-black/5"
+                      : "text-gray-600 hover:text-[#14452f] hover:bg-white/60"
+                  }`}
+                >
+                  <span
+                    className={`text-[9.5px] font-mono px-1.5 py-0.5 rounded transition-colors ${
+                      activeTab === tab.id
+                        ? "bg-[#14452f] text-white"
+                        : "bg-gray-200/80 text-gray-500"
                     }`}
                   >
-                    <span>{stage.tabLabel}</span>
-                  </button>
-                );
-              })}
+                    {tab.count}
+                  </span>
+                  <span>{tab.label}</span>
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Active Stage Data Spotlight */}
-          {(() => {
-            const currentStage = ACADEMIC_STAGES[activeTab] || ACADEMIC_STAGES.all;
-            return (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
-                
-                {/* Left Spotlight Feature Card (7 columns on desktop) */}
-                <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          {/* Dynamic Academic Cards Grid & Holistic Growth Feature Bento */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
+            
+            {/* Left Dynamic Cards (8 columns) */}
+            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              {(ACADEMICS_CARDS_DATA[activeTab] || ACADEMICS_CARDS_DATA.all).map((item, idx) => (
+                <div
+                  key={idx}
+                  className="group relative bg-white rounded-2xl p-6 sm:p-7 border border-gray-150 shadow-xs hover:shadow-xl hover:border-[#14452f]/30 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 overflow-hidden"
+                >
+                  {/* Decorative Corner Glow */}
+                  <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-bl from-[#f0faf5] to-transparent rounded-bl-full opacity-60 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+
                   <div>
-                    {/* Stage Hero Image Banner */}
-                    <div className="relative rounded-2xl overflow-hidden mb-6 h-56 sm:h-72 shadow-inner group/img">
-                      <img
-                        src={currentStage.image}
-                        alt={currentStage.headline}
-                        loading="lazy"
-                        className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700"
-                      />
-                      <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-5 sm:p-6 text-white">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dfb455] text-[#14452f] text-[10px] sm:text-xs font-bold uppercase tracking-wider self-start mb-2 shadow-sm">
-                          <span>{currentStage.stageName}</span>
-                          <span>•</span>
-                          <span>{currentStage.gradeSpan}</span>
-                        </div>
-                        <h3 className="font-serif text-lg sm:text-2xl font-bold leading-tight">
-                          {currentStage.headline}
-                        </h3>
+                    {/* Top Row: Bespoke SVG Icon + Badge */}
+                    <div className="flex items-center justify-between gap-3 mb-5 relative z-10">
+                      <div className="w-12 h-12 rounded-xl bg-[#f0faf5] border border-[#14452f]/10 text-[#14452f] flex items-center justify-center group-hover:bg-[#14452f] group-hover:text-[#dfb455] group-hover:border-[#14452f] transition-all duration-300 shadow-xs">
+                        {item.icon}
                       </div>
+                      <span className="text-[10px] sm:text-[10.5px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#faf7ee] text-[#a87920] border border-[#e5d5ab]/60 shadow-2xs">
+                        {item.badge}
+                      </span>
                     </div>
 
-                    {/* Stage Description */}
-                    <p className="text-gray-600 text-xs sm:text-sm md:text-base leading-relaxed mb-6">
-                      {currentStage.overview}
+                    {/* Title & Description */}
+                    <h3 className="font-serif font-bold text-base sm:text-lg text-gray-900 group-hover:text-[#14452f] transition-colors mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                      {item.desc}
                     </p>
-
-                    {/* Key Learning Outcomes Checklist */}
-                    <div className="space-y-2.5 sm:space-y-3 mb-6 bg-[#f9fbf9] p-4 sm:p-5 rounded-2xl border border-emerald-900/10">
-                      <h4 className="text-xs font-bold text-[#14452f] uppercase tracking-wider">
-                        Key Developmental Focus &amp; Outcomes
-                      </h4>
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
-                        {currentStage.outcomes.map((outcome, oIdx) => (
-                          <li key={oIdx} className="flex items-start gap-2 text-xs sm:text-[13px] text-gray-700 leading-snug">
-                            <svg className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            <span>{outcome}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
                   </div>
 
-                  {/* Stage Subject & Skill Tags */}
-                  <div className="pt-4 border-t border-gray-100 flex flex-wrap items-center gap-2">
-                    <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mr-1">Focus Areas:</span>
-                    {currentStage.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-3 py-1 rounded-full bg-gray-100 hover:bg-[#f0faf5] hover:text-[#14452f] text-gray-700 text-xs font-medium transition-colors border border-gray-200/60"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                  {/* Bottom Clean Footer */}
+                  <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between text-[11px] font-semibold text-gray-400 group-hover:text-[#14452f] transition-colors">
+                    <span className="tracking-wide">Academic Pillar 0{idx + 1}</span>
+                    <span className="inline-flex items-center gap-1 text-[#14452f] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200">
+                      Explore Curriculum →
+                    </span>
                   </div>
                 </div>
+              ))}
+            </div>
 
-                {/* Right Curated Pillar Cards & Advantage Banner (5 columns on desktop) */}
-                <div className="lg:col-span-5 flex flex-col justify-between gap-4 sm:gap-5">
-                  {/* Pillar Cards List */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-                    {currentStage.features.map((feat, fIdx) => (
-                      <div
-                        key={fIdx}
-                        className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200/80 shadow-sm hover:shadow-md transition-all duration-300 hover:border-emerald-700/30 flex flex-col items-start group"
-                      >
-                        <div className="flex items-center justify-between w-full mb-3">
-                          <div className="w-10 h-10 rounded-xl bg-[#f0faf5] text-[#14452f] flex items-center justify-center ring-1 ring-[#14452f]/10 group-hover:bg-[#14452f] group-hover:text-[#dfb455] transition-colors">
-                            <AcademicIcon type={feat.iconType} className="w-5 h-5" />
-                          </div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-amber-50 text-[#b5832a] border border-amber-200/60">
-                            {feat.badge}
-                          </span>
-                        </div>
-                        <h4 className="font-serif font-bold text-sm sm:text-base text-gray-900 group-hover:text-[#14452f] transition-colors mb-1.5">
-                          {feat.title}
-                        </h4>
-                        <p className="text-gray-500 text-xs sm:text-sm leading-relaxed">
-                          {feat.desc}
-                        </p>
-                      </div>
-                    ))}
+            {/* Right Holistic Growth Feature Box (4 columns) */}
+            <div className="lg:col-span-4 flex flex-col h-full">
+              <div className="relative rounded-3xl overflow-hidden bg-[#0d2e20] text-white p-6 sm:p-7 border border-[#1f5f40] shadow-2xl flex flex-col justify-between flex-1 group">
+                {/* Background Subtle Gradient & Glow */}
+                <div className="absolute -top-20 -right-20 w-60 h-60 bg-[#dfb455]/10 rounded-full blur-3xl pointer-events-none" />
+                
+                <div>
+                  {/* Top Tag & Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="inline-flex items-center gap-1.5 text-[9.5px] sm:text-[10px] font-bold tracking-widest uppercase bg-white/10 text-[#dfb455] px-3 py-1 rounded-full backdrop-blur-md border border-white/10">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#dfb455] animate-pulse" />
+                      DEVELOPMENT MODEL
+                    </span>
+                    <span className="text-[11px] font-mono text-white/50">CBSE Affiliated</span>
                   </div>
 
-                  {/* The GPS Academic Advantage Banner */}
-                  <div className="bg-linear-to-br from-[#0e3322] via-[#14452f] to-[#0a2618] rounded-3xl p-6 text-white shadow-xl border border-emerald-800/40 relative overflow-hidden">
-                    <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-[#dfb455]/10 rounded-full blur-2xl" />
-                    
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <SchoolLogo className="w-7 h-7" />
-                        <span className="font-serif font-bold text-sm sm:text-base tracking-wide text-white">
-                          GPS Academic Advantage
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-[#dfb455] text-[#14452f]">
-                        CBSE Bagodar
+                  {/* Framed High-Res Editorial Campus Photo */}
+                  <div className="relative w-full h-44 sm:h-48 rounded-2xl overflow-hidden mb-5 border border-white/10 shadow-inner">
+                    <img
+                      src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&h=600&fit=crop&auto=format&q=80"
+                      alt="Students engaged in holistic learning and collaboration"
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d2e20]/90 via-black/10 to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white/90">
+                      <span className="font-semibold text-xs tracking-wide">Experiential Learning</span>
+                      <span className="text-[10px] bg-black/40 px-2 py-0.5 rounded backdrop-blur-xs">GPS Bagodar</span>
+                    </div>
+                  </div>
+
+                  {/* Title & Core Philosophy */}
+                  <h4 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-white mb-1">
+                    Holistic Growth
+                  </h4>
+                  <p className="text-[#dfb455] text-xs font-semibold tracking-wider uppercase mb-5">
+                    Mind · Body · Values
+                  </p>
+
+                  {/* 3 Core Developmental Pillars List */}
+                  <div className="space-y-2 mb-6">
+                    <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-xs text-gray-200">
+                      <span className="w-6 h-6 rounded-lg bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center font-bold text-xs shrink-0">
+                        🧠
                       </span>
+                      <span><strong>Mind:</strong> Critical thinking & academic mastery</span>
                     </div>
-
-                    <div className="grid grid-cols-3 gap-2 py-3 border-y border-white/10 my-3 text-center">
-                      <div>
-                        <div className="font-serif text-lg sm:text-xl font-bold text-[#dfb455]">1:20</div>
-                        <div className="text-[9.5px] sm:text-[10px] text-gray-300 uppercase tracking-wider">Teacher Ratio</div>
-                      </div>
-                      <div>
-                        <div className="font-serif text-lg sm:text-xl font-bold text-[#dfb455]">100%</div>
-                        <div className="text-[9.5px] sm:text-[10px] text-gray-300 uppercase tracking-wider">Board Result</div>
-                      </div>
-                      <div>
-                        <div className="font-serif text-lg sm:text-xl font-bold text-[#dfb455]">25+</div>
-                        <div className="text-[9.5px] sm:text-[10px] text-gray-300 uppercase tracking-wider">Skill Clubs</div>
-                      </div>
+                    <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-xs text-gray-200">
+                      <span className="w-6 h-6 rounded-lg bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center font-bold text-xs shrink-0">
+                        🏃
+                      </span>
+                      <span><strong>Body:</strong> Sports, wellness & physical endurance</span>
                     </div>
-
-                    <div className="flex flex-col sm:flex-row items-center gap-2.5 mt-4">
-                      <button
-                        onClick={() => {
-                          setAdmissionModalOpen(true);
-                        }}
-                        style={{ backgroundColor: GOLD }}
-                        className="w-full sm:w-auto flex-1 text-white font-bold text-xs py-2.5 px-4 rounded-xl text-center uppercase tracking-wider shadow-sm hover:brightness-110 cursor-pointer transition-transform active:scale-95"
-                      >
-                        Enquire for Admission
-                      </button>
-                      <button
-                        onClick={() => {
-                          showToast("📘 Academic Curriculum Guide & Fee Structure requested.");
-                          setAdmissionModalOpen(true);
-                        }}
-                        className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 transition-colors border border-white/20 cursor-pointer text-center"
-                      >
-                        Get Syllabus ↗
-                      </button>
+                    <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-xs text-gray-200">
+                      <span className="w-6 h-6 rounded-lg bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center font-bold text-xs shrink-0">
+                        ⚖️
+                      </span>
+                      <span><strong>Values:</strong> Moral integrity & leadership ethics</span>
                     </div>
                   </div>
                 </div>
 
+                {/* Call To Action Button */}
+                <button
+                  onClick={() => setAdmissionModalOpen(true)}
+                  style={{ backgroundColor: GOLD }}
+                  className="w-full text-white font-bold text-xs py-3 px-4 rounded-xl text-center uppercase tracking-wider shadow-lg hover:brightness-110 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer mt-auto"
+                >
+                  <span>Apply For Admission 2025–26</span>
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </button>
               </div>
-            );
-          })()}
-
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ======================================================== */}
       {/* 7. FACILITIES (WORLD-CLASS INFRASTRUCTURE) */}
       {/* ======================================================== */}
-      <section id="facilities" className="py-16 sm:py-24 bg-white">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="facilities" className="py-14 sm:py-20 bg-white">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
           
           {/* Section Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 sm:mb-14">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-900/5 border border-emerald-900/10 text-[#14452f] text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-2">
-                <span>Campus &amp; Infrastructure</span>
-              </div>
-              <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
-                Designed to Inspire &amp; Safeguard
-              </h2>
-            </div>
-
-            <button
-              onClick={() => setTourModalOpen(true)}
-              className="inline-flex items-center gap-2 self-start md:self-end text-xs sm:text-sm font-bold text-[#14452f] hover:text-[#c59a3f] transition-colors uppercase tracking-wider group cursor-pointer"
+          <div className="mb-8 sm:mb-10 text-center sm:text-left">
+            <p
+              style={{ color: GOLD }}
+              className="text-xs font-bold uppercase tracking-[0.2em] mb-1"
             >
-              <span>Explore Virtual 360° Tour</span>
-              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </button>
+              FACILITIES
+            </p>
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
+              World-Class Infrastructure
+            </h2>
           </div>
 
           {/* 4 Infrastructure Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10 sm:mb-12">
             {FACILITIES_LIST.map((fac) => (
               <div
                 key={fac.title}
-                onClick={() => setTourModalOpen(true)}
-                className="group bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col hover:-translate-y-1 cursor-pointer"
+                className="group bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col hover:-translate-y-1.5 cursor-pointer"
               >
                 {/* Photo with Tag */}
-                <div className="relative h-48 sm:h-52 overflow-hidden bg-gray-100">
+                <div className="relative h-44 sm:h-48 overflow-hidden bg-gray-200">
                   <img
                     src={fac.img}
                     alt={fac.title}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                   
                   {/* Floating Tag */}
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-[#14452f] border border-white text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider shadow-sm">
+                  <div className="absolute top-3 right-3 bg-black/60 text-white text-[10px] px-2.5 py-1 rounded-full backdrop-blur-xs font-semibold">
                     {fac.tag}
                   </div>
                 </div>
 
                 {/* Card Content */}
-                <div className="p-5 flex-1 flex flex-col justify-between bg-white">
+                <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
                     <h3
                       style={{ color: GREEN }}
-                      className="font-bold text-sm sm:text-base mb-1.5 font-serif group-hover:text-[#c59a3f] transition-colors"
+                      className="font-bold text-sm mb-1 font-serif group-hover:text-[#c59a3f] transition-colors"
                     >
                       {fac.title}
                     </h3>
@@ -1794,13 +1617,23 @@ export default function App() {
                       {fac.desc}
                     </p>
                   </div>
-                  <div className="pt-3 mt-3 border-t border-gray-100 flex items-center justify-between text-[11px] font-semibold text-[#14452f] group-hover:text-[#c59a3f]">
-                    <span>View Specifications</span>
-                    <span>→</span>
-                  </div>
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* View All Facilities CTA Button */}
+          <div className="text-center">
+            <button
+              onClick={() => setTourModalOpen(true)}
+              style={{ borderColor: "#14452f", color: "#14452f" }}
+              className="inline-flex items-center gap-2 border-2 text-xs sm:text-sm font-semibold px-6 py-2.5 rounded-sm hover:bg-[#14452f] hover:text-white transition-all uppercase tracking-wider cursor-pointer hover:scale-105"
+            >
+              <span>VIEW ALL FACILITIES</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
           </div>
         </div>
       </section>
