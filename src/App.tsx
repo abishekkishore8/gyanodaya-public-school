@@ -568,6 +568,15 @@ export default function App() {
 
   // Interactive Modals & States
   const [admissionModalOpen, setAdmissionModalOpen] = useState(false);
+  const [parentLoginModalOpen, setParentLoginModalOpen] = useState(false);
+  const [loginRole, setLoginRole] = useState<"parent" | "student" | "staff">("parent");
+  const [loginForm, setLoginForm] = useState({
+    userId: "",
+    password: "",
+    rememberMe: true,
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginSubmitted, setLoginSubmitted] = useState(false);
   const [tourModalOpen, setTourModalOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("all");
@@ -642,6 +651,18 @@ export default function App() {
     }, 1200);
   };
 
+  const handleLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginSubmitted(true);
+    setTimeout(() => {
+      setLoginSubmitted(false);
+      setParentLoginModalOpen(false);
+      const roleTitle = loginRole === "parent" ? "Parents" : loginRole === "student" ? "Student" : "Staff";
+      showToast(`🎓 Welcome back! Successfully logged into the ${roleTitle} Portal.`);
+      setLoginForm({ userId: "", password: "", rememberMe: true });
+    }, 1000);
+  };
+
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newsletterEmail) return;
@@ -710,7 +731,13 @@ export default function App() {
               <a
                 key={item.label}
                 href={item.href}
-                className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 hidden lg:inline-block"
+                onClick={(e) => {
+                  if (item.label === "Parent Login") {
+                    e.preventDefault();
+                    setParentLoginModalOpen(true);
+                  }
+                }}
+                className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 hidden lg:inline-block cursor-pointer"
               >
                 {item.label}
               </a>
@@ -750,24 +777,24 @@ export default function App() {
       </div>
 
       {/* ======================================================== */}
-      {/* 2. MAIN NAVBAR WITH LOGO AND SEARCH */}
+      {/* 2. MAIN NAVBAR WITH LOGO, PARENTS LOGIN AND SEARCH */}
       {/* ======================================================== */}
-      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 ${scrolled ? "shadow-md py-2" : "border-b border-gray-100 py-3 sm:py-3.5"}`}>
-        <div className="max-w-[1240px] mx-auto px-4 flex items-center justify-between">
+      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 ${scrolled ? "shadow-md py-2" : "border-b border-gray-100 py-2.5 sm:py-3.5"}`}>
+        <div className="max-w-[1240px] mx-auto px-3 sm:px-4 flex items-center justify-between gap-2">
           
           {/* Logo & School Name */}
-          <a href="#home" className="flex items-center gap-2 sm:gap-2.5 group">
-            <SchoolLogo className="w-10 h-10 sm:w-12 sm:h-12 group-hover:scale-105 transition-transform duration-300" />
+          <a href="#home" className="flex items-center gap-2 sm:gap-2.5 group shrink-0">
+            <SchoolLogo className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 group-hover:scale-105 transition-transform duration-300" />
             <div className="flex flex-col">
               <span
                 style={{ color: GREEN }}
-                className="font-serif font-bold text-base sm:text-xl md:text-2xl leading-none tracking-tight group-hover:opacity-90"
+                className="font-serif font-bold text-sm sm:text-lg md:text-2xl leading-none tracking-tight group-hover:opacity-90"
               >
                 GYANODAYA
               </span>
               <span
                 style={{ color: GREEN }}
-                className="text-[8.5px] sm:text-[10px] md:text-[11px] font-semibold tracking-[0.16em] sm:tracking-[0.18em] uppercase leading-tight mt-0.5"
+                className="text-[8px] sm:text-[9.5px] md:text-[11px] font-semibold tracking-[0.14em] sm:tracking-[0.18em] uppercase leading-tight mt-0.5"
               >
                 PUBLIC SCHOOL • BAGODAR
               </span>
@@ -812,22 +839,37 @@ export default function App() {
             ))}
           </nav>
 
-          {/* Search Icon & Enquire Button & Mobile Menu Button */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Right Action Icons & Buttons (Search, Parents Login, Enquire, Mobile Menu) */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3">
+            {/* Search Icon */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               aria-label="Search website"
-              className="p-2 text-gray-700 hover:text-[#14452f] transition-colors rounded-full hover:bg-gray-100 cursor-pointer"
+              className="p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] transition-colors rounded-full hover:bg-gray-100 cursor-pointer"
             >
               <svg className="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
 
+            {/* PARENTS LOGIN BUTTON - PROMINENT ACROSS ALL SCREEN SIZES */}
+            <button
+              onClick={() => setParentLoginModalOpen(true)}
+              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
+              aria-label="Parents Login Portal"
+            >
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#c59a3f] group-hover:text-[#dfb455] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span className="hidden xs:inline">Parents</span>
+              <span>Login</span>
+            </button>
+
+            {/* Enquire Button (visible on md+) */}
             <button
               onClick={() => setAdmissionModalOpen(true)}
               style={{ backgroundColor: GREEN }}
-              className="hidden md:inline-flex items-center gap-1.5 text-white text-xs font-semibold px-4 py-2 rounded-sm hover:brightness-110 transition-all shadow-sm uppercase tracking-wider cursor-pointer"
+              className="hidden md:inline-flex items-center gap-1.5 text-white text-xs font-semibold px-4 py-2 rounded-sm hover:brightness-110 transition-all shadow-sm uppercase tracking-wider cursor-pointer shrink-0"
             >
               <span>Enquire</span>
               <svg className="w-3.5 h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -839,7 +881,7 @@ export default function App() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? "Close menu" : "Open mobile menu"}
-              className="lg:hidden p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100"
+              className="lg:hidden p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {mobileMenuOpen ? (
@@ -856,13 +898,33 @@ export default function App() {
         {/* MOBILE SLIDE-IN OVERLAY DRAWER */}
         {/* ======================================================== */}
         {mobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 top-[102px] z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-start">
+          <div className="lg:hidden fixed inset-0 top-[96px] sm:top-[102px] z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-start">
             <div
               className="bg-white max-h-[82vh] overflow-y-auto w-full p-4 shadow-2xl border-b border-gray-200 animate-slide-down flex flex-col gap-2"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Quick Parent Portal Banner in Drawer */}
+              <div
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setParentLoginModalOpen(true);
+                }}
+                className="bg-[#f0faf5] border border-[#14452f]/20 rounded-lg p-3 flex items-center justify-between cursor-pointer hover:bg-[#e4f5ed] transition-colors"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#14452f] text-[#dfb455] flex items-center justify-center font-bold text-xs">
+                    👤
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#14452f] uppercase tracking-wider">Parents &amp; Student Portal</h4>
+                    <p className="text-[10.5px] text-gray-500">Access attendance, fees, marks &amp; circulars</p>
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-[#14452f] bg-white px-2.5 py-1 rounded shadow-xs border border-gray-200">Login →</span>
+              </div>
+
               {/* Quick Search */}
-              <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 mb-2">
+              <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 mb-1 mt-1">
                 <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -1692,8 +1754,15 @@ export default function App() {
                   <li key={info}>
                     <a
                       href={`#${info.toLowerCase().replace(/\s+/g, "-")}`}
-                      onClick={() => setAdmissionModalOpen(true)}
-                      className="hover:text-[#dfb455] transition-colors inline-block hover:translate-x-1 duration-200"
+                      onClick={(e) => {
+                        if (info === "Parent Login") {
+                          e.preventDefault();
+                          setParentLoginModalOpen(true);
+                        } else {
+                          setAdmissionModalOpen(true);
+                        }
+                      }}
+                      className="hover:text-[#dfb455] transition-colors inline-block hover:translate-x-1 duration-200 cursor-pointer"
                     >
                       {info}
                     </a>
@@ -1989,6 +2058,190 @@ export default function App() {
       )}
 
       {/* ======================================================== */}
+      {/* 12.5. INTERACTIVE PARENTS & STUDENT LOGIN PORTAL MODAL */}
+      {/* ======================================================== */}
+      {parentLoginModalOpen && (
+        <div
+          className="fixed inset-0 z-[115] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in-up"
+          onClick={() => setParentLoginModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 relative border border-gray-100 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setParentLoginModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold cursor-pointer transition-colors"
+              aria-label="Close Login Modal"
+            >
+              ✕
+            </button>
+
+            {/* Portal Header */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-full bg-[#14452f] text-[#dfb455] flex items-center justify-center shrink-0 border border-[#dfb455] shadow">
+                <SchoolLogo className="w-10 h-10" />
+              </div>
+              <div>
+                <h3 style={{ color: GREEN }} className="font-serif font-bold text-xl sm:text-2xl leading-tight">
+                  Gyanodaya Portal
+                </h3>
+                <p className="text-gray-500 text-xs mt-0.5">
+                  Secure Access for Parents, Students &amp; Staff
+                </p>
+              </div>
+            </div>
+
+            {/* Role Selector Tabs */}
+            <div className="grid grid-cols-3 gap-1 bg-gray-100 p-1 rounded-lg mb-5 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setLoginRole("parent")}
+                className={`py-2 rounded-md transition-all cursor-pointer ${
+                  loginRole === "parent"
+                    ? "bg-[#14452f] text-white shadow-sm"
+                    : "text-gray-600 hover:text-[#14452f]"
+                }`}
+              >
+                👨‍👩‍👧 Parents
+              </button>
+              <button
+                type="button"
+                onClick={() => setLoginRole("student")}
+                className={`py-2 rounded-md transition-all cursor-pointer ${
+                  loginRole === "student"
+                    ? "bg-[#14452f] text-white shadow-sm"
+                    : "text-gray-600 hover:text-[#14452f]"
+                }`}
+              >
+                🎓 Student
+              </button>
+              <button
+                type="button"
+                onClick={() => setLoginRole("staff")}
+                className={`py-2 rounded-md transition-all cursor-pointer ${
+                  loginRole === "staff"
+                    ? "bg-[#14452f] text-white shadow-sm"
+                    : "text-gray-600 hover:text-[#14452f]"
+                }`}
+              >
+                👨‍🏫 Staff
+              </button>
+            </div>
+
+            {loginSubmitted ? (
+              <div className="py-8 text-center animate-scale-in">
+                <div className="w-16 h-16 bg-emerald-100 text-[#14452f] rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+                  ✓
+                </div>
+                <h4 className="font-serif font-bold text-xl text-gray-900 mb-1">
+                  Authenticating...
+                </h4>
+                <p className="text-gray-600 text-xs sm:text-sm">
+                  Loading dashboard, fee ledger, and attendance records...
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleLoginSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    {loginRole === "parent"
+                      ? "Admission No. / Registered Mobile No. *"
+                      : loginRole === "student"
+                      ? "Student Roll No. / Enrollment ID *"
+                      : "Staff Employee Code *"}
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      required
+                      placeholder={
+                        loginRole === "parent"
+                          ? "e.g. GPS2025-408 or 9431377488"
+                          : loginRole === "student"
+                          ? "e.g. GPS-STD-1042"
+                          : "e.g. GPS-TCH-08"
+                      }
+                      value={loginForm.userId}
+                      onChange={(e) => setLoginForm({ ...loginForm, userId: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:ring-1 focus:ring-[#14452f]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    Password / Date of Birth (DDMMYYYY) *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      placeholder="Enter your secret password"
+                      value={loginForm.password}
+                      onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:ring-1 focus:ring-[#14452f]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-xs font-semibold cursor-pointer"
+                    >
+                      {showPassword ? "HIDE" : "SHOW"}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-gray-600 pt-1">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={loginForm.rememberMe}
+                      onChange={(e) => setLoginForm({ ...loginForm, rememberMe: e.target.checked })}
+                      className="accent-[#14452f] rounded"
+                    />
+                    <span>Remember me</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => showToast("🔒 Password reset instructions sent to your registered mobile number!")}
+                    className="text-[#14452f] hover:underline font-medium cursor-pointer"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+
+                {/* Demo Credentials Helper Pill */}
+                <div className="bg-amber-50 border border-amber-200/80 rounded-lg p-2.5 text-[11px] text-amber-900 leading-snug">
+                  <span className="font-bold">💡 Demo Login:</span> ID: <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono font-bold">GPS2025-408</code> | Pass: <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono font-bold">gps@2025</code>
+                </div>
+
+                <button
+                  type="submit"
+                  style={{ backgroundColor: GREEN }}
+                  className="w-full text-white font-bold py-3 rounded-lg text-xs sm:text-sm uppercase tracking-wider hover:brightness-110 transition-all shadow-md cursor-pointer hover:scale-101 active:scale-98 flex items-center justify-center gap-2"
+                >
+                  <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                  </svg>
+                  <span>Login to {loginRole === "parent" ? "Parents" : loginRole === "student" ? "Student" : "Staff"} Portal</span>
+                </button>
+              </form>
+            )}
+
+            <div className="mt-5 pt-4 border-t border-gray-100 text-center text-[11px] text-gray-500">
+              Need technical help or new credentials?
+              <br />
+              <a href="tel:+919431377488" className="text-[#14452f] font-semibold hover:underline">
+                Contact GPS Admin: +91 94313 77488
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
       {/* 13. CAMPUS VIRTUAL TOUR MODAL */}
       {/* ======================================================== */}
       {tourModalOpen && (
@@ -2084,44 +2337,43 @@ export default function App() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0e3322]/98 backdrop-blur-md border-t border-[#1f5f40] px-2 py-1.5 flex items-center justify-around shadow-2xl">
         <a
           href="tel:+919431377488"
-          className="flex flex-col items-center justify-center gap-0.5 text-gray-200 hover:text-[#dfb455] py-1 px-2.5 rounded-lg active:scale-95 transition-transform"
+          className="flex flex-col items-center justify-center gap-0.5 text-gray-200 hover:text-[#dfb455] py-1 px-2 rounded-lg active:scale-95 transition-transform"
         >
           <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
           </svg>
-          <span className="text-[10px] font-medium tracking-tight">Call Us</span>
+          <span className="text-[9.5px] font-medium tracking-tight">Call</span>
         </a>
 
         <a
           href="https://wa.me/919431377488"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-col items-center justify-center gap-0.5 text-gray-200 hover:text-emerald-400 py-1 px-2.5 rounded-lg active:scale-95 transition-transform"
+          className="flex flex-col items-center justify-center gap-0.5 text-gray-200 hover:text-emerald-400 py-1 px-2 rounded-lg active:scale-95 transition-transform"
         >
           <svg className="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.632.062-.976-.051-.309-.101-.689-.234-1.196-.453-2.144-.925-3.535-3.111-3.642-3.255-.106-.144-.872-1.159-.872-2.212 0-1.053.548-1.57.742-1.785.195-.214.424-.268.566-.268.143 0 .285.002.408.008.131.006.305-.05.477.362.179.428.611 1.488.665 1.595.054.107.089.232.018.375-.071.144-.107.233-.213.357-.107.125-.224.279-.32.375-.107.107-.219.224-.094.438.125.214.556.915 1.193 1.482.82.731 1.512.958 1.726 1.065.214.107.339.089.464-.054.125-.143.536-.625.679-.839.143-.214.286-.179.479-.107.195.071 1.23.58 1.443.687.214.107.357.161.41.25.054.089.054.518-.09.923z" />
           </svg>
-          <span className="text-[10px] font-medium tracking-tight">WhatsApp</span>
+          <span className="text-[9.5px] font-medium tracking-tight">WhatsApp</span>
         </a>
 
-        <a
-          href="#about"
-          className="flex flex-col items-center justify-center gap-0.5 text-gray-200 hover:text-[#dfb455] py-1 px-2.5 rounded-lg active:scale-95 transition-transform"
+        <button
+          onClick={() => setParentLoginModalOpen(true)}
+          className="flex flex-col items-center justify-center gap-0.5 text-[#dfb455] hover:text-white py-1 px-2 rounded-lg active:scale-95 transition-transform cursor-pointer"
         >
           <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
-          <span className="text-[10px] font-medium tracking-tight">Campus</span>
-        </a>
+          <span className="text-[9.5px] font-bold tracking-tight">Parent Login</span>
+        </button>
 
         <button
           onClick={() => setAdmissionModalOpen(true)}
           style={{ backgroundColor: GOLD }}
-          className="flex items-center gap-1 text-white font-bold text-[11px] px-3 py-1.5 rounded-md shadow-md active:scale-95 transition-transform cursor-pointer"
+          className="flex items-center gap-1 text-white font-bold text-[10.5px] px-2.5 py-1.5 rounded-md shadow-md active:scale-95 transition-transform cursor-pointer"
         >
           <span>Apply</span>
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>
         </button>
