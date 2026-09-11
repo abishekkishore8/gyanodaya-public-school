@@ -329,6 +329,7 @@ function AcademicStageIcon({ type, className = "w-6 h-6 text-[#14452f]" }: { typ
 // Announcements / News Ticker items
 const ANNOUNCEMENTS = [
   "📢 Admissions Open for Academic Session 2025–26 (Nursery to Class XII) at GPS Bagodar",
+  "💼 Faculty Recruitment 2025-26 Active: Walk-in & Online Applications Open for PGT, TGT, PRT",
   "🏆 Gyanodaya Public School students win District Inter-School Science & Math Fair",
   "📅 Annual Sports & Cultural Meet 2025 scheduled for next month",
   "✨ 100% Pass Percentage in CBSE Board Examinations with distinction",
@@ -339,9 +340,9 @@ const PLAYSTORE_PARENT_APP_URL = "https://play.google.com/store/search?q=gyanoda
 
 // Top bar navigation links
 const TOP_NAV = [
-  { label: "Career", href: "#career" },
-  { label: "Alumni", href: "#alumni" },
-  { label: "News & Events", href: "#news" },
+  { label: "Notice Board", href: "#notice-board" },
+  { label: "Careers & Hiring", href: "#recruitment" },
+  { label: "News & Circulars", href: "#notice-board" },
   { label: "Parents Login", href: PLAYSTORE_PARENT_APP_URL, isExternal: true },
 ];
 
@@ -360,6 +361,7 @@ const MAIN_NAV = [
       { label: "Middle & Senior Secondary", href: "#academics" },
     ],
   },
+  { label: "NOTICE BOARD", href: "#notice-board" },
   {
     label: "FACILITIES",
     href: "#facilities",
@@ -714,6 +716,269 @@ const GALLERY_ITEMS = [
   },
 ];
 
+// Notice Board Categories & Filter Tabs
+const NOTICE_TABS = [
+  { id: "all", label: "All Updates", icon: "📌", count: "8" },
+  { id: "notices", label: "Official Circulars", icon: "📄", count: "3" },
+  { id: "announcements", label: "Announcements", icon: "📢", count: "3" },
+  { id: "recruitment", label: "Career & Recruitment", icon: "💼", count: "5" },
+  { id: "exams", label: "Exams & Results", icon: "📝", count: "2" },
+];
+
+export interface NoticeItem {
+  id: string;
+  category: "notices" | "announcements" | "recruitment" | "exams";
+  title: string;
+  refNo: string;
+  date: string;
+  day: string;
+  month: string;
+  year: string;
+  badge: string;
+  badgeColor: "red" | "emerald" | "amber" | "blue" | "purple";
+  isPinned?: boolean;
+  summary: string;
+  fullDetails: string[];
+  fileSize?: string;
+  audience: string;
+  actionText?: string;
+  jobId?: string;
+}
+
+export interface JobPosition {
+  id: string;
+  title: string;
+  dept: string;
+  type: string;
+  vacancies: string;
+  experience: string;
+  qualification: string;
+  payScale: string;
+  deadline: string;
+  location: string;
+  highlights: string[];
+  description: string;
+}
+
+// Official Notices & Announcements Data
+const NOTICES_DATA: NoticeItem[] = [
+  {
+    id: "notice-cbse-2025",
+    category: "notices",
+    title: "CBSE Class X & XII Board Examination 2025: Practical & Theory Guidelines",
+    refNo: "GPS/CIR/2025/118",
+    date: "12 Mar 2025",
+    day: "12",
+    month: "MAR",
+    year: "2025",
+    badge: "URGENT",
+    badgeColor: "red",
+    isPinned: true,
+    summary:
+      "Mandatory guidelines for CBSE Class X & XII board examinees regarding admit card collection, reporting protocols, and practical project evaluations.",
+    fullDetails: [
+      "All students appearing for the CBSE Board Examinations 2025 must collect their verified Admit Cards from the Principal's Office between 9:00 AM and 1:30 PM on working days.",
+      "Reporting time at the board examination center is strictly 09:30 AM with proper school uniform and authorized stationery in transparent pouches.",
+      "Special doubt-clearing clinics and subject mentorship will remain operational daily until examination conclusion.",
+    ],
+    fileSize: "PDF · 1.4 MB",
+    audience: "Class X & XII Students & Parents",
+    actionText: "Download Circular PDF",
+  },
+  {
+    id: "notice-recruitment-2025",
+    category: "recruitment",
+    title: "Annual Faculty & Staff Recruitment 2025–26: PGT, TGT, PRT & Sports Mentors",
+    refNo: "GPS/HR/2025/034",
+    date: "10 Mar 2025",
+    day: "10",
+    month: "MAR",
+    year: "2025",
+    badge: "HIRING ACTIVE",
+    badgeColor: "emerald",
+    isPinned: true,
+    summary:
+      "Inviting applications from qualified, passionate educators and administrative professionals. Attractive CBSE salary matrix, EPF, free transport & housing aid.",
+    fullDetails: [
+      "Gyanodaya Public School, Bagodar invites experienced and energetic educators for PGT (Physics, Maths, Chemistry), TGT (English, Social Science), PRT (All Subjects), and Physical Education Mentors.",
+      "Candidates must possess appropriate Post-Graduate/Graduate degrees with B.Ed from recognized universities with high English communication proficiency.",
+      "Shortlisted applicants will undergo a written evaluation followed by classroom demo and interview with the Academic Selection Board.",
+    ],
+    fileSize: "PDF · 980 KB",
+    audience: "Educators & Job Seekers",
+    actionText: "View Open Positions",
+    jobId: "pgt-physics",
+  },
+  {
+    id: "notice-admission-guidelines",
+    category: "announcements",
+    title: "Admission Session 2025–26: Phase-II Entrance Test & Registration Open",
+    refNo: "GPS/ADM/2025/082",
+    date: "08 Mar 2025",
+    day: "08",
+    month: "MAR",
+    year: "2025",
+    badge: "NEW",
+    badgeColor: "amber",
+    isPinned: false,
+    summary:
+      "Phase-II Registration for Nursery to Class IX & XI is now live. Limited seats available in Science & Commerce streams with merit scholarships.",
+    fullDetails: [
+      "Online and on-campus registration for the academic session 2025–26 is ongoing. Entrance test for Class I to IX will be conducted on the 3rd Saturday of each month.",
+      "Documents required at the time of admission: Birth Certificate, 4 Passport Photos, Aadhaar Card copy, and Previous Class Report Card / Transfer Certificate.",
+      "Scholarships up to 50% tuition waiver available for students scoring 90%+ in previous annual exams or state-level sports medalists.",
+    ],
+    fileSize: "PDF · 2.1 MB",
+    audience: "Prospective Parents & Guardians",
+    actionText: "Download Brochure & Form",
+  },
+  {
+    id: "notice-science-exhibition",
+    category: "announcements",
+    title: "Inter-School Science, Robotics & Mathematical Innovation Fest (SRIF 2025)",
+    refNo: "GPS/EVT/2025/065",
+    date: "04 Mar 2025",
+    day: "04",
+    month: "MAR",
+    year: "2025",
+    badge: "CAMPUS EVENT",
+    badgeColor: "blue",
+    summary:
+      "Grand science exhibition featuring 120+ working STEM models, robotics displays, AI demonstrations, and science quiz competitions.",
+    fullDetails: [
+      "Gyanodaya Public School is hosting the District Science & Robotics Innovation Fest. Over 25 CBSE schools from Giridih, Bokaro, and Hazaribagh will participate.",
+      "Parents are cordially invited to visit student exhibitions on Saturday between 10:00 AM and 4:00 PM at the Main Auditorium.",
+      "Chief Guest: Eminent scientists from BIT Mesra and District Education Officers.",
+    ],
+    fileSize: "PDF · 1.1 MB",
+    audience: "All Students, Parents & Guests",
+    actionText: "Download Schedule PDF",
+  },
+  {
+    id: "notice-bus-routes",
+    category: "notices",
+    title: "Revised Safe School Bus Routes & Real-Time GPS Tracking App Access",
+    refNo: "GPS/TRN/2025/019",
+    date: "01 Mar 2025",
+    day: "01",
+    month: "MAR",
+    year: "2025",
+    badge: "TRANSPORT",
+    badgeColor: "purple",
+    summary:
+      "New GPS tracking routes operational for Bagodar, Saria, Suriya, Dumri, Atka & Bishnugarh. Download the Parents App for live bus tracking.",
+    fullDetails: [
+      "Our school transport fleet has been upgraded with automated speed governors, CCTV cameras, and synchronized GPS tracking modules.",
+      "Parents can view live bus movement, estimated arrival timings, and morning pickup notifications through the GPS Parents Mobile App on Google Play.",
+      "For bus route inquiries or driver contact info, please contact Transport In-Charge at +91 94313 77488.",
+    ],
+    fileSize: "PDF · 850 KB",
+    audience: "Bus Commuter Parents",
+    actionText: "Download Route Schedule",
+  },
+  {
+    id: "notice-datesheet-term2",
+    category: "exams",
+    title: "Annual Examination Datesheet 2024–25 for Classes Nursery to VIII & IX",
+    refNo: "GPS/EXAM/2025/098",
+    date: "25 Feb 2025",
+    day: "25",
+    month: "FEB",
+    year: "2025",
+    badge: "EXAM SCHEDULE",
+    badgeColor: "red",
+    summary:
+      "Complete timetable, revision blueprint, and syllabus guidelines for final promotional examinations commencing from 15th March.",
+    fullDetails: [
+      "The Annual Promotional Examinations for Classes Nursery to VIII & IX are scheduled from 15th March to 28th March 2025.",
+      "Maximum marks, syllabus distribution, and sample question paper blueprints have been distributed in classrooms and uploaded to the student portal.",
+      "Result Declaration & Parent-Teacher Meeting (PTM) will take place on 5th April 2025.",
+    ],
+    fileSize: "PDF · 1.6 MB",
+    audience: "Classes Nursery to IX",
+    actionText: "Download Datesheet PDF",
+  },
+];
+
+// Open Career / Recruitment Positions Data
+const RECRUITMENT_POSITIONS: JobPosition[] = [
+  {
+    id: "pgt-physics-maths",
+    title: "PGT – Physics & Mathematics",
+    dept: "Senior Secondary (Classes XI & XII)",
+    type: "Full Time · Permanent",
+    vacancies: "2 Positions",
+    experience: "3+ Years in CBSE Senior Secondary School",
+    qualification: "M.Sc (Physics / Mathematics) + B.Ed with First Division",
+    payScale: "CBSE Scale (₹35,000 – ₹55,000/mo) + EPF + Free Transport + Housing Aid",
+    deadline: "30 April 2025",
+    location: "Bagodar Campus, Giridih",
+    highlights: ["Well-equipped STEM & Physics Lab", "Annual Performance Bonus", "Child Education Fee Waiver"],
+    description:
+      "Seeking dynamic, concept-oriented subject teachers with proven track record in guiding students for CBSE Board excellence and competitive entrance foundations (JEE/NEET).",
+  },
+  {
+    id: "tgt-english-sst",
+    title: "TGT – English & Social Science",
+    dept: "Middle & High School (Classes VI to X)",
+    type: "Full Time · Permanent",
+    vacancies: "3 Positions",
+    experience: "2+ Years CBSE Experience",
+    qualification: "M.A / B.A (English / History / Political Science) + B.Ed",
+    payScale: "CBSE Scale (₹25,000 – ₹40,000/mo) + EPF + Staff Bus",
+    deadline: "30 April 2025",
+    location: "Bagodar Campus, Giridih",
+    highlights: ["Language Lab Access", "Faculty Training by CBSE Resource Persons", "Staff Health Benefits"],
+    description:
+      "Requires excellent spoken English communication skills, interactive pedagogy, and enthusiasm for literary clubs, debating, and social inquiry.",
+  },
+  {
+    id: "prt-mother-teacher",
+    title: "PRT – Primary Mother Teacher (All Subjects)",
+    dept: "Primary Wing (Classes I to V)",
+    type: "Full Time · Permanent",
+    vacancies: "2 Positions",
+    experience: "1+ Years experience or fresher with strong credentials",
+    qualification: "Graduation + D.El.Ed / NTT / B.Ed with fluent English",
+    payScale: "₹20,000 – ₹30,000/mo + EPF + Transport",
+    deadline: "15 May 2025",
+    location: "Bagodar Campus, Giridih",
+    highlights: ["Activity-based discovery rooms", "Supportive mentorship environment"],
+    description:
+      "Looking for warm, patient, and creative educators who specialize in early child psychology, phonics, storytelling, and experiential arithmetic.",
+  },
+  {
+    id: "sports-coach-instructor",
+    title: "Sports Coach & Physical Education Instructor",
+    dept: "Sports & Physical Fitness Department",
+    type: "Full Time",
+    vacancies: "1 Position (Male / Female)",
+    experience: "2+ Years or State/National Level Athletic Credentials",
+    qualification: "B.P.Ed / M.P.Ed or certified coach in Cricket / Football / Martial Arts",
+    payScale: "Attractive Package commensurate with credentials + EPF + Perks",
+    deadline: "30 April 2025",
+    location: "Bagodar Campus, Giridih",
+    highlights: ["Sprawling Multi-Sport Ground", "Inter-School Tournament Leadership"],
+    description:
+      "To train students in daily fitness drills, athletic sports, martial arts, yoga, and lead school contingents at CBSE cluster tournaments.",
+  },
+  {
+    id: "it-computer-admin",
+    title: "Computer Science Teacher & IT Administrator",
+    dept: "Computer Science & Digital Infrastructure",
+    type: "Full Time",
+    vacancies: "1 Position",
+    experience: "1–3 Years in Web/Hardware/Python/Scratch teaching",
+    qualification: "BCA / MCA / B.Tech (CS/IT) or equivalent",
+    payScale: "₹22,000 – ₹35,000/mo + EPF + Subsidized Perks",
+    deadline: "15 May 2025",
+    location: "Bagodar Campus, Giridih",
+    highlights: ["Modern 40+ System High-Speed Lab", "Network & School Software Incharge"],
+    description:
+      "Responsible for teaching computer basics, Python programming, web essentials, and managing school digital infrastructure, website, and smart class servers.",
+  },
+];
+
 // Frequently Asked Questions
 const FAQS = [
   {
@@ -754,6 +1019,23 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("all");
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Notice Board & Recruitment State
+  const [noticeFilter, setNoticeFilter] = useState("all");
+  const [noticeSearch, setNoticeSearch] = useState("");
+  const [selectedNotice, setSelectedNotice] = useState<NoticeItem | null>(null);
+  const [jobModalOpen, setJobModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<JobPosition | null>(null);
+  const [jobForm, setJobForm] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    position: "PGT – Physics & Mathematics",
+    experience: "2-4 Years",
+    qualification: "M.Sc / B.Ed",
+    notes: "",
+  });
+  const [jobSubmitted, setJobSubmitted] = useState(false);
 
   // Form State
   const [enquiryForm, setEnquiryForm] = useState({
@@ -820,6 +1102,25 @@ export default function App() {
       setAdmissionModalOpen(false);
       setEnquiryForm({ studentName: "", grade: "Grade 1 - 5", parentName: "", phone: "", email: "" });
       showToast("🎉 Thank you! Your admission enquiry has been submitted. Our counselor will contact you shortly.");
+    }, 1200);
+  };
+
+  const handleJobSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setJobSubmitted(true);
+    setTimeout(() => {
+      setJobSubmitted(false);
+      setJobModalOpen(false);
+      showToast(`🎉 Application received for ${jobForm.position}! Our HR panel will review your profile.`);
+      setJobForm({
+        fullName: "",
+        email: "",
+        phone: "",
+        position: "PGT – Physics & Mathematics",
+        experience: "2-4 Years",
+        qualification: "M.Sc / B.Ed",
+        notes: "",
+      });
     }, 1200);
   };
 
@@ -1673,6 +1974,391 @@ export default function App() {
       </section>
 
       {/* ======================================================== */}
+      {/* 6.5. DIGITAL NOTICE BOARD, ANNOUNCEMENTS & RECRUITMENT DESK */}
+      {/* ======================================================== */}
+      <section
+        id="notice-board"
+        className="py-16 sm:py-24 bg-[#f2f6f3] border-t border-gray-200/80 relative overflow-hidden"
+      >
+        {/* Anchor targets for smooth scrolling from menus and footer */}
+        <div id="notices" className="absolute -top-24" />
+        <div id="announcements" className="absolute -top-24" />
+        <div id="recruitment" className="absolute -top-24" />
+        <div id="career" className="absolute -top-24" />
+
+        {/* Ambient background accents */}
+        <div className="absolute -top-24 right-10 w-96 h-96 bg-[#dfb455]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 left-10 w-96 h-96 bg-[#14452f]/8 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          
+          {/* Section Header: Bulletin Themed */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 pb-6 border-b border-gray-300/80">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14452f] text-[#dfb455] text-[11px] font-bold tracking-[0.16em] uppercase mb-3 shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                <span>OFFICIAL BULLETIN &amp; CAREERS DESK</span>
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-[1.15]">
+                Notice Board &amp; <br className="hidden sm:inline" />
+                <span className="italic font-normal text-[#14452f]">Latest Announcements</span>
+              </h2>
+            </div>
+            
+            {/* Live Indicator & Quick Actions */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 lg:self-end">
+              <div className="bg-white px-3.5 py-2 rounded-xl border border-gray-200/90 shadow-xs flex items-center gap-2.5 text-xs text-gray-700">
+                <span className="flex h-2.5 w-2.5 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600" />
+                </span>
+                <span className="font-semibold text-[#14452f]">Live Board</span>
+                <span className="text-gray-400">|</span>
+                <span className="text-gray-500">Updated Daily</span>
+              </div>
+
+              <button
+                onClick={() => {
+                  setNoticeFilter("recruitment");
+                  const elem = document.getElementById("recruitment-board");
+                  if (elem) elem.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="bg-[#14452f] hover:bg-[#1a583c] text-[#dfb455] text-xs font-bold px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-sm cursor-pointer hover:scale-102"
+              >
+                <span>💼 View Career Openings (5)</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Bulletin Search & Filter Bar */}
+          <div className="bg-white p-3 sm:p-4 rounded-2xl border border-gray-200/90 shadow-sm mb-8 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+            
+            {/* Category Filter Pills */}
+            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
+              {NOTICE_TABS.map((tab) => {
+                const isActive = noticeFilter === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setNoticeFilter(tab.id)}
+                    className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
+                      isActive
+                        ? "bg-[#14452f] text-white shadow-xs font-bold"
+                        : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-200/60"
+                    }`}
+                  >
+                    <span>{tab.icon}</span>
+                    <span>{tab.label}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                        isActive ? "bg-[#dfb455] text-[#14452f]" : "bg-gray-200 text-gray-600"
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Notice Search Input */}
+            <div className="relative min-w-[240px] lg:min-w-[280px]">
+              <svg
+                className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                value={noticeSearch}
+                onChange={(e) => setNoticeSearch(e.target.value)}
+                placeholder="Search circulars, ref no, jobs..."
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-9 pr-3 py-2 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#14452f] focus:bg-white"
+              />
+              {noticeSearch && (
+                <button
+                  onClick={() => setNoticeSearch("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* ======================================================== */}
+          {/* SPECIAL SECTION: RECRUITMENT DESK (CAREER VACANCIES) */}
+          {/* ======================================================== */}
+          {(noticeFilter === "recruitment" || noticeFilter === "all") && (
+            <div id="recruitment-board" className="mb-12">
+              
+              {/* Recruitment Header Banner */}
+              <div className="bg-gradient-to-r from-[#0e3322] via-[#14452f] to-[#1e5a3f] text-white rounded-2xl p-6 sm:p-8 mb-6 shadow-xl border border-[#276b4c] relative overflow-hidden">
+                <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-[#dfb455]/10 rounded-full blur-2xl pointer-events-none" />
+                
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                  <div className="max-w-2xl">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#dfb455]/20 text-[#dfb455] text-[10.5px] font-bold uppercase tracking-wider mb-2.5">
+                      <span>💼 FACULTY &amp; STAFF HIRING DRIVE 2025–26</span>
+                    </div>
+                    <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white mb-2">
+                      Join Our Distinguished Teaching Community
+                    </h3>
+                    <p className="text-gray-200 text-xs sm:text-sm leading-relaxed font-light">
+                      Gyanodaya Public School (CBSE Affiliated, Bagodar) invites applications from passionate, visionary educators. We provide competitive salary packages, Employee Provident Fund (EPF), free staff transport, subsidized education for children, and ongoing CBSE faculty development programs.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+                    <button
+                      onClick={() => {
+                        setSelectedJob(RECRUITMENT_POSITIONS[0]);
+                        setJobForm((prev) => ({ ...prev, position: RECRUITMENT_POSITIONS[0].title }));
+                        setJobModalOpen(true);
+                      }}
+                      style={{ backgroundColor: GOLD }}
+                      className="text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-xl hover:brightness-110 transition-all uppercase tracking-wider shadow-lg cursor-pointer hover:scale-102 text-center"
+                    >
+                      Apply Online for Job ↗
+                    </button>
+                    <a
+                      href="mailto:careers@gpsbagodar.edu.in"
+                      className="bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all text-center flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-3.5 h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      <span>careers@gpsbagodar.edu.in</span>
+                    </a>
+                  </div>
+                </div>
+
+                {/* Staff Perks Pill Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-6 pt-6 border-t border-white/10 text-xs text-gray-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center text-xs">✓</span>
+                    <span>CBSE 7th Pay Scale</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center text-xs">✓</span>
+                    <span>Free Staff Bus Transit</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center text-xs">✓</span>
+                    <span>EPF &amp; Gratuity Benefits</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center text-xs">✓</span>
+                    <span>Child Education Subsidy</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Recruitment Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {RECRUITMENT_POSITIONS.map((job) => (
+                  <div
+                    key={job.id}
+                    className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200/90 shadow-xs hover:shadow-xl hover:border-[#14452f]/40 transition-all duration-300 flex flex-col justify-between group relative hover:-translate-y-1"
+                  >
+                    {/* Brass Pin Top Header */}
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                          {job.type}
+                        </span>
+                        <div className="text-[11px] font-semibold text-gray-500 mt-1">
+                          {job.dept}
+                        </div>
+                      </div>
+
+                      <span className="text-xs font-bold text-[#14452f] bg-[#f0faf5] px-2.5 py-1 rounded-lg border border-[#14452f]/10">
+                        {job.vacancies}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h4 className="font-serif text-base sm:text-lg font-bold text-gray-900 group-hover:text-[#14452f] transition-colors mb-2">
+                        {job.title}
+                      </h4>
+                      <p className="text-gray-600 text-xs leading-relaxed mb-4">
+                        {job.description}
+                      </p>
+
+                      <div className="space-y-1.5 text-xs text-gray-700 bg-gray-50/80 p-3 rounded-xl border border-gray-100 mb-4">
+                        <div className="flex items-start gap-1.5">
+                          <span className="font-semibold text-gray-900 shrink-0">🎓 Eligibility:</span>
+                          <span className="text-gray-600 truncate">{job.qualification}</span>
+                        </div>
+                        <div className="flex items-start gap-1.5">
+                          <span className="font-semibold text-gray-900 shrink-0">💼 Experience:</span>
+                          <span className="text-gray-600">{job.experience}</span>
+                        </div>
+                        <div className="flex items-start gap-1.5">
+                          <span className="font-semibold text-gray-900 shrink-0">💰 Salary:</span>
+                          <span className="text-[#14452f] font-medium">{job.payScale}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                      <span className="text-[10.5px] text-gray-400">
+                        Deadline: <strong className="text-gray-600 font-semibold">{job.deadline}</strong>
+                      </span>
+                      <button
+                        onClick={() => {
+                          setSelectedJob(job);
+                          setJobForm((prev) => ({ ...prev, position: job.title }));
+                          setJobModalOpen(true);
+                        }}
+                        style={{ backgroundColor: GREEN }}
+                        className="text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg hover:brightness-110 transition-all cursor-pointer shadow-xs active:scale-95"
+                      >
+                        Apply Now ↗
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* NOTICE BOARD BULLETIN CARDS */}
+          {/* ======================================================== */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {NOTICES_DATA.filter((n) => {
+              const matchesFilter = noticeFilter === "all" || n.category === noticeFilter;
+              const matchesSearch =
+                !noticeSearch ||
+                n.title.toLowerCase().includes(noticeSearch.toLowerCase()) ||
+                n.refNo.toLowerCase().includes(noticeSearch.toLowerCase()) ||
+                n.summary.toLowerCase().includes(noticeSearch.toLowerCase());
+              return matchesFilter && matchesSearch;
+            }).map((notice) => (
+              <div
+                key={notice.id}
+                className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200/90 shadow-sm hover:shadow-2xl hover:border-[#14452f]/30 transition-all duration-300 flex flex-col justify-between group relative hover:-translate-y-1.5"
+              >
+                {/* Decorative Pin Badge */}
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-gradient-to-br from-[#dfb455] to-[#976a16] shadow-md border-2 border-white flex items-center justify-center text-white text-[9px] font-bold z-10">
+                  📌
+                </div>
+
+                <div>
+                  {/* Top Meta Bar */}
+                  <div className="flex items-center justify-between gap-2 pt-2 mb-3.5">
+                    <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-center justify-center bg-[#f0faf5] border border-[#14452f]/20 rounded-lg px-2 py-1 leading-none text-center">
+                        <span className="text-xs font-bold text-[#14452f]">{notice.day}</span>
+                        <span className="text-[9px] font-semibold text-[#c59a3f] uppercase">{notice.month}</span>
+                      </div>
+                      <span className="text-[10px] font-mono font-semibold text-gray-500">
+                        {notice.refNo}
+                      </span>
+                    </div>
+
+                    <span
+                      className={`text-[9.5px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                        notice.badgeColor === "red"
+                          ? "bg-red-50 text-red-700 border-red-200"
+                          : notice.badgeColor === "emerald"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : notice.badgeColor === "amber"
+                          ? "bg-amber-50 text-amber-800 border-amber-200"
+                          : notice.badgeColor === "purple"
+                          ? "bg-purple-50 text-purple-700 border-purple-200"
+                          : "bg-blue-50 text-blue-700 border-blue-200"
+                      }`}
+                    >
+                      {notice.badge}
+                    </span>
+                  </div>
+
+                  {/* Notice Title */}
+                  <h3
+                    onClick={() => setSelectedNotice(notice)}
+                    className="font-serif text-base sm:text-lg font-bold text-gray-900 group-hover:text-[#14452f] transition-colors mb-2 cursor-pointer leading-snug"
+                  >
+                    {notice.title}
+                  </h3>
+
+                  {/* Summary */}
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-4">
+                    {notice.summary}
+                  </p>
+                </div>
+
+                {/* Bottom Target & Action Buttons */}
+                <div className="pt-3.5 border-t border-gray-100 flex flex-col gap-2.5">
+                  <div className="flex items-center justify-between text-[11px] text-gray-500">
+                    <span className="truncate">🎯 Audience: <strong className="text-gray-700 font-semibold">{notice.audience}</strong></span>
+                    {notice.fileSize && <span className="text-[10px] font-mono text-gray-400 shrink-0">{notice.fileSize}</span>}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => {
+                        showToast(`📄 Downloading official notice PDF: ${notice.refNo}.pdf (${notice.fileSize || "1.2 MB"})...`);
+                      }}
+                      className="flex items-center justify-center gap-1.5 text-xs font-semibold py-2 px-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors cursor-pointer"
+                    >
+                      <svg className="w-3.5 h-3.5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      <span>Download</span>
+                    </button>
+
+                    <button
+                      onClick={() => setSelectedNotice(notice)}
+                      style={{ backgroundColor: GREEN }}
+                      className="flex items-center justify-center gap-1 text-xs font-semibold py-2 px-2.5 rounded-lg text-white hover:brightness-110 transition-colors cursor-pointer shadow-xs"
+                    >
+                      <span>Read Notice</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom Archive Notification Box */}
+          <div className="mt-10 bg-white p-4 sm:p-5 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#f0faf5] text-[#14452f] flex items-center justify-center font-bold text-lg shrink-0">
+                📁
+              </div>
+              <div>
+                <h4 className="text-xs sm:text-sm font-bold text-gray-900">
+                  Looking for past circulars or archived academic records?
+                </h4>
+                <p className="text-[11px] sm:text-xs text-gray-500">
+                  Access comprehensive archives for academic years 2022–2025 via the Student &amp; Parent Portal.
+                </p>
+              </div>
+            </div>
+
+            <a
+              href={PLAYSTORE_PARENT_APP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#14452f] hover:bg-[#1a583c] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all uppercase tracking-wider shrink-0"
+            >
+              Open Parents Portal ↗
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ======================================================== */}
       {/* 7. FACILITIES (WORLD-CLASS INFRASTRUCTURE) */}
       {/* ======================================================== */}
       <section id="facilities" className="py-14 sm:py-20 bg-white">
@@ -2455,6 +3141,287 @@ export default function App() {
           </svg>
         </button>
       </div>
+
+      {/* ======================================================== */}
+      {/* 16. OFFICIAL NOTICE CIRCULAR LETTERHEAD MODAL */}
+      {/* ======================================================== */}
+      {selectedNotice && (
+        <div
+          className="fixed inset-0 z-[125] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-scale-in"
+          onClick={() => setSelectedNotice(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 sm:p-8 relative border-2 border-[#14452f]/20 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedNotice(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold cursor-pointer"
+            >
+              ✕
+            </button>
+
+            {/* Official Letterhead Header */}
+            <div className="flex items-center gap-3.5 pb-5 border-b-2 border-[#14452f]/30 mb-5">
+              <SchoolLogo className="w-12 h-12 sm:w-14 sm:h-14 shrink-0" />
+              <div>
+                <h3 className="font-serif font-bold text-base sm:text-xl text-[#14452f] leading-tight">
+                  GYANODAYA PUBLIC SCHOOL
+                </h3>
+                <p className="text-[11px] sm:text-xs font-semibold text-gray-600">
+                  Affiliated to CBSE, New Delhi • Bagodar, Giridih District, Jharkhand
+                </p>
+                <p className="text-[10px] text-gray-400 font-mono mt-0.5">
+                  Ref No: <strong>{selectedNotice.refNo}</strong> | Date: <strong>{selectedNotice.date}</strong>
+                </p>
+              </div>
+            </div>
+
+            {/* Notice Title & Priority Badge */}
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <h4 className="font-serif text-lg sm:text-xl font-bold text-gray-900 leading-snug">
+                {selectedNotice.title}
+              </h4>
+              <span
+                className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shrink-0 border ${
+                  selectedNotice.badgeColor === "red"
+                    ? "bg-red-50 text-red-700 border-red-200"
+                    : selectedNotice.badgeColor === "emerald"
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : selectedNotice.badgeColor === "amber"
+                    ? "bg-amber-50 text-amber-800 border-amber-200"
+                    : "bg-blue-50 text-blue-700 border-blue-200"
+                }`}
+              >
+                {selectedNotice.badge}
+              </span>
+            </div>
+
+            {/* Notice Body Paragraphs */}
+            <div className="space-y-3 text-xs sm:text-sm text-gray-700 leading-relaxed bg-[#f9faf9] p-4 sm:p-5 rounded-xl border border-gray-200/80 mb-6">
+              {selectedNotice.fullDetails.map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
+            </div>
+
+            {/* Signatory & Official Stamp Block */}
+            <div className="flex items-end justify-between pt-4 border-t border-gray-200 mb-6 text-xs">
+              <div className="text-gray-500">
+                <p className="font-semibold text-gray-700">Target Audience:</p>
+                <p>{selectedNotice.audience}</p>
+              </div>
+
+              <div className="text-right">
+                <div className="font-serif font-bold text-sm text-[#14452f]">
+                  Office of the Principal
+                </div>
+                <div className="text-[10.5px] text-gray-500">
+                  Gyanodaya Public School, Bagodar
+                </div>
+                <div className="text-[9px] font-mono text-emerald-700 mt-0.5 font-bold uppercase tracking-wider">
+                  ✓ Digitally Verified Circular
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <button
+                onClick={() => {
+                  showToast(`📄 Downloading official circular PDF: ${selectedNotice.refNo}.pdf (${selectedNotice.fileSize || "1.2 MB"})...`);
+                  setSelectedNotice(null);
+                }}
+                style={{ backgroundColor: GREEN }}
+                className="w-full sm:w-auto text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+              >
+                <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>Download Official Circular PDF</span>
+              </button>
+
+              <button
+                onClick={() => setSelectedNotice(null)}
+                className="w-full sm:w-auto text-gray-600 hover:text-gray-900 text-xs font-semibold py-2 px-4 cursor-pointer"
+              >
+                Close Notice
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* 17. CAREER & RECRUITMENT APPLICATION MODAL */}
+      {/* ======================================================== */}
+      {jobModalOpen && (
+        <div
+          className="fixed inset-0 z-[125] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-scale-in"
+          onClick={() => setJobModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative border border-gray-200 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setJobModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold cursor-pointer"
+            >
+              ✕
+            </button>
+
+            {/* Modal Header */}
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-[#f0faf5] text-[#14452f] flex items-center justify-center text-xl font-bold shrink-0">
+                💼
+              </div>
+              <div>
+                <h3 style={{ color: GREEN }} className="font-serif font-bold text-lg sm:text-2xl">
+                  Job Application
+                </h3>
+                <p className="text-gray-500 text-xs">
+                  Faculty &amp; Staff Recruitment Drive 2025–26 • GPS Bagodar
+                </p>
+              </div>
+            </div>
+
+            {jobSubmitted ? (
+              <div className="py-8 text-center animate-scale-in">
+                <div className="w-16 h-16 bg-green-100 text-green-700 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                  ✓
+                </div>
+                <h4 className="font-serif font-bold text-xl text-gray-900 mb-1">
+                  Application Received!
+                </h4>
+                <p className="text-gray-600 text-xs sm:text-sm">
+                  Our academic selection committee will review your profile and contact you for demo &amp; interview rounds.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleJobSubmit} className="space-y-3 sm:space-y-3.5">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    Position Applied For *
+                  </label>
+                  <select
+                    value={jobForm.position}
+                    onChange={(e) => setJobForm({ ...jobForm, position: e.target.value })}
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] bg-white font-medium"
+                  >
+                    {RECRUITMENT_POSITIONS.map((j) => (
+                      <option key={j.id} value={j.title}>
+                        {j.title}
+                      </option>
+                    ))}
+                    <option value="Other Subject Teacher / Staff">Other Subject Teacher / Admin Staff</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Dr. Ramesh Sharma"
+                      value={jobForm.fullName}
+                      onChange={(e) => setJobForm({ ...jobForm, fullName: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="10-digit mobile number"
+                      value={jobForm.phone}
+                      onChange={(e) => setJobForm({ ...jobForm, phone: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="youremail@example.com"
+                      value={jobForm.email}
+                      onChange={(e) => setJobForm({ ...jobForm, email: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Total Experience *
+                    </label>
+                    <select
+                      value={jobForm.experience}
+                      onChange={(e) => setJobForm({ ...jobForm, experience: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] bg-white"
+                    >
+                      <option>Fresher / Under 1 Year</option>
+                      <option>1 - 3 Years</option>
+                      <option>3 - 5 Years</option>
+                      <option>5+ Years (Senior Faculty)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    Highest Qualification &amp; Specialization *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. M.Sc (Physics), B.Ed (First Class)"
+                    value={jobForm.qualification}
+                    onChange={(e) => setJobForm({ ...jobForm, qualification: e.target.value })}
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    Key Highlights / Resume Drive Link / Notes
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Provide Google Drive link to Resume/CV or mention subject achievements..."
+                    value={jobForm.notes}
+                    onChange={(e) => setJobForm({ ...jobForm, notes: e.target.value })}
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f]"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  style={{ backgroundColor: GOLD }}
+                  className="w-full text-white font-bold py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider hover:brightness-110 transition-all shadow-md mt-2 cursor-pointer active:scale-98"
+                >
+                  Submit Job Application ↗
+                </button>
+              </form>
+            )}
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
