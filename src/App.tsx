@@ -652,18 +652,19 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-800 font-sans antialiased selection:bg-[#c59a3f] selection:text-white pb-14 md:pb-0">
+    <div className="min-h-screen bg-white text-gray-800 font-sans antialiased selection:bg-[#c59a3f] selection:text-white pb-16 md:pb-0 overflow-x-hidden w-full max-w-full">
 
       {/* ======================================================== */}
       {/* 0. INTERACTIVE TOAST NOTIFICATION */}
       {/* ======================================================== */}
       {toastMessage && (
-        <div className="fixed top-4 sm:top-5 right-4 sm:right-5 z-[100] animate-slide-down bg-[#14452f] text-white px-4 sm:px-5 py-3 sm:py-3.5 rounded-lg shadow-2xl border-2 border-[#dfb455] flex items-center gap-3 text-xs sm:text-sm font-medium max-w-sm sm:max-w-md">
-          <span className="text-lg sm:text-xl">🔔</span>
+        <div className="fixed top-3 sm:top-5 right-3 sm:right-5 left-3 sm:left-auto z-[100] animate-slide-down bg-[#14452f] text-white px-4 sm:px-5 py-3 rounded-xl shadow-2xl border-2 border-[#dfb455] flex items-center gap-3 text-xs sm:text-sm font-medium max-w-sm sm:max-w-md">
+          <span className="text-base sm:text-xl">🔔</span>
           <span className="flex-1">{toastMessage}</span>
           <button
             onClick={() => setToastMessage(null)}
-            className="text-white/70 hover:text-white text-lg font-bold ml-2 cursor-pointer"
+            className="text-white/70 hover:text-white text-lg font-bold ml-1 cursor-pointer"
+            aria-label="Close notification"
           >
             ✕
           </button>
@@ -674,12 +675,13 @@ export default function App() {
       {/* 1. TOP UTILITY HEADER BAR */}
       {/* ======================================================== */}
       <div style={{ backgroundColor: GREEN }} className="text-white text-[11px] sm:text-xs tracking-wide relative z-40 border-b border-white/10">
-        <div className="max-w-[1240px] mx-auto px-3 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between gap-x-3">
+        <div className="max-w-[1240px] mx-auto px-3 sm:px-4 py-1.5 flex items-center justify-between gap-x-2">
           {/* Left Contact Details */}
           <div className="flex items-center gap-x-3 sm:gap-x-5 text-gray-200 truncate">
             <a
               href="tel:+919431377488"
               className="flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group shrink-0"
+              aria-label="Call school office"
             >
               <svg className="w-3.5 h-3.5 text-[#dfb455] group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -689,7 +691,7 @@ export default function App() {
 
             <a
               href="mailto:info@gpsbagodar.edu.in"
-              className="hidden xs:flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group truncate"
+              className="hidden sm:flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group truncate"
             >
               <svg className="w-3.5 h-3.5 text-[#dfb455] group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -702,7 +704,7 @@ export default function App() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span>Bagodar, Giridih</span>
+              <span>Bagodar, Giridih, Jharkhand</span>
             </span>
           </div>
 
@@ -722,7 +724,7 @@ export default function App() {
             <button
               onClick={() => setAdmissionModalOpen(true)}
               style={{ backgroundColor: GOLD }}
-              className="text-white font-semibold text-[10px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-sm hover:brightness-110 transition-all shadow-sm tracking-wider uppercase cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
+              className="text-white font-semibold text-[10px] sm:text-xs px-2.5 sm:px-3 py-1 sm:py-1.5 rounded hover:brightness-110 transition-all shadow-sm tracking-wider uppercase cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
             >
               ADMISSION OPEN
             </button>
@@ -733,13 +735,13 @@ export default function App() {
       {/* ======================================================== */}
       {/* 1.5. LIVE NEWS & NOTICE TICKER MARQUEE */}
       {/* ======================================================== */}
-      <div className="bg-[#0e3322] text-white py-1.5 border-b border-[#1f5f40] overflow-hidden flex items-center text-xs">
-        <div className="px-2.5 sm:px-4 bg-[#c59a3f] text-[#14452f] font-bold text-[9px] sm:text-xs uppercase tracking-wider py-0.5 rounded-r shrink-0 z-10 flex items-center gap-1.5 shadow">
-          <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
+      <div className="bg-[#0e3322] text-white py-1.5 border-b border-[#1f5f40] overflow-hidden flex items-center text-xs w-full">
+        <div className="px-2.5 sm:px-3.5 bg-[#c59a3f] text-[#14452f] font-bold text-[9px] sm:text-[11px] uppercase tracking-wider py-0.5 rounded-r shrink-0 z-10 flex items-center gap-1.5 shadow">
+          <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-600 animate-ping" />
           <span>LATEST NEWS</span>
         </div>
         <div className="overflow-hidden whitespace-nowrap flex-1 relative">
-          <div className="animate-marquee flex items-center gap-10 sm:gap-12 font-medium text-gray-200 cursor-pointer text-[11px] sm:text-xs">
+          <div className="animate-marquee flex items-center gap-8 sm:gap-12 font-medium text-gray-200 cursor-pointer text-[10.5px] sm:text-xs">
             {ANNOUNCEMENTS.concat(ANNOUNCEMENTS).map((item, idx) => (
               <span
                 key={idx}
@@ -756,22 +758,22 @@ export default function App() {
       {/* ======================================================== */}
       {/* 2. MAIN NAVBAR WITH LOGO, PARENTS LOGIN AND SEARCH */}
       {/* ======================================================== */}
-      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 ${scrolled ? "shadow-md py-2" : "border-b border-gray-100 py-2.5 sm:py-3.5"}`}>
-        <div className="max-w-[1240px] mx-auto px-3 sm:px-4 flex items-center justify-between gap-2">
+      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 w-full ${scrolled ? "shadow-md py-2" : "border-b border-gray-100 py-2 sm:py-3"}`}>
+        <div className="max-w-[1240px] mx-auto px-3 sm:px-4 flex items-center justify-between gap-1.5 sm:gap-3">
           
           {/* Logo & School Name */}
-          <a href="#home" className="flex items-center gap-2 sm:gap-2.5 group shrink-0">
-            <SchoolLogo className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 group-hover:scale-105 transition-transform duration-300" />
-            <div className="flex flex-col">
+          <a href="#home" className="flex items-center gap-1.5 sm:gap-2.5 group shrink-0 min-w-0">
+            <SchoolLogo className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 group-hover:scale-105 transition-transform duration-300 shrink-0" />
+            <div className="flex flex-col truncate">
               <span
                 style={{ color: GREEN }}
-                className="font-serif font-bold text-sm sm:text-lg md:text-2xl leading-none tracking-tight group-hover:opacity-90"
+                className="font-serif font-bold text-sm sm:text-lg md:text-2xl leading-none tracking-tight group-hover:opacity-90 truncate"
               >
                 GYANODAYA
               </span>
               <span
                 style={{ color: GREEN }}
-                className="text-[8px] sm:text-[9.5px] md:text-[11px] font-semibold tracking-[0.14em] sm:tracking-[0.18em] uppercase leading-tight mt-0.5"
+                className="text-[7.5px] sm:text-[9.5px] md:text-[11px] font-semibold tracking-[0.14em] sm:tracking-[0.18em] uppercase leading-tight mt-0.5 truncate"
               >
                 PUBLIC SCHOOL • BAGODAR
               </span>
@@ -817,7 +819,7 @@ export default function App() {
           </nav>
 
           {/* Right Action Icons & Buttons (Search, Parents Login, Enquire, Mobile Menu) */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Search Icon */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
@@ -834,11 +836,11 @@ export default function App() {
               href={PLAYSTORE_PARENT_APP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[10.5px] sm:text-xs font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
+              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1 sm:py-1.5 rounded transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
               aria-label="Parents Login Play Store App"
             >
               {/* Google Play / Android Icon */}
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#c59a3f] group-hover:text-[#dfb455] transition-colors shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-3.5 h-3.5 text-[#c59a3f] group-hover:text-[#dfb455] transition-colors shrink-0" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3.609 1.814L13.793 12 3.61 22.186c-.368-.328-.61-.83-.61-1.426V3.24c0-.596.242-1.098.609-1.426zm11.246 11.248l2.257 2.257-11.83 6.643 9.573-8.9zm0-2.124L5.282 2.038l11.83 6.643-2.257 2.257zm1.487 1.062l3.435 1.932c.708.398.708 1.05 0 1.448l-3.435 1.932-2.115-2.115 2.115-3.197z" />
               </svg>
               <span className="whitespace-nowrap">Parents Login</span>
@@ -848,7 +850,7 @@ export default function App() {
             <button
               onClick={() => setAdmissionModalOpen(true)}
               style={{ backgroundColor: GREEN }}
-              className="hidden md:inline-flex items-center gap-1.5 text-white text-xs font-semibold px-4 py-2 rounded-sm hover:brightness-110 transition-all shadow-sm uppercase tracking-wider cursor-pointer shrink-0"
+              className="hidden md:inline-flex items-center gap-1.5 text-white text-xs font-semibold px-3.5 py-1.5 rounded hover:brightness-110 transition-all shadow-sm uppercase tracking-wider cursor-pointer shrink-0"
             >
               <span>Enquire</span>
               <svg className="w-3.5 h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -856,13 +858,13 @@ export default function App() {
               </svg>
             </button>
 
-            {/* Mobile Hamburger toggle */}
+            {/* Mobile / Tablet Hamburger toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? "Close menu" : "Open mobile menu"}
-              className="lg:hidden p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100"
+              className="lg:hidden p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100 shrink-0"
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {mobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -874,12 +876,15 @@ export default function App() {
         </div>
 
         {/* ======================================================== */}
-        {/* MOBILE SLIDE-IN OVERLAY DRAWER */}
+        {/* MOBILE & TABLET SLIDE-IN OVERLAY DRAWER */}
         {/* ======================================================== */}
         {mobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 top-[96px] sm:top-[102px] z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-start">
+          <div
+            className="lg:hidden fixed inset-0 top-[90px] sm:top-[98px] z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-start animate-fade-in"
+            onClick={() => setMobileMenuOpen(false)}
+          >
             <div
-              className="bg-white max-h-[82vh] overflow-y-auto w-full p-4 shadow-2xl border-b border-gray-200 animate-slide-down flex flex-col gap-2"
+              className="bg-white max-h-[82vh] overflow-y-auto w-full p-4 shadow-2xl border-b border-gray-200 animate-slide-down flex flex-col gap-2.5"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Quick Parent Portal Banner in Drawer */}
@@ -888,10 +893,10 @@ export default function App() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setMobileMenuOpen(false)}
-                className="bg-[#f0faf5] border border-[#14452f]/20 rounded-lg p-3 flex items-center justify-between cursor-pointer hover:bg-[#e4f5ed] transition-colors"
+                className="bg-[#f0faf5] border border-[#14452f]/20 rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-[#e4f5ed] transition-colors"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#14452f] text-[#dfb455] flex items-center justify-center font-bold text-xs">
+                  <div className="w-8 h-8 rounded-full bg-[#14452f] text-[#dfb455] flex items-center justify-center font-bold text-xs shrink-0">
                     📱
                   </div>
                   <div>
@@ -899,11 +904,11 @@ export default function App() {
                     <p className="text-[10.5px] text-gray-500">Download Official GPS Mobile App on Google Play</p>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-[#14452f] bg-white px-2.5 py-1 rounded shadow-xs border border-gray-200 whitespace-nowrap">Open App ↗</span>
+                <span className="text-xs font-bold text-[#14452f] bg-white px-2.5 py-1 rounded-lg shadow-xs border border-gray-200 whitespace-nowrap">Open App ↗</span>
               </a>
 
               {/* Quick Search */}
-              <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 mb-1 mt-1">
+              <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2">
                 <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -923,7 +928,7 @@ export default function App() {
               {/* Main Navigation Links */}
               <div className="flex flex-col divide-y divide-gray-100 text-sm font-semibold text-gray-800">
                 {MAIN_NAV.map((item) => (
-                  <div key={item.label} className="py-1">
+                  <div key={item.label} className="py-0.5">
                     <div className="flex items-center justify-between">
                       <a
                         href={item.href}
@@ -970,11 +975,11 @@ export default function App() {
               </div>
 
               {/* Quick Contact & Action Buttons */}
-              <div className="pt-3 mt-2 border-t border-gray-100 flex flex-col gap-2">
+              <div className="pt-2.5 mt-1 border-t border-gray-100 flex flex-col gap-2">
                 <div className="grid grid-cols-2 gap-2">
                   <a
                     href="tel:+919431377488"
-                    className="flex items-center justify-center gap-1.5 py-2.5 rounded bg-gray-100 text-gray-800 text-xs font-semibold hover:bg-gray-200"
+                    className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-gray-100 text-gray-800 text-xs font-semibold hover:bg-gray-200 active:scale-95"
                   >
                     <span>📞 Call Us</span>
                   </a>
@@ -982,7 +987,7 @@ export default function App() {
                     href="https://wa.me/919431377488"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 py-2.5 rounded bg-emerald-50 text-emerald-800 text-xs font-semibold hover:bg-emerald-100"
+                    className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-semibold hover:bg-emerald-100 active:scale-95"
                   >
                     <span>💬 WhatsApp</span>
                   </a>
@@ -994,7 +999,7 @@ export default function App() {
                     setAdmissionModalOpen(true);
                   }}
                   style={{ backgroundColor: GOLD }}
-                  className="w-full text-white font-bold text-xs py-3 rounded text-center uppercase tracking-wider shadow-md hover:brightness-110 cursor-pointer"
+                  className="w-full text-white font-bold text-xs py-3 rounded-lg text-center uppercase tracking-wider shadow-md hover:brightness-110 cursor-pointer active:scale-98"
                 >
                   Apply for Admission 2025–26
                 </button>
@@ -1035,8 +1040,8 @@ export default function App() {
         id="home"
         onMouseEnter={() => setIsHoveringHero(true)}
         onMouseLeave={() => setIsHoveringHero(false)}
-        className="relative w-full overflow-hidden bg-[#0d2e20] min-h-[500px] sm:min-h-[560px] md:min-h-[620px] max-h-[740px]"
-        style={{ height: "82vh" }}
+        className="relative w-full overflow-hidden bg-[#0d2e20] min-h-[460px] sm:min-h-[520px] md:min-h-[600px] max-h-[720px]"
+        style={{ height: "76vh" }}
       >
         {/* Animated countdown progress bar on top */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-white/10 z-30">
@@ -1078,7 +1083,7 @@ export default function App() {
         <button
           onClick={() => setActiveSlide((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1))}
           aria-label="Previous Slide"
-          className="hidden sm:flex absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/60 bg-black/30 hover:bg-black/60 text-white items-center justify-center transition-all hover:scale-110 cursor-pointer backdrop-blur-xs shadow-lg"
+          className="hidden sm:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-white/60 bg-black/30 hover:bg-black/60 text-white items-center justify-center transition-all hover:scale-110 cursor-pointer backdrop-blur-xs shadow-lg"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 19l-7-7 7-7" />
@@ -1087,7 +1092,7 @@ export default function App() {
         <button
           onClick={() => setActiveSlide((prev) => (prev === HERO_SLIDES.length - 1 ? 0 : prev + 1))}
           aria-label="Next Slide"
-          className="hidden sm:flex absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/60 bg-black/30 hover:bg-black/60 text-white items-center justify-center transition-all hover:scale-110 cursor-pointer backdrop-blur-xs shadow-lg"
+          className="hidden sm:flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-white/60 bg-black/30 hover:bg-black/60 text-white items-center justify-center transition-all hover:scale-110 cursor-pointer backdrop-blur-xs shadow-lg"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M9 5l7 7-7 7" />
@@ -1095,7 +1100,7 @@ export default function App() {
         </button>
 
         {/* Carousel Dot Indicators */}
-        <div className="absolute bottom-20 sm:bottom-28 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-full backdrop-blur-xs">
+        <div className="absolute bottom-14 sm:bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/35 px-3 py-1.5 rounded-full backdrop-blur-xs">
           {HERO_SLIDES.map((_, dotIndex) => (
             <button
               key={dotIndex}
@@ -1109,17 +1114,17 @@ export default function App() {
         </div>
 
         {/* Hero Content Container */}
-        <div className="relative z-10 h-full max-w-[1240px] mx-auto px-5 sm:px-8 md:px-10 flex flex-col justify-center pb-12 sm:pb-0">
+        <div className="relative z-10 h-full max-w-[1240px] mx-auto px-4 sm:px-8 md:px-10 flex flex-col justify-center pb-8 sm:pb-0">
           <div key={activeSlide} className="max-w-xl animate-fade-in-up">
             
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#dfb455] text-[10px] sm:text-xs font-semibold tracking-wider uppercase mb-3 sm:mb-4">
-              <span className="w-2 h-2 rounded-full bg-[#dfb455] animate-ping" />
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#dfb455] text-[9.5px] sm:text-xs font-semibold tracking-wider uppercase mb-2.5 sm:mb-4">
+              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#dfb455] animate-ping" />
               <span>{HERO_SLIDES[activeSlide].tag}</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="font-serif text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-bold text-white leading-[1.18] sm:leading-[1.15] mb-3 sm:mb-4 drop-shadow-md">
+            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-[50px] font-bold text-white leading-[1.18] sm:leading-[1.15] mb-2.5 sm:mb-4 drop-shadow-md">
               {HERO_SLIDES[activeSlide].headline.split(", ")[0]},
               <br />
               {HERO_SLIDES[activeSlide].headline.split(", ")[1] ? (
@@ -1135,29 +1140,29 @@ export default function App() {
             </h1>
 
             {/* Sub-headline */}
-            <p className="text-white/90 text-xs sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-8 max-w-md font-light">
+            <p className="text-white/90 text-xs sm:text-sm md:text-base leading-relaxed mb-5 sm:mb-7 max-w-md font-light line-clamp-3 sm:line-clamp-none">
               {HERO_SLIDES[activeSlide].subtitle}
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-2.5 sm:gap-4 flex-wrap">
               <button
                 onClick={() => setAdmissionModalOpen(true)}
                 style={{ backgroundColor: GOLD }}
-                className="text-white font-semibold text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-sm flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-lg uppercase tracking-wider cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
+                className="text-white font-semibold text-xs sm:text-sm px-4 sm:px-6 py-2.5 sm:py-3.5 rounded flex items-center justify-center gap-1.5 sm:gap-2 hover:brightness-110 transition-all shadow-lg uppercase tracking-wider cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
               >
                 <span>ADMISSION OPEN</span>
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </button>
 
               <button
                 onClick={() => setTourModalOpen(true)}
-                className="border border-white/80 text-white font-semibold text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-sm flex items-center justify-center gap-2 hover:bg-white hover:text-[#14452f] transition-all uppercase tracking-wider backdrop-blur-xs cursor-pointer hover:scale-105 active:scale-95"
+                className="border border-white/80 text-white font-semibold text-xs sm:text-sm px-4 sm:px-6 py-2.5 sm:py-3.5 rounded flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-white hover:text-[#14452f] transition-all uppercase tracking-wider backdrop-blur-xs cursor-pointer hover:scale-105 active:scale-95"
               >
                 <span>CAMPUS TOUR</span>
-                <svg className="w-4 h-4 text-[#dfb455]" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#dfb455]" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </button>
@@ -1169,16 +1174,16 @@ export default function App() {
       {/* ======================================================== */}
       {/* 4. FIVE FEATURE HIGHLIGHTS FLOATING CARD (RESPONSIVE GRID) */}
       {/* ======================================================== */}
-      <div className="relative z-20 max-w-[1140px] mx-auto px-4 -mt-10 sm:-mt-12 md:-mt-14">
-        <div className="bg-white rounded-xl shadow-2xl border border-gray-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 overflow-hidden">
+      <div className="relative z-20 max-w-[1140px] mx-auto px-3 sm:px-4 -mt-8 sm:-mt-10 md:-mt-14">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 overflow-hidden">
           {HIGHLIGHT_CARDS.map((card, cIdx) => (
             <div
               key={card.title}
-              className={`p-4 sm:p-5 md:p-6 flex flex-col items-center text-center group hover:bg-[#f9fbf9] transition-all duration-300 cursor-pointer hover:-translate-y-1 ${
+              className={`p-3.5 sm:p-4 md:p-6 flex flex-col items-center text-center group hover:bg-[#f9fbf9] transition-all duration-300 cursor-pointer hover:-translate-y-1 ${
                 cIdx === 4 ? "col-span-2 sm:col-span-1 border-t sm:border-t-0" : ""
               }`}
             >
-              <div className="mb-2.5 transform group-hover:scale-115 transition-transform duration-300">
+              <div className="mb-2 transform group-hover:scale-110 transition-transform duration-300">
                 {card.icon}
               </div>
               <h2
@@ -1187,7 +1192,7 @@ export default function App() {
               >
                 {card.title}
               </h2>
-              <p className="text-gray-500 text-[11px] sm:text-xs leading-relaxed max-w-[170px]">
+              <p className="text-gray-500 text-[10.5px] sm:text-xs leading-relaxed max-w-[170px]">
                 {card.desc}
               </p>
             </div>
