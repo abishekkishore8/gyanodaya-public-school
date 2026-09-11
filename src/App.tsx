@@ -256,12 +256,14 @@ const ANNOUNCEMENTS = [
   "🚌 GPS-enabled Safe School Bus routes operational across Bagodar, Saria, Dumri & Giridih",
 ];
 
+const PLAYSTORE_PARENT_APP_URL = "https://play.google.com/store/search?q=gyanodaya+public+school+bagodar&c=apps";
+
 // Top bar navigation links
 const TOP_NAV = [
   { label: "Career", href: "#career" },
   { label: "Alumni", href: "#alumni" },
   { label: "News & Events", href: "#news" },
-  { label: "Parent Login", href: "#parent-login" },
+  { label: "Parents Login", href: PLAYSTORE_PARENT_APP_URL, isExternal: true },
 ];
 
 // Main navigation bar links with dropdown submenu structure
@@ -568,15 +570,6 @@ export default function App() {
 
   // Interactive Modals & States
   const [admissionModalOpen, setAdmissionModalOpen] = useState(false);
-  const [parentLoginModalOpen, setParentLoginModalOpen] = useState(false);
-  const [loginRole, setLoginRole] = useState<"parent" | "student" | "staff">("parent");
-  const [loginForm, setLoginForm] = useState({
-    userId: "",
-    password: "",
-    rememberMe: true,
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [loginSubmitted, setLoginSubmitted] = useState(false);
   const [tourModalOpen, setTourModalOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("all");
@@ -651,18 +644,6 @@ export default function App() {
     }, 1200);
   };
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginSubmitted(true);
-    setTimeout(() => {
-      setLoginSubmitted(false);
-      setParentLoginModalOpen(false);
-      const roleTitle = loginRole === "parent" ? "Parents" : loginRole === "student" ? "Student" : "Staff";
-      showToast(`🎓 Welcome back! Successfully logged into the ${roleTitle} Portal.`);
-      setLoginForm({ userId: "", password: "", rememberMe: true });
-    }, 1000);
-  };
-
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newsletterEmail) return;
@@ -731,12 +712,8 @@ export default function App() {
               <a
                 key={item.label}
                 href={item.href}
-                onClick={(e) => {
-                  if (item.label === "Parent Login") {
-                    e.preventDefault();
-                    setParentLoginModalOpen(true);
-                  }
-                }}
+                target={item.isExternal ? "_blank" : undefined}
+                rel={item.isExternal ? "noopener noreferrer" : undefined}
                 className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 hidden lg:inline-block cursor-pointer"
               >
                 {item.label}
@@ -852,18 +829,20 @@ export default function App() {
               </svg>
             </button>
 
-            {/* PARENTS LOGIN BUTTON - PROMINENT ACROSS ALL SCREEN SIZES */}
-            <button
-              onClick={() => setParentLoginModalOpen(true)}
-              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
-              aria-label="Parents Login Portal"
+            {/* PARENTS LOGIN BUTTON - REDIRECTS TO PLAY STORE APP ON ALL SCREEN SIZES */}
+            <a
+              href={PLAYSTORE_PARENT_APP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[10.5px] sm:text-xs font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
+              aria-label="Parents Login Play Store App"
             >
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#c59a3f] group-hover:text-[#dfb455] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              {/* Google Play / Android Icon */}
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#c59a3f] group-hover:text-[#dfb455] transition-colors shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3.609 1.814L13.793 12 3.61 22.186c-.368-.328-.61-.83-.61-1.426V3.24c0-.596.242-1.098.609-1.426zm11.246 11.248l2.257 2.257-11.83 6.643 9.573-8.9zm0-2.124L5.282 2.038l11.83 6.643-2.257 2.257zm1.487 1.062l3.435 1.932c.708.398.708 1.05 0 1.448l-3.435 1.932-2.115-2.115 2.115-3.197z" />
               </svg>
-              <span className="hidden xs:inline">Parents</span>
-              <span>Login</span>
-            </button>
+              <span className="whitespace-nowrap">Parents Login</span>
+            </a>
 
             {/* Enquire Button (visible on md+) */}
             <button
@@ -904,24 +883,24 @@ export default function App() {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Quick Parent Portal Banner in Drawer */}
-              <div
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setParentLoginModalOpen(true);
-                }}
+              <a
+                href={PLAYSTORE_PARENT_APP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
                 className="bg-[#f0faf5] border border-[#14452f]/20 rounded-lg p-3 flex items-center justify-between cursor-pointer hover:bg-[#e4f5ed] transition-colors"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-full bg-[#14452f] text-[#dfb455] flex items-center justify-center font-bold text-xs">
-                    👤
+                    📱
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-[#14452f] uppercase tracking-wider">Parents &amp; Student Portal</h4>
-                    <p className="text-[10.5px] text-gray-500">Access attendance, fees, marks &amp; circulars</p>
+                    <h4 className="text-xs font-bold text-[#14452f] uppercase tracking-wider">Parents Login App</h4>
+                    <p className="text-[10.5px] text-gray-500">Download Official GPS Mobile App on Google Play</p>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-[#14452f] bg-white px-2.5 py-1 rounded shadow-xs border border-gray-200">Login →</span>
-              </div>
+                <span className="text-xs font-bold text-[#14452f] bg-white px-2.5 py-1 rounded shadow-xs border border-gray-200 whitespace-nowrap">Open App ↗</span>
+              </a>
 
               {/* Quick Search */}
               <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 mb-1 mt-1">
@@ -1743,28 +1722,28 @@ export default function App() {
               </h4>
               <ul className="space-y-2 text-xs sm:text-sm text-gray-300">
                 {[
-                  "Fee Structure",
-                  "Admission Process",
-                  "School Calendar",
-                  "News & Events",
-                  "Career",
-                  "Alumni",
-                  "Parent Login",
+                  { label: "Fee Structure", href: "#fee-structure" },
+                  { label: "Admission Process", href: "#admissions" },
+                  { label: "School Calendar", href: "#calendar" },
+                  { label: "News & Events", href: "#news" },
+                  { label: "Career", href: "#career" },
+                  { label: "Alumni", href: "#alumni" },
+                  { label: "Parents Login", href: PLAYSTORE_PARENT_APP_URL, isExternal: true },
                 ].map((info) => (
-                  <li key={info}>
+                  <li key={info.label}>
                     <a
-                      href={`#${info.toLowerCase().replace(/\s+/g, "-")}`}
+                      href={info.href}
+                      target={info.isExternal ? "_blank" : undefined}
+                      rel={info.isExternal ? "noopener noreferrer" : undefined}
                       onClick={(e) => {
-                        if (info === "Parent Login") {
+                        if (!info.isExternal) {
                           e.preventDefault();
-                          setParentLoginModalOpen(true);
-                        } else {
                           setAdmissionModalOpen(true);
                         }
                       }}
                       className="hover:text-[#dfb455] transition-colors inline-block hover:translate-x-1 duration-200 cursor-pointer"
                     >
-                      {info}
+                      {info.label}
                     </a>
                   </li>
                 ))}
@@ -2058,190 +2037,6 @@ export default function App() {
       )}
 
       {/* ======================================================== */}
-      {/* 12.5. INTERACTIVE PARENTS & STUDENT LOGIN PORTAL MODAL */}
-      {/* ======================================================== */}
-      {parentLoginModalOpen && (
-        <div
-          className="fixed inset-0 z-[115] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in-up"
-          onClick={() => setParentLoginModalOpen(false)}
-        >
-          <div
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 relative border border-gray-100 max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setParentLoginModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold cursor-pointer transition-colors"
-              aria-label="Close Login Modal"
-            >
-              ✕
-            </button>
-
-            {/* Portal Header */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-[#14452f] text-[#dfb455] flex items-center justify-center shrink-0 border border-[#dfb455] shadow">
-                <SchoolLogo className="w-10 h-10" />
-              </div>
-              <div>
-                <h3 style={{ color: GREEN }} className="font-serif font-bold text-xl sm:text-2xl leading-tight">
-                  Gyanodaya Portal
-                </h3>
-                <p className="text-gray-500 text-xs mt-0.5">
-                  Secure Access for Parents, Students &amp; Staff
-                </p>
-              </div>
-            </div>
-
-            {/* Role Selector Tabs */}
-            <div className="grid grid-cols-3 gap-1 bg-gray-100 p-1 rounded-lg mb-5 text-xs font-semibold">
-              <button
-                type="button"
-                onClick={() => setLoginRole("parent")}
-                className={`py-2 rounded-md transition-all cursor-pointer ${
-                  loginRole === "parent"
-                    ? "bg-[#14452f] text-white shadow-sm"
-                    : "text-gray-600 hover:text-[#14452f]"
-                }`}
-              >
-                👨‍👩‍👧 Parents
-              </button>
-              <button
-                type="button"
-                onClick={() => setLoginRole("student")}
-                className={`py-2 rounded-md transition-all cursor-pointer ${
-                  loginRole === "student"
-                    ? "bg-[#14452f] text-white shadow-sm"
-                    : "text-gray-600 hover:text-[#14452f]"
-                }`}
-              >
-                🎓 Student
-              </button>
-              <button
-                type="button"
-                onClick={() => setLoginRole("staff")}
-                className={`py-2 rounded-md transition-all cursor-pointer ${
-                  loginRole === "staff"
-                    ? "bg-[#14452f] text-white shadow-sm"
-                    : "text-gray-600 hover:text-[#14452f]"
-                }`}
-              >
-                👨‍🏫 Staff
-              </button>
-            </div>
-
-            {loginSubmitted ? (
-              <div className="py-8 text-center animate-scale-in">
-                <div className="w-16 h-16 bg-emerald-100 text-[#14452f] rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
-                  ✓
-                </div>
-                <h4 className="font-serif font-bold text-xl text-gray-900 mb-1">
-                  Authenticating...
-                </h4>
-                <p className="text-gray-600 text-xs sm:text-sm">
-                  Loading dashboard, fee ledger, and attendance records...
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleLoginSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    {loginRole === "parent"
-                      ? "Admission No. / Registered Mobile No. *"
-                      : loginRole === "student"
-                      ? "Student Roll No. / Enrollment ID *"
-                      : "Staff Employee Code *"}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      required
-                      placeholder={
-                        loginRole === "parent"
-                          ? "e.g. GPS2025-408 or 9431377488"
-                          : loginRole === "student"
-                          ? "e.g. GPS-STD-1042"
-                          : "e.g. GPS-TCH-08"
-                      }
-                      value={loginForm.userId}
-                      onChange={(e) => setLoginForm({ ...loginForm, userId: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:ring-1 focus:ring-[#14452f]"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Password / Date of Birth (DDMMYYYY) *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      required
-                      placeholder="Enter your secret password"
-                      value={loginForm.password}
-                      onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:ring-1 focus:ring-[#14452f]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-xs font-semibold cursor-pointer"
-                    >
-                      {showPassword ? "HIDE" : "SHOW"}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-gray-600 pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={loginForm.rememberMe}
-                      onChange={(e) => setLoginForm({ ...loginForm, rememberMe: e.target.checked })}
-                      className="accent-[#14452f] rounded"
-                    />
-                    <span>Remember me</span>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => showToast("🔒 Password reset instructions sent to your registered mobile number!")}
-                    className="text-[#14452f] hover:underline font-medium cursor-pointer"
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
-
-                {/* Demo Credentials Helper Pill */}
-                <div className="bg-amber-50 border border-amber-200/80 rounded-lg p-2.5 text-[11px] text-amber-900 leading-snug">
-                  <span className="font-bold">💡 Demo Login:</span> ID: <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono font-bold">GPS2025-408</code> | Pass: <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono font-bold">gps@2025</code>
-                </div>
-
-                <button
-                  type="submit"
-                  style={{ backgroundColor: GREEN }}
-                  className="w-full text-white font-bold py-3 rounded-lg text-xs sm:text-sm uppercase tracking-wider hover:brightness-110 transition-all shadow-md cursor-pointer hover:scale-101 active:scale-98 flex items-center justify-center gap-2"
-                >
-                  <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                  </svg>
-                  <span>Login to {loginRole === "parent" ? "Parents" : loginRole === "student" ? "Student" : "Staff"} Portal</span>
-                </button>
-              </form>
-            )}
-
-            <div className="mt-5 pt-4 border-t border-gray-100 text-center text-[11px] text-gray-500">
-              Need technical help or new credentials?
-              <br />
-              <a href="tel:+919431377488" className="text-[#14452f] font-semibold hover:underline">
-                Contact GPS Admin: +91 94313 77488
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ======================================================== */}
       {/* 13. CAMPUS VIRTUAL TOUR MODAL */}
       {/* ======================================================== */}
       {tourModalOpen && (
@@ -2357,15 +2152,17 @@ export default function App() {
           <span className="text-[9.5px] font-medium tracking-tight">WhatsApp</span>
         </a>
 
-        <button
-          onClick={() => setParentLoginModalOpen(true)}
+        <a
+          href={PLAYSTORE_PARENT_APP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex flex-col items-center justify-center gap-0.5 text-[#dfb455] hover:text-white py-1 px-2 rounded-lg active:scale-95 transition-transform cursor-pointer"
         >
-          <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          <svg className="w-4 h-4 text-[#dfb455]" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.609 1.814L13.793 12 3.61 22.186c-.368-.328-.61-.83-.61-1.426V3.24c0-.596.242-1.098.609-1.426zm11.246 11.248l2.257 2.257-11.83 6.643 9.573-8.9zm0-2.124L5.282 2.038l11.83 6.643-2.257 2.257zm1.487 1.062l3.435 1.932c.708.398.708 1.05 0 1.448l-3.435 1.932-2.115-2.115 2.115-3.197z" />
           </svg>
-          <span className="text-[9.5px] font-bold tracking-tight">Parent Login</span>
-        </button>
+          <span className="text-[9.5px] font-bold tracking-tight">Parents Login</span>
+        </a>
 
         <button
           onClick={() => setAdmissionModalOpen(true)}
