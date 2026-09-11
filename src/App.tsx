@@ -677,7 +677,8 @@ export default function App() {
       <div style={{ backgroundColor: GREEN }} className="text-white text-[11px] sm:text-xs tracking-wide relative z-40 border-b border-white/10">
         <div className="max-w-[1240px] mx-auto px-3 sm:px-4 py-1.5 flex items-center justify-between gap-x-2">
           {/* Left Contact Details */}
-          <div className="flex items-center gap-x-3 sm:gap-x-5 text-gray-200 truncate">
+          {/* Left Contact & Location Info */}
+          <div className="flex items-center gap-x-2.5 sm:gap-x-4 md:gap-x-5 text-gray-200 truncate">
             <a
               href="tel:+919431377488"
               className="flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group shrink-0"
@@ -686,12 +687,12 @@ export default function App() {
               <svg className="w-3.5 h-3.5 text-[#dfb455] group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              <span className="font-medium">+91 94313 77488</span>
+              <span className="font-medium text-[11px] sm:text-xs">+91 94313 77488</span>
             </a>
 
             <a
               href="mailto:info@gpsbagodar.edu.in"
-              className="hidden sm:flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group truncate"
+              className="hidden sm:flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group truncate text-[11px] sm:text-xs"
             >
               <svg className="w-3.5 h-3.5 text-[#dfb455] group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -699,7 +700,7 @@ export default function App() {
               <span className="truncate">info@gpsbagodar.edu.in</span>
             </a>
 
-            <span className="hidden md:flex items-center gap-1.5 text-gray-300">
+            <span className="hidden xl:flex items-center gap-1.5 text-gray-300 text-xs">
               <svg className="w-3.5 h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -709,14 +710,14 @@ export default function App() {
           </div>
 
           {/* Right Links & Gold CTA */}
-          <div className="flex items-center gap-x-2 sm:gap-x-4 shrink-0">
+          <div className="flex items-center gap-x-2 sm:gap-x-3 md:gap-x-4 shrink-0">
             {TOP_NAV.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
                 target={item.isExternal ? "_blank" : undefined}
                 rel={item.isExternal ? "noopener noreferrer" : undefined}
-                className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 hidden lg:inline-block cursor-pointer"
+                className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 text-[11px] lg:text-xs hidden md:inline-block cursor-pointer"
               >
                 {item.label}
               </a>
@@ -758,35 +759,35 @@ export default function App() {
       {/* ======================================================== */}
       {/* 2. MAIN NAVBAR WITH LOGO, PARENTS LOGIN AND SEARCH */}
       {/* ======================================================== */}
-      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 w-full ${scrolled ? "shadow-md py-2" : "border-b border-gray-100 py-2 sm:py-3"}`}>
-        <div className="max-w-[1240px] mx-auto px-3 sm:px-4 flex items-center justify-between gap-1.5 sm:gap-3">
+      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 w-full ${scrolled ? "shadow-md py-1.5 sm:py-2" : "border-b border-gray-100 py-2 sm:py-2.5 md:py-3"}`}>
+        <div className="max-w-[1280px] mx-auto px-2.5 sm:px-4 flex items-center justify-between gap-1 sm:gap-2 md:gap-3">
           
           {/* Logo & School Name */}
-          <a href="#home" className="flex items-center gap-1.5 sm:gap-2.5 group shrink-0 min-w-0">
-            <SchoolLogo className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 group-hover:scale-105 transition-transform duration-300 shrink-0" />
+          <a href="#home" className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 group shrink-0 min-w-0">
+            <SchoolLogo className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 group-hover:scale-105 transition-transform duration-300 shrink-0" />
             <div className="flex flex-col truncate">
               <span
                 style={{ color: GREEN }}
-                className="font-serif font-bold text-sm sm:text-lg md:text-2xl leading-none tracking-tight group-hover:opacity-90 truncate"
+                className="font-serif font-bold text-sm sm:text-base md:text-lg lg:text-2xl leading-none tracking-tight group-hover:opacity-90 truncate"
               >
                 GYANODAYA
               </span>
               <span
                 style={{ color: GREEN }}
-                className="text-[7.5px] sm:text-[9.5px] md:text-[11px] font-semibold tracking-[0.14em] sm:tracking-[0.18em] uppercase leading-tight mt-0.5 truncate"
+                className="text-[7px] sm:text-[8px] md:text-[9.5px] lg:text-[11px] font-semibold tracking-[0.14em] sm:tracking-[0.18em] uppercase leading-tight mt-0.5 truncate"
               >
                 PUBLIC SCHOOL • BAGODAR
               </span>
             </div>
           </a>
 
-          {/* Desktop Navigation Links with Dropdown Menu */}
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
+          {/* Desktop & Tablet Navigation Links with Dropdown Menu */}
+          <nav className="hidden md:flex items-center gap-1 md:gap-2 lg:gap-4 xl:gap-6">
             {MAIN_NAV.map((item) => (
-              <div key={item.label} className="relative group/menu py-2">
+              <div key={item.label} className="relative group/menu py-1.5">
                 <a
                   href={item.href}
-                  className={`flex items-center gap-1 text-[13px] font-semibold tracking-wider transition-all py-1 relative ${
+                  className={`flex items-center gap-0.5 md:gap-1 text-[11px] md:text-[11.5px] lg:text-[13px] font-semibold tracking-wider transition-all py-1 px-1 md:px-1.5 relative whitespace-nowrap ${
                     item.active
                       ? "text-[#14452f] border-b-2 border-[#14452f]"
                       : "text-gray-700 hover:text-[#14452f]"
@@ -794,15 +795,15 @@ export default function App() {
                 >
                   <span>{item.label}</span>
                   {item.hasDropdown && (
-                    <svg className="w-3 h-3 text-gray-400 mt-0.5 group-hover/menu:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-gray-400 mt-0.5 group-hover/menu:rotate-180 transition-transform duration-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                     </svg>
                   )}
                 </a>
 
-                {/* Desktop Dropdown flyout */}
+                {/* Dropdown flyout */}
                 {item.subItems && (
-                  <div className="absolute top-full left-0 w-56 bg-white border border-gray-100 rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all duration-200 z-50 animate-slide-down">
+                  <div className="absolute top-full left-0 w-52 bg-white border border-gray-100 rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all duration-200 z-50 animate-slide-down">
                     {item.subItems.map((sub) => (
                       <a
                         key={sub.label}
@@ -819,12 +820,12 @@ export default function App() {
           </nav>
 
           {/* Right Action Icons & Buttons (Search, Parents Login, Enquire, Mobile Menu) */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0">
             {/* Search Icon */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               aria-label="Search website"
-              className="p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] transition-colors rounded-full hover:bg-gray-100 cursor-pointer"
+              className="p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] transition-colors rounded-full hover:bg-gray-100 cursor-pointer shrink-0"
             >
               <svg className="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -836,7 +837,7 @@ export default function App() {
               href={PLAYSTORE_PARENT_APP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1 sm:py-1.5 rounded transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
+              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[9.5px] sm:text-[10.5px] md:text-xs font-bold px-2 sm:px-2.5 lg:px-3 py-1 sm:py-1.5 rounded transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
               aria-label="Parents Login Play Store App"
             >
               {/* Google Play / Android Icon */}
@@ -846,23 +847,23 @@ export default function App() {
               <span className="whitespace-nowrap">Parents Login</span>
             </a>
 
-            {/* Enquire Button (visible on md+) */}
+            {/* Enquire Button (visible on sm+) */}
             <button
               onClick={() => setAdmissionModalOpen(true)}
               style={{ backgroundColor: GREEN }}
-              className="hidden md:inline-flex items-center gap-1.5 text-white text-xs font-semibold px-3.5 py-1.5 rounded hover:brightness-110 transition-all shadow-sm uppercase tracking-wider cursor-pointer shrink-0"
+              className="hidden sm:inline-flex items-center gap-1 sm:gap-1.5 text-white text-[10.5px] sm:text-[11.5px] md:text-xs font-semibold px-2.5 sm:px-3 lg:px-3.5 py-1 sm:py-1.5 rounded hover:brightness-110 transition-all shadow-sm uppercase tracking-wider cursor-pointer shrink-0"
             >
               <span>Enquire</span>
-              <svg className="w-3.5 h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </button>
 
-            {/* Mobile / Tablet Hamburger toggle */}
+            {/* Mobile Hamburger toggle (only for < md mobile screens) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? "Close menu" : "Open mobile menu"}
-              className="lg:hidden p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100 shrink-0"
+              className="md:hidden p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100 shrink-0"
             >
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {mobileMenuOpen ? (
@@ -876,11 +877,11 @@ export default function App() {
         </div>
 
         {/* ======================================================== */}
-        {/* MOBILE & TABLET SLIDE-IN OVERLAY DRAWER */}
+        {/* MOBILE SLIDE-IN OVERLAY DRAWER (< md) */}
         {/* ======================================================== */}
         {mobileMenuOpen && (
           <div
-            className="lg:hidden fixed inset-0 top-[90px] sm:top-[98px] z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-start animate-fade-in"
+            className="md:hidden fixed inset-0 top-[70px] sm:top-[78px] z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-start animate-fade-in"
             onClick={() => setMobileMenuOpen(false)}
           >
             <div
