@@ -264,13 +264,42 @@ const TOP_NAV = [
   { label: "Parent Login", href: "#parent-login" },
 ];
 
-// Main navigation bar links
+// Main navigation bar links with dropdown submenu structure
 const MAIN_NAV = [
   { label: "HOME", href: "#home", active: true },
   { label: "ABOUT US", href: "#about" },
-  { label: "ACADEMICS", href: "#academics", hasDropdown: true },
-  { label: "FACILITIES", href: "#facilities", hasDropdown: true },
-  { label: "ADMISSIONS", href: "#admissions", hasDropdown: true },
+  {
+    label: "ACADEMICS",
+    href: "#academics",
+    hasDropdown: true,
+    subItems: [
+      { label: "Core Pillars", href: "#academics" },
+      { label: "Pre-Primary (Nursery - KG)", href: "#academics" },
+      { label: "Primary Wing (Class I - V)", href: "#academics" },
+      { label: "Middle & Senior Secondary", href: "#academics" },
+    ],
+  },
+  {
+    label: "FACILITIES",
+    href: "#facilities",
+    hasDropdown: true,
+    subItems: [
+      { label: "Smart Classrooms", href: "#facilities" },
+      { label: "Science & STEM Labs", href: "#facilities" },
+      { label: "Digital Library Hub", href: "#facilities" },
+      { label: "GPS-Tracked Bus Transport", href: "#facilities" },
+    ],
+  },
+  {
+    label: "ADMISSIONS",
+    href: "#admissions",
+    hasDropdown: true,
+    subItems: [
+      { label: "Admission Criteria 2025–26", href: "#admissions" },
+      { label: "Fee Structure & Guidelines", href: "#admissions" },
+      { label: "Online Admission Enquiry", href: "#admissions" },
+    ],
+  },
   { label: "GALLERY", href: "#gallery" },
   { label: "FAQS", href: "#faqs" },
   { label: "CONTACT US", href: "#contact" },
@@ -467,34 +496,40 @@ const FACILITIES_LIST = [
 // Student Life / Gallery Images with detailed captions
 const GALLERY_ITEMS = [
   {
-    img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1000&h=750&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=900&h=675&fit=crop&auto=format&q=80",
     title: "Interactive Classroom Discussions",
     category: "Academics",
     desc: "Students participating in collaborative peer learning and debate sessions.",
   },
   {
-    img: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=1000&h=750&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=900&h=675&fit=crop&auto=format&q=80",
     title: "Modern Library Research",
     category: "Campus Life",
     desc: "Dedicated silent reading spaces fostering a lifelong passion for books.",
   },
   {
-    img: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1000&h=750&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=900&h=675&fit=crop&auto=format&q=80",
     title: "Annual STEM & Robotics Fair",
     category: "Innovation",
     desc: "Showcasing student-built electronic models, automated systems, and science projects.",
   },
   {
-    img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1000&h=750&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=900&h=675&fit=crop&auto=format&q=80",
     title: "Cultural & Musical Celebrations",
     category: "Arts & Culture",
     desc: "Vibrant stage performances celebrating India's rich cultural heritage and talent.",
   },
   {
-    img: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1000&h=750&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&h=675&fit=crop&auto=format&q=80",
     title: "Annual Athletic Meet & Sports Day",
     category: "Sports",
     desc: "Fostering team spirit, resilience, and physical fitness on the championship track.",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&h=675&fit=crop&auto=format&q=80",
+    title: "Eco-Friendly Green Campus & Labs",
+    category: "Environment",
+    desc: "Sprawling botanical lawns and scientific inquiry zones inspiring nature stewardship.",
   },
 ];
 
@@ -524,6 +559,7 @@ const FAQS = [
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSubNavOpen, setMobileSubNavOpen] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -614,14 +650,14 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-800 font-sans antialiased selection:bg-[#c59a3f] selection:text-white">
+    <div className="min-h-screen bg-white text-gray-800 font-sans antialiased selection:bg-[#c59a3f] selection:text-white pb-14 md:pb-0">
 
       {/* ======================================================== */}
       {/* 0. INTERACTIVE TOAST NOTIFICATION */}
       {/* ======================================================== */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-[100] animate-slide-down bg-[#14452f] text-white px-5 py-3.5 rounded-lg shadow-2xl border-2 border-[#dfb455] flex items-center gap-3 text-sm font-medium max-w-md">
-          <span className="text-xl">🔔</span>
+        <div className="fixed top-4 sm:top-5 right-4 sm:right-5 z-[100] animate-slide-down bg-[#14452f] text-white px-4 sm:px-5 py-3 sm:py-3.5 rounded-lg shadow-2xl border-2 border-[#dfb455] flex items-center gap-3 text-xs sm:text-sm font-medium max-w-sm sm:max-w-md">
+          <span className="text-lg sm:text-xl">🔔</span>
           <span className="flex-1">{toastMessage}</span>
           <button
             onClick={() => setToastMessage(null)}
@@ -636,27 +672,27 @@ export default function App() {
       {/* 1. TOP UTILITY HEADER BAR */}
       {/* ======================================================== */}
       <div style={{ backgroundColor: GREEN }} className="text-white text-[11px] sm:text-xs tracking-wide relative z-40 border-b border-white/10">
-        <div className="max-w-[1240px] mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-y-1.5">
+        <div className="max-w-[1240px] mx-auto px-3 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between gap-x-3">
           {/* Left Contact Details */}
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-gray-200">
+          <div className="flex items-center gap-x-3 sm:gap-x-5 text-gray-200 truncate">
             <a
               href="tel:+919431377488"
-              className="flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group"
+              className="flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group shrink-0"
             >
               <svg className="w-3.5 h-3.5 text-[#dfb455] group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              <span>+91 94313 77488</span>
+              <span className="font-medium">+91 94313 77488</span>
             </a>
 
             <a
               href="mailto:info@gpsbagodar.edu.in"
-              className="flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group"
+              className="hidden xs:flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group truncate"
             >
               <svg className="w-3.5 h-3.5 text-[#dfb455] group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
-              <span>info@gpsbagodar.edu.in</span>
+              <span className="truncate">info@gpsbagodar.edu.in</span>
             </a>
 
             <span className="hidden md:flex items-center gap-1.5 text-gray-300">
@@ -664,17 +700,17 @@ export default function App() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span>Bagodar, Giridih, Jharkhand</span>
+              <span>Bagodar, Giridih</span>
             </span>
           </div>
 
           {/* Right Links & Gold CTA */}
-          <div className="flex items-center gap-x-4 sm:gap-x-5">
+          <div className="flex items-center gap-x-2 sm:gap-x-4 shrink-0">
             {TOP_NAV.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
-                className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 hidden sm:inline-block"
+                className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 hidden lg:inline-block"
               >
                 {item.label}
               </a>
@@ -682,7 +718,7 @@ export default function App() {
             <button
               onClick={() => setAdmissionModalOpen(true)}
               style={{ backgroundColor: GOLD }}
-              className="text-white font-semibold text-[11px] sm:text-xs px-3.5 py-1.5 rounded-sm hover:brightness-110 transition-all shadow-sm tracking-wider uppercase cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
+              className="text-white font-semibold text-[10px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-sm hover:brightness-110 transition-all shadow-sm tracking-wider uppercase cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
             >
               ADMISSION OPEN
             </button>
@@ -694,12 +730,12 @@ export default function App() {
       {/* 1.5. LIVE NEWS & NOTICE TICKER MARQUEE */}
       {/* ======================================================== */}
       <div className="bg-[#0e3322] text-white py-1.5 border-b border-[#1f5f40] overflow-hidden flex items-center text-xs">
-        <div className="px-3 sm:px-4 bg-[#c59a3f] text-[#14452f] font-bold text-[10px] sm:text-xs uppercase tracking-wider py-0.5 rounded-r shrink-0 z-10 flex items-center gap-1.5 shadow">
+        <div className="px-2.5 sm:px-4 bg-[#c59a3f] text-[#14452f] font-bold text-[9px] sm:text-xs uppercase tracking-wider py-0.5 rounded-r shrink-0 z-10 flex items-center gap-1.5 shadow">
           <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
           <span>LATEST NEWS</span>
         </div>
         <div className="overflow-hidden whitespace-nowrap flex-1 relative">
-          <div className="animate-marquee flex items-center gap-12 font-medium text-gray-200 cursor-pointer">
+          <div className="animate-marquee flex items-center gap-10 sm:gap-12 font-medium text-gray-200 cursor-pointer text-[11px] sm:text-xs">
             {ANNOUNCEMENTS.concat(ANNOUNCEMENTS).map((item, idx) => (
               <span
                 key={idx}
@@ -716,55 +752,71 @@ export default function App() {
       {/* ======================================================== */}
       {/* 2. MAIN NAVBAR WITH LOGO AND SEARCH */}
       {/* ======================================================== */}
-      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 ${scrolled ? "shadow-md py-2" : "border-b border-gray-100 py-3.5"}`}>
+      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 ${scrolled ? "shadow-md py-2" : "border-b border-gray-100 py-3 sm:py-3.5"}`}>
         <div className="max-w-[1240px] mx-auto px-4 flex items-center justify-between">
           
           {/* Logo & School Name */}
-          <a href="#home" className="flex items-center gap-2.5 group">
-            <SchoolLogo className="w-11 h-11 sm:w-12 sm:h-12 group-hover:scale-105 transition-transform duration-300" />
+          <a href="#home" className="flex items-center gap-2 sm:gap-2.5 group">
+            <SchoolLogo className="w-10 h-10 sm:w-12 sm:h-12 group-hover:scale-105 transition-transform duration-300" />
             <div className="flex flex-col">
               <span
                 style={{ color: GREEN }}
-                className="font-serif font-bold text-lg sm:text-xl md:text-2xl leading-none tracking-tight group-hover:opacity-90"
+                className="font-serif font-bold text-base sm:text-xl md:text-2xl leading-none tracking-tight group-hover:opacity-90"
               >
                 GYANODAYA
               </span>
               <span
                 style={{ color: GREEN }}
-                className="text-[9px] sm:text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase leading-tight mt-0.5"
+                className="text-[8.5px] sm:text-[10px] md:text-[11px] font-semibold tracking-[0.16em] sm:tracking-[0.18em] uppercase leading-tight mt-0.5"
               >
                 PUBLIC SCHOOL • BAGODAR
               </span>
             </div>
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
+          {/* Desktop Navigation Links with Dropdown Menu */}
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
             {MAIN_NAV.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className={`flex items-center gap-1 text-[13px] font-semibold tracking-wider transition-all py-1 relative group ${
-                  item.active
-                    ? "text-[#14452f] border-b-2 border-[#14452f]"
-                    : "text-gray-700 hover:text-[#14452f]"
-                }`}
-              >
-                <span>{item.label}</span>
-                {item.hasDropdown && (
-                  <svg className="w-3 h-3 text-gray-400 mt-0.5 group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                  </svg>
+              <div key={item.label} className="relative group/menu py-2">
+                <a
+                  href={item.href}
+                  className={`flex items-center gap-1 text-[13px] font-semibold tracking-wider transition-all py-1 relative ${
+                    item.active
+                      ? "text-[#14452f] border-b-2 border-[#14452f]"
+                      : "text-gray-700 hover:text-[#14452f]"
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  {item.hasDropdown && (
+                    <svg className="w-3 h-3 text-gray-400 mt-0.5 group-hover/menu:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  )}
+                </a>
+
+                {/* Desktop Dropdown flyout */}
+                {item.subItems && (
+                  <div className="absolute top-full left-0 w-56 bg-white border border-gray-100 rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all duration-200 z-50 animate-slide-down">
+                    {item.subItems.map((sub) => (
+                      <a
+                        key={sub.label}
+                        href={sub.href}
+                        className="block px-4 py-2 text-xs font-medium text-gray-700 hover:bg-[#f0faf5] hover:text-[#14452f] transition-colors"
+                      >
+                        {sub.label}
+                      </a>
+                    ))}
+                  </div>
                 )}
-              </a>
+              </div>
             ))}
           </nav>
 
           {/* Search Icon & Enquire Button & Mobile Menu Button */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              aria-label="Search"
+              aria-label="Search website"
               className="p-2 text-gray-700 hover:text-[#14452f] transition-colors rounded-full hover:bg-gray-100 cursor-pointer"
             >
               <svg className="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -786,8 +838,8 @@ export default function App() {
             {/* Mobile Hamburger toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Open mobile menu"
-              className="lg:hidden p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open mobile menu"}
+              className="lg:hidden p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {mobileMenuOpen ? (
@@ -800,48 +852,124 @@ export default function App() {
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
+        {/* ======================================================== */}
+        {/* MOBILE SLIDE-IN OVERLAY DRAWER */}
+        {/* ======================================================== */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-3 shadow-lg flex flex-col gap-1 text-sm font-medium animate-slide-down">
-            {MAIN_NAV.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-2 px-2 hover:bg-gray-50 rounded text-gray-800 hover:text-[#14452f] flex justify-between items-center"
-              >
-                <span>{item.label}</span>
-                {item.hasDropdown && <span className="text-gray-400 text-xs">▼</span>}
-              </a>
-            ))}
-            <div className="border-t border-gray-100 pt-2 mt-1 flex flex-col gap-1.5 text-xs text-gray-600">
-              {TOP_NAV.map((item) => (
-                <a key={item.label} href={item.href} className="py-1 px-2 hover:text-[#14452f]">
-                  {item.label}
-                </a>
-              ))}
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setAdmissionModalOpen(true);
-                }}
-                style={{ backgroundColor: GOLD }}
-                className="mt-2 text-white font-semibold text-xs py-2 rounded text-center uppercase tracking-wider"
-              >
-                Apply for Admission
-              </button>
+          <div className="lg:hidden fixed inset-0 top-[102px] z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-start">
+            <div
+              className="bg-white max-h-[82vh] overflow-y-auto w-full p-4 shadow-2xl border-b border-gray-200 animate-slide-down flex flex-col gap-2"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Quick Search */}
+              <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 mb-2">
+                <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search GPS Bagodar..."
+                  className="bg-transparent text-xs text-gray-800 w-full focus:outline-none"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      showToast("🔍 Searching school records...");
+                      setMobileMenuOpen(false);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Main Navigation Links */}
+              <div className="flex flex-col divide-y divide-gray-100 text-sm font-semibold text-gray-800">
+                {MAIN_NAV.map((item) => (
+                  <div key={item.label} className="py-1">
+                    <div className="flex items-center justify-between">
+                      <a
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="py-2 px-1 hover:text-[#14452f] flex-1"
+                      >
+                        {item.label}
+                      </a>
+                      {item.hasDropdown && (
+                        <button
+                          onClick={() => setMobileSubNavOpen(mobileSubNavOpen === item.label ? null : item.label)}
+                          className="p-2 text-gray-400 hover:text-[#14452f] cursor-pointer"
+                          aria-label={`Toggle ${item.label} submenu`}
+                        >
+                          <svg
+                            className={`w-4 h-4 transition-transform duration-200 ${mobileSubNavOpen === item.label ? "rotate-180 text-[#14452f]" : ""}`}
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Collapsible Submenu */}
+                    {item.subItems && mobileSubNavOpen === item.label && (
+                      <div className="pl-4 py-1.5 flex flex-col gap-1 bg-[#f9faf9] rounded-md animate-slide-down">
+                        {item.subItems.map((sub) => (
+                          <a
+                            key={sub.label}
+                            href={sub.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="py-1.5 text-xs text-gray-600 hover:text-[#14452f] font-normal"
+                          >
+                            • {sub.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Quick Contact & Action Buttons */}
+              <div className="pt-3 mt-2 border-t border-gray-100 flex flex-col gap-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <a
+                    href="tel:+919431377488"
+                    className="flex items-center justify-center gap-1.5 py-2.5 rounded bg-gray-100 text-gray-800 text-xs font-semibold hover:bg-gray-200"
+                  >
+                    <span>📞 Call Us</span>
+                  </a>
+                  <a
+                    href="https://wa.me/919431377488"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 py-2.5 rounded bg-emerald-50 text-emerald-800 text-xs font-semibold hover:bg-emerald-100"
+                  >
+                    <span>💬 WhatsApp</span>
+                  </a>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setAdmissionModalOpen(true);
+                  }}
+                  style={{ backgroundColor: GOLD }}
+                  className="w-full text-white font-bold text-xs py-3 rounded text-center uppercase tracking-wider shadow-md hover:brightness-110 cursor-pointer"
+                >
+                  Apply for Admission 2025–26
+                </button>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Expandable Search Input */}
+        {/* Expandable Desktop Search Input */}
         {searchOpen && (
-          <div className="border-t border-gray-100 bg-gray-50 px-4 py-2 transition-all animate-slide-down">
+          <div className="border-t border-gray-100 bg-gray-50 px-4 py-2.5 transition-all animate-slide-down">
             <div className="max-w-[1240px] mx-auto flex items-center gap-2">
               <input
                 type="text"
-                placeholder="Search programs, admissions, curriculum, transport..."
-                className="flex-1 bg-white border border-gray-300 rounded px-3.5 py-2 text-sm focus:outline-none focus:border-[#14452f] shadow-inner"
+                placeholder="Search programs, admissions, curriculum, bus routes..."
+                className="flex-1 bg-white border border-gray-300 rounded px-3.5 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] shadow-inner"
                 autoFocus
               />
               <button
@@ -860,14 +988,14 @@ export default function App() {
       </header>
 
       {/* ======================================================== */}
-      {/* 3. HERO SLIDER SECTION (INTERACTIVE AUTO-SLIDER) */}
+      {/* 3. HERO SLIDER SECTION (RESPONSIVE & FLUID) */}
       {/* ======================================================== */}
       <section
         id="home"
         onMouseEnter={() => setIsHoveringHero(true)}
         onMouseLeave={() => setIsHoveringHero(false)}
-        className="relative w-full overflow-hidden bg-[#0d2e20]"
-        style={{ height: "82vh", minHeight: 520, maxHeight: 680 }}
+        className="relative w-full overflow-hidden bg-[#0d2e20] min-h-[500px] sm:min-h-[560px] md:min-h-[620px] max-h-[740px]"
+        style={{ height: "82vh" }}
       >
         {/* Animated countdown progress bar on top */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-white/10 z-30">
@@ -890,6 +1018,8 @@ export default function App() {
             <img
               src={slide.img}
               alt={slide.headline}
+              loading={idx === 0 ? "eager" : "lazy"}
+              decoding="async"
               className="w-full h-full object-cover object-center"
             />
           </div>
@@ -899,15 +1029,15 @@ export default function App() {
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
-            background: "linear-gradient(90deg, rgba(12,38,25,0.94) 0%, rgba(12,38,25,0.82) 42%, rgba(12,38,25,0.4) 72%, rgba(12,38,25,0.15) 100%)",
+            background: "linear-gradient(90deg, rgba(12,38,25,0.95) 0%, rgba(12,38,25,0.85) 45%, rgba(12,38,25,0.45) 75%, rgba(12,38,25,0.2) 100%)",
           }}
         />
 
-        {/* Carousel Arrow Buttons */}
+        {/* Carousel Arrow Buttons (visible on sm+) */}
         <button
           onClick={() => setActiveSlide((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1))}
           aria-label="Previous Slide"
-          className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border border-white/60 bg-black/30 hover:bg-black/60 text-white flex items-center justify-center transition-all hover:scale-110 cursor-pointer backdrop-blur-xs shadow-lg"
+          className="hidden sm:flex absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/60 bg-black/30 hover:bg-black/60 text-white items-center justify-center transition-all hover:scale-110 cursor-pointer backdrop-blur-xs shadow-lg"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 19l-7-7 7-7" />
@@ -916,7 +1046,7 @@ export default function App() {
         <button
           onClick={() => setActiveSlide((prev) => (prev === HERO_SLIDES.length - 1 ? 0 : prev + 1))}
           aria-label="Next Slide"
-          className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border border-white/60 bg-black/30 hover:bg-black/60 text-white flex items-center justify-center transition-all hover:scale-110 cursor-pointer backdrop-blur-xs shadow-lg"
+          className="hidden sm:flex absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/60 bg-black/30 hover:bg-black/60 text-white items-center justify-center transition-all hover:scale-110 cursor-pointer backdrop-blur-xs shadow-lg"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M9 5l7 7-7 7" />
@@ -924,31 +1054,31 @@ export default function App() {
         </button>
 
         {/* Carousel Dot Indicators */}
-        <div className="absolute bottom-24 sm:bottom-28 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 bg-black/30 px-3 py-1.5 rounded-full backdrop-blur-xs">
+        <div className="absolute bottom-20 sm:bottom-28 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-full backdrop-blur-xs">
           {HERO_SLIDES.map((_, dotIndex) => (
             <button
               key={dotIndex}
               onClick={() => setActiveSlide(dotIndex)}
               aria-label={`Go to slide ${dotIndex + 1}`}
               className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                activeSlide === dotIndex ? "w-7 bg-[#dfb455]" : "w-2 bg-white/50 hover:bg-white/90"
+                activeSlide === dotIndex ? "w-6 sm:w-7 bg-[#dfb455]" : "w-2 bg-white/50 hover:bg-white/90"
               }`}
             />
           ))}
         </div>
 
-        {/* Hero Content Container with dynamic key for smooth entrance animation */}
-        <div className="relative z-10 h-full max-w-[1240px] mx-auto px-6 sm:px-10 flex flex-col justify-center">
+        {/* Hero Content Container */}
+        <div className="relative z-10 h-full max-w-[1240px] mx-auto px-5 sm:px-8 md:px-10 flex flex-col justify-center pb-12 sm:pb-0">
           <div key={activeSlide} className="max-w-xl animate-fade-in-up">
             
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#dfb455] text-xs font-semibold tracking-wider uppercase mb-4">
+            <div className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#dfb455] text-[10px] sm:text-xs font-semibold tracking-wider uppercase mb-3 sm:mb-4">
               <span className="w-2 h-2 rounded-full bg-[#dfb455] animate-ping" />
               <span>{HERO_SLIDES[activeSlide].tag}</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold text-white leading-[1.15] mb-4 drop-shadow-md">
+            <h1 className="font-serif text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-bold text-white leading-[1.18] sm:leading-[1.15] mb-3 sm:mb-4 drop-shadow-md">
               {HERO_SLIDES[activeSlide].headline.split(", ")[0]},
               <br />
               {HERO_SLIDES[activeSlide].headline.split(", ")[1] ? (
@@ -964,16 +1094,16 @@ export default function App() {
             </h1>
 
             {/* Sub-headline */}
-            <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed mb-8 max-w-md font-light">
+            <p className="text-white/90 text-xs sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-8 max-w-md font-light">
               {HERO_SLIDES[activeSlide].subtitle}
             </p>
 
-            {/* Two Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4">
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               <button
                 onClick={() => setAdmissionModalOpen(true)}
                 style={{ backgroundColor: GOLD }}
-                className="text-white font-semibold text-xs sm:text-sm px-6 sm:px-7 py-3.5 rounded-sm flex items-center gap-2.5 hover:brightness-110 transition-all shadow-lg uppercase tracking-wider cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
+                className="text-white font-semibold text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-sm flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-lg uppercase tracking-wider cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
               >
                 <span>ADMISSION OPEN</span>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -983,7 +1113,7 @@ export default function App() {
 
               <button
                 onClick={() => setTourModalOpen(true)}
-                className="border border-white/80 text-white font-semibold text-xs sm:text-sm px-6 sm:px-7 py-3.5 rounded-sm flex items-center gap-2.5 hover:bg-white hover:text-[#14452f] transition-all uppercase tracking-wider backdrop-blur-xs cursor-pointer hover:scale-105 active:scale-95"
+                className="border border-white/80 text-white font-semibold text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-sm flex items-center justify-center gap-2 hover:bg-white hover:text-[#14452f] transition-all uppercase tracking-wider backdrop-blur-xs cursor-pointer hover:scale-105 active:scale-95"
               >
                 <span>CAMPUS TOUR</span>
                 <svg className="w-4 h-4 text-[#dfb455]" fill="currentColor" viewBox="0 0 24 24">
@@ -996,25 +1126,27 @@ export default function App() {
       </section>
 
       {/* ======================================================== */}
-      {/* 4. FIVE FEATURE HIGHLIGHTS FLOATING CARD */}
+      {/* 4. FIVE FEATURE HIGHLIGHTS FLOATING CARD (RESPONSIVE GRID) */}
       {/* ======================================================== */}
-      <div className="relative z-20 max-w-[1140px] mx-auto px-4 -mt-12 sm:-mt-14">
-        <div className="bg-white rounded-lg shadow-2xl border border-gray-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 overflow-hidden">
-          {HIGHLIGHT_CARDS.map((card) => (
+      <div className="relative z-20 max-w-[1140px] mx-auto px-4 -mt-10 sm:-mt-12 md:-mt-14">
+        <div className="bg-white rounded-xl shadow-2xl border border-gray-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 overflow-hidden">
+          {HIGHLIGHT_CARDS.map((card, cIdx) => (
             <div
               key={card.title}
-              className="p-5 sm:p-6 flex flex-col items-center text-center group hover:bg-[#f9fbf9] transition-all duration-300 cursor-pointer hover:-translate-y-1"
+              className={`p-4 sm:p-5 md:p-6 flex flex-col items-center text-center group hover:bg-[#f9fbf9] transition-all duration-300 cursor-pointer hover:-translate-y-1 ${
+                cIdx === 4 ? "col-span-2 sm:col-span-1 border-t sm:border-t-0" : ""
+              }`}
             >
-              <div className="mb-3 transform group-hover:scale-115 transition-transform duration-300">
+              <div className="mb-2.5 transform group-hover:scale-115 transition-transform duration-300">
                 {card.icon}
               </div>
               <h2
                 style={{ color: GREEN }}
-                className="font-semibold text-sm leading-snug mb-1 group-hover:text-[#c59a3f] transition-colors"
+                className="font-semibold text-xs sm:text-sm leading-snug mb-1 group-hover:text-[#c59a3f] transition-colors"
               >
                 {card.title}
               </h2>
-              <p className="text-gray-500 text-xs leading-relaxed max-w-[170px]">
+              <p className="text-gray-500 text-[11px] sm:text-xs leading-relaxed max-w-[170px]">
                 {card.desc}
               </p>
             </div>
@@ -1025,32 +1157,34 @@ export default function App() {
       {/* ======================================================== */}
       {/* 5. WELCOME TO GYANODAYA PUBLIC SCHOOL (ABOUT SECTION) */}
       {/* ======================================================== */}
-      <section id="about" className="py-16 sm:py-20 bg-white">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <section id="about" className="py-14 sm:py-20 bg-white">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-8 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           
           {/* Left Campus Photo with Interactive Video Teaser */}
           <div className="relative rounded-xl overflow-hidden shadow-xl group">
             <img
-              src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&h=700&fit=crop&auto=format"
+              src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&h=700&fit=crop&auto=format&q=80"
               alt="Gyanodaya Public School Students and Campus"
-              className="w-full h-[360px] sm:h-[420px] object-cover object-center group-hover:scale-105 transition-transform duration-700"
+              loading="lazy"
+              decoding="async"
+              className="w-full h-[300px] sm:h-[400px] md:h-[420px] object-cover object-center group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-black/25 group-hover:bg-black/40 transition-colors flex items-center justify-center">
               <button
                 onClick={() => setTourModalOpen(true)}
                 aria-label="Play Virtual Campus Tour"
-                className="w-16 h-16 rounded-full bg-white/90 hover:bg-[#c59a3f] text-[#14452f] hover:text-white flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-115 cursor-pointer animate-pulse-glow"
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/90 hover:bg-[#c59a3f] text-[#14452f] hover:text-white flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-115 cursor-pointer animate-pulse-glow"
               >
-                <svg className="w-7 h-7 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 ml-1" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </button>
             </div>
             
             {/* Floating Experience Badge */}
-            <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-lg shadow-lg border border-gray-100 flex items-center gap-3">
-              <span className="font-serif font-bold text-2xl text-[#14452f]">20+</span>
-              <span className="text-xs text-gray-600 font-medium leading-tight">
+            <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 bg-white/95 backdrop-blur-md px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg shadow-lg border border-gray-100 flex items-center gap-2.5 sm:gap-3">
+              <span className="font-serif font-bold text-xl sm:text-2xl text-[#14452f]">20+</span>
+              <span className="text-[11px] sm:text-xs text-gray-600 font-medium leading-tight">
                 Years of Academic
                 <br />
                 Distinction &amp; Trust
@@ -1068,45 +1202,45 @@ export default function App() {
             </p>
             <h2
               style={{ color: GREEN }}
-              className="font-serif text-3xl sm:text-4xl font-bold leading-tight mb-5"
+              className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-4 sm:mb-5"
             >
               Gyanodaya Public School
             </h2>
-            <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8">
+            <p className="text-gray-600 text-xs sm:text-sm md:text-base leading-relaxed mb-6 sm:mb-8">
               Gyanodaya Public School (GPS Bagodar) is a premier co-educational institution in Bagodar, Giridih, Jharkhand, dedicated to developing confident, compassionate and responsible global citizens. We blend rigorous CBSE academic curriculum with character building, digital smart education, and moral values to prepare students for a bright and successful future.
             </p>
 
-            {/* 4 Stats Grid with Interactive Hover */}
-            <div className="grid grid-cols-4 gap-2 sm:gap-4 py-4 mb-8">
+            {/* 4 Stats Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 py-3 sm:py-4 mb-6 sm:mb-8 bg-gray-50/70 p-3 rounded-xl border border-gray-100">
               {[
                 { value: "CBSE", label: "Affiliation" },
                 { value: "1:20", label: "Teacher Ratio" },
-                { value: "20+", label: "Years of Excellence" },
-                { value: "100%", label: "Commitment" },
+                { value: "20+", label: "Years of Trust" },
+                { value: "100%", label: "Pass Result" },
               ].map((stat) => (
                 <div
                   key={stat.label}
-                  className="text-left p-2 rounded hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="text-left p-2 rounded hover:bg-white transition-colors"
                 >
                   <div
                     style={{ color: GREEN }}
-                    className="font-serif text-2xl sm:text-3xl font-bold tracking-tight"
+                    className="font-serif text-xl sm:text-2xl md:text-3xl font-bold tracking-tight"
                   >
                     {stat.value}
                   </div>
-                  <div className="text-gray-500 text-[11px] sm:text-xs mt-1 leading-snug">
+                  <div className="text-gray-500 text-[10px] sm:text-xs mt-0.5 sm:mt-1 leading-snug">
                     {stat.label}
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Read More About Us CTA Button */}
+            {/* Read More CTA Button */}
             <div className="flex flex-wrap items-center gap-4">
               <button
                 onClick={() => setAdmissionModalOpen(true)}
                 style={{ backgroundColor: GREEN }}
-                className="inline-flex items-center gap-2 text-white text-xs sm:text-sm font-semibold px-6 py-3 rounded-sm hover:brightness-110 transition-all uppercase tracking-wider cursor-pointer shadow hover:scale-102"
+                className="inline-flex items-center gap-2 text-white text-xs sm:text-sm font-semibold px-5 sm:px-6 py-3 rounded-sm hover:brightness-110 transition-all uppercase tracking-wider cursor-pointer shadow hover:scale-102"
               >
                 <span>READ MORE ABOUT US</span>
                 <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1119,13 +1253,13 @@ export default function App() {
       </section>
 
       {/* ======================================================== */}
-      {/* 6. ACADEMICS SECTION (INTERACTIVE TABS & CURRICULUM EXPLORER) */}
+      {/* 6. ACADEMICS SECTION (SWIPEABLE TABS & CURRICULUM EXPLORER) */}
       {/* ======================================================== */}
-      <section id="academics" className="py-16 sm:py-20 bg-[#f9faf9] border-t border-gray-100">
+      <section id="academics" className="py-14 sm:py-20 bg-[#f9faf9] border-t border-gray-100">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
           
           {/* Section Header */}
-          <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 sm:mb-8">
             <div>
               <p
                 style={{ color: GOLD }}
@@ -1138,15 +1272,15 @@ export default function App() {
               </h2>
             </div>
 
-            {/* Interactive Tab Navigation */}
-            <div className="flex flex-wrap gap-2">
+            {/* Smooth Horizontal Scrolling Tab Bar */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1.5 pt-1 w-full md:w-auto -mx-4 px-4 md:mx-0 md:px-0">
               {ACADEMIC_TABS.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 cursor-pointer ${
                     activeTab === tab.id
-                      ? "bg-[#14452f] text-white shadow-sm"
+                      ? "bg-[#14452f] text-white shadow-sm scale-102"
                       : "bg-white text-gray-600 border border-gray-200 hover:border-[#14452f] hover:text-[#14452f]"
                   }`}
                 >
@@ -1157,26 +1291,26 @@ export default function App() {
           </div>
 
           {/* Dynamic Academic Cards Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             
             {/* Left Dynamic Cards (8 columns) */}
-            <div className="lg:col-span-8 grid sm:grid-cols-2 gap-5">
+            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
               {(ACADEMICS_CARDS_DATA[activeTab] || ACADEMICS_CARDS_DATA.all).map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-start hover:-translate-y-1 group"
+                  className="bg-white rounded-xl p-5 sm:p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-start hover:-translate-y-1 group"
                 >
                   <div className="flex items-center justify-between w-full mb-3">
-                    <span className="text-3xl p-2.5 bg-[#f0faf5] rounded-lg group-hover:scale-110 transition-transform">
+                    <span className="text-2xl sm:text-3xl p-2 sm:p-2.5 bg-[#f0faf5] rounded-lg group-hover:scale-110 transition-transform">
                       {item.icon}
                     </span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-amber-50 text-[#c59a3f] border border-amber-200/60">
+                    <span className="text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 rounded bg-amber-50 text-[#c59a3f] border border-amber-200/60">
                       {item.badge}
                     </span>
                   </div>
                   <h3
                     style={{ color: GREEN }}
-                    className="font-bold text-base mb-2 font-serif group-hover:text-[#c59a3f] transition-colors"
+                    className="font-bold text-sm sm:text-base mb-1.5 sm:mb-2 font-serif group-hover:text-[#c59a3f] transition-colors"
                   >
                     {item.title}
                   </h3>
@@ -1188,12 +1322,14 @@ export default function App() {
             </div>
 
             {/* Right Holistic Growth Feature Box (4 columns) */}
-            <div className="lg:col-span-4 flex flex-col items-center">
-              {/* Circular Student Photo with Interactive Glow */}
-              <div className="w-56 h-56 sm:w-64 sm:h-64 rounded-full overflow-hidden border-4 border-white shadow-2xl -mb-8 relative z-10 group cursor-pointer">
+            <div className="lg:col-span-4 flex flex-col items-center mt-4 lg:mt-0">
+              {/* Circular Student Photo */}
+              <div className="w-48 h-48 sm:w-60 sm:h-60 rounded-full overflow-hidden border-4 border-white shadow-2xl -mb-7 sm:-mb-8 relative z-10 group cursor-pointer">
                 <img
-                  src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&h=600&fit=crop&auto=format"
+                  src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&h=600&fit=crop&auto=format&q=80"
                   alt="Students engaged in holistic learning and collaboration"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
@@ -1201,9 +1337,9 @@ export default function App() {
               {/* Dark Green Banner */}
               <div
                 style={{ backgroundColor: GREEN }}
-                className="w-full max-w-[300px] pt-12 pb-5 px-6 rounded-lg text-center text-white shadow-xl"
+                className="w-full max-w-[280px] sm:max-w-[300px] pt-10 sm:pt-12 pb-4 sm:pb-5 px-5 sm:px-6 rounded-xl text-center text-white shadow-xl"
               >
-                <h4 className="font-serif text-lg sm:text-xl font-bold tracking-wide">
+                <h4 className="font-serif text-base sm:text-xl font-bold tracking-wide">
                   Holistic Growth
                 </h4>
                 <p className="text-[#dfb455] text-xs mt-1 font-medium tracking-wider">
@@ -1218,11 +1354,11 @@ export default function App() {
       {/* ======================================================== */}
       {/* 7. FACILITIES (WORLD-CLASS INFRASTRUCTURE) */}
       {/* ======================================================== */}
-      <section id="facilities" className="py-16 sm:py-20 bg-white">
+      <section id="facilities" className="py-14 sm:py-20 bg-white">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
           
           {/* Section Header */}
-          <div className="mb-10 text-center sm:text-left">
+          <div className="mb-8 sm:mb-10 text-center sm:text-left">
             <p
               style={{ color: GOLD }}
               className="text-xs font-bold uppercase tracking-[0.2em] mb-1"
@@ -1235,17 +1371,19 @@ export default function App() {
           </div>
 
           {/* 4 Infrastructure Cards */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10 sm:mb-12">
             {FACILITIES_LIST.map((fac) => (
               <div
                 key={fac.title}
-                className="group bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col hover:-translate-y-1.5 cursor-pointer"
+                className="group bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col hover:-translate-y-1.5 cursor-pointer"
               >
-                {/* Photo with Icon Badge */}
+                {/* Photo with Tag */}
                 <div className="relative h-44 sm:h-48 overflow-hidden bg-gray-200">
                   <img
                     src={fac.img}
                     alt={fac.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
@@ -1256,12 +1394,12 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Card Title & Description */}
+                {/* Card Content */}
                 <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
                     <h3
                       style={{ color: GREEN }}
-                      className="font-bold text-sm mb-1.5 font-serif group-hover:text-[#c59a3f] transition-colors"
+                      className="font-bold text-sm mb-1 font-serif group-hover:text-[#c59a3f] transition-colors"
                     >
                       {fac.title}
                     </h3>
@@ -1291,13 +1429,13 @@ export default function App() {
       </section>
 
       {/* ======================================================== */}
-      {/* 8. STUDENT LIFE / GALLERY (INTERACTIVE LIGHTBOX) */}
+      {/* 8. STUDENT LIFE / GALLERY (INTERACTIVE LIGHTBOX - 6 ITEMS) */}
       {/* ======================================================== */}
-      <section id="gallery" className="py-16 sm:py-20 bg-[#f9faf9] border-t border-gray-100">
+      <section id="gallery" className="py-14 sm:py-20 bg-[#f9faf9] border-t border-gray-100">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
           
           {/* Header with View Gallery Button */}
-          <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
+          <div className="flex flex-wrap items-end justify-between gap-4 mb-6 sm:mb-8">
             <div>
               <p
                 style={{ color: GOLD }}
@@ -1313,7 +1451,7 @@ export default function App() {
             <button
               onClick={() => setLightboxIndex(0)}
               style={{ borderColor: "#14452f", color: "#14452f" }}
-              className="border-2 text-xs sm:text-sm font-semibold px-5 py-2 rounded-sm hover:bg-[#14452f] hover:text-white transition-all inline-flex items-center gap-2 uppercase tracking-wider cursor-pointer hover:scale-105"
+              className="border-2 text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 rounded-sm hover:bg-[#14452f] hover:text-white transition-all inline-flex items-center gap-2 uppercase tracking-wider cursor-pointer hover:scale-105"
             >
               <span>OPEN FULL GALLERY</span>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1322,29 +1460,31 @@ export default function App() {
             </button>
           </div>
 
-          {/* 5 Gallery Photos Grid with Click to Open Lightbox */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+          {/* 6 Gallery Photos Grid with Clean Responsive Breakpoints */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5">
             {GALLERY_ITEMS.map((item, index) => (
               <div
                 key={index}
                 onClick={() => setLightboxIndex(index)}
-                className="relative h-44 sm:h-48 rounded-lg overflow-hidden shadow-sm group cursor-pointer bg-gray-200"
+                className="relative h-40 sm:h-44 md:h-48 rounded-lg overflow-hidden shadow-sm group cursor-pointer bg-gray-200"
               >
                 <img
                   src={item.img}
                   alt={item.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 
                 {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-opacity duration-300 opacity-0 group-hover:opacity-100 flex flex-col justify-end p-3 text-white pointer-events-none">
-                  <span className="text-[10px] text-[#dfb455] font-bold uppercase tracking-wider">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent transition-opacity duration-300 opacity-0 group-hover:opacity-100 flex flex-col justify-end p-2.5 sm:p-3 text-white pointer-events-none">
+                  <span className="text-[9px] sm:text-[10px] text-[#dfb455] font-bold uppercase tracking-wider">
                     {item.category}
                   </span>
-                  <span className="text-xs font-semibold leading-tight line-clamp-1">
+                  <span className="text-[11px] sm:text-xs font-semibold leading-tight line-clamp-1">
                     {item.title}
                   </span>
-                  <div className="mt-1 flex items-center gap-1 text-[10px] text-white/80">
+                  <div className="mt-1 flex items-center gap-1 text-[9.5px] sm:text-[10px] text-white/80">
                     <span>Click to zoom</span>
                     <span>🔍</span>
                   </div>
@@ -1358,9 +1498,9 @@ export default function App() {
       {/* ======================================================== */}
       {/* 8.5. FREQUENTLY ASKED QUESTIONS (INTERACTIVE ACCORDION) */}
       {/* ======================================================== */}
-      <section id="faqs" className="py-16 sm:py-20 bg-white border-t border-gray-100">
+      <section id="faqs" className="py-14 sm:py-20 bg-white border-t border-gray-100">
         <div className="max-w-[900px] mx-auto px-4 sm:px-8">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8 sm:mb-10">
             <p
               style={{ color: GOLD }}
               className="text-xs font-bold uppercase tracking-[0.2em] mb-1"
@@ -1378,16 +1518,16 @@ export default function App() {
               return (
                 <div
                   key={idx}
-                  className="border border-gray-200 rounded-lg overflow-hidden transition-all duration-300 hover:border-[#14452f]"
+                  className="border border-gray-200 rounded-xl overflow-hidden transition-all duration-300 hover:border-[#14452f]"
                 >
                   <button
                     onClick={() => setActiveFaq(isOpen ? null : idx)}
-                    className="w-full text-left px-5 py-4 bg-gray-50/70 hover:bg-gray-100 flex items-center justify-between gap-4 font-semibold text-sm sm:text-base text-gray-800 cursor-pointer"
+                    className="w-full text-left px-4 sm:px-5 py-3.5 sm:py-4 bg-gray-50/70 hover:bg-gray-100 flex items-center justify-between gap-3 sm:gap-4 font-semibold text-xs sm:text-base text-gray-800 cursor-pointer"
                   >
                     <span>{faq.q}</span>
                     <span
                       style={{ color: GREEN }}
-                      className={`text-lg font-bold transition-transform duration-300 ${
+                      className={`text-lg font-bold transition-transform duration-300 shrink-0 ${
                         isOpen ? "rotate-45" : ""
                       }`}
                     >
@@ -1395,7 +1535,7 @@ export default function App() {
                     </span>
                   </button>
                   {isOpen && (
-                    <div className="px-5 py-4 bg-white text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 animate-slide-down">
+                    <div className="px-4 sm:px-5 py-3.5 sm:py-4 bg-white text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 animate-slide-down">
                       {faq.a}
                     </div>
                   )}
@@ -1409,21 +1549,21 @@ export default function App() {
       {/* ======================================================== */}
       {/* 9. ADMISSIONS CTA BANNER */}
       {/* ======================================================== */}
-      <section id="admissions" style={{ backgroundColor: GREEN }} className="py-9 sm:py-11 border-t border-b border-[#1b583c] relative overflow-hidden">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-8 flex flex-wrap items-center justify-between gap-6 relative z-10">
+      <section id="admissions" style={{ backgroundColor: GREEN }} className="py-8 sm:py-11 border-t border-b border-[#1b583c] relative overflow-hidden">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6 relative z-10 text-center md:text-left">
           
           {/* Left: Crest Icon + Text */}
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
             {/* School Emblem Logo */}
-            <div className="w-16 h-16 rounded-full bg-white/10 p-1 flex items-center justify-center shrink-0 border border-white/20 shadow-inner animate-float">
-              <SchoolLogo className="w-14 h-14" />
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/10 p-1 flex items-center justify-center shrink-0 border border-white/20 shadow-inner animate-float">
+              <SchoolLogo className="w-12 h-12 sm:w-14 sm:h-14" />
             </div>
 
-            {/* Title & Subtitle with vertical divider */}
-            <div className="flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-6">
+            {/* Title & Subtitle */}
+            <div className="flex flex-col md:flex-row items-center gap-y-1 gap-x-6">
               <h3
                 style={{ color: GOLD_TEXT }}
-                className="font-serif text-xl sm:text-2xl font-bold tracking-tight"
+                className="font-serif text-lg sm:text-2xl font-bold tracking-tight"
               >
                 Admissions Open for
                 <br className="sm:hidden" /> Academic Year 2025–26
@@ -1434,8 +1574,7 @@ export default function App() {
 
               <p className="text-white/80 text-xs sm:text-sm font-light">
                 Give your child the best start
-                <br />
-                for a bright tomorrow.
+                <br className="hidden sm:inline" /> for a bright tomorrow.
               </p>
             </div>
           </div>
@@ -1444,7 +1583,7 @@ export default function App() {
           <button
             onClick={() => setAdmissionModalOpen(true)}
             style={{ backgroundColor: GOLD }}
-            className="text-white font-semibold text-xs sm:text-sm px-7 py-3 rounded-sm flex items-center gap-2 hover:brightness-110 transition-all uppercase tracking-wider shadow-xl shrink-0 cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
+            className="w-full sm:w-auto text-white font-semibold text-xs sm:text-sm px-6 sm:px-7 py-3 rounded-sm flex items-center justify-center gap-2 hover:brightness-110 transition-all uppercase tracking-wider shadow-xl shrink-0 cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
           >
             <span>ENQUIRE NOW</span>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1457,20 +1596,20 @@ export default function App() {
       {/* ======================================================== */}
       {/* 10. FOOTER */}
       {/* ======================================================== */}
-      <footer style={{ backgroundColor: "#0e3322" }} className="text-white pt-16 pb-8 border-t border-black/20">
+      <footer style={{ backgroundColor: "#0e3322" }} className="text-white pt-12 sm:pt-16 pb-8 border-t border-black/20">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-8 mb-10 sm:mb-12">
             
             {/* Column 1: School Brand & Description (2 cols on lg) */}
             <div className="lg:col-span-2">
               <div className="flex items-center gap-2.5 mb-4">
-                <SchoolLogo className="w-12 h-12" />
+                <SchoolLogo className="w-11 h-11 sm:w-12 sm:h-12" />
                 <div className="flex flex-col">
                   <span className="font-serif font-bold text-lg sm:text-xl leading-none tracking-tight text-white">
                     GYANODAYA
                   </span>
-                  <span className="text-[10px] text-gray-300 font-semibold tracking-[0.2em] uppercase leading-tight mt-0.5">
+                  <span className="text-[9.5px] sm:text-[10px] text-gray-300 font-semibold tracking-[0.2em] uppercase leading-tight mt-0.5">
                     PUBLIC SCHOOL • BAGODAR
                   </span>
                 </div>
@@ -1510,7 +1649,7 @@ export default function App() {
 
             {/* Column 2: Quick Links */}
             <div>
-              <h4 className="text-white font-serif font-semibold text-sm uppercase tracking-wider mb-4">
+              <h4 className="text-white font-serif font-semibold text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
                 QUICK LINKS
               </h4>
               <ul className="space-y-2 text-xs sm:text-sm text-gray-300">
@@ -1537,7 +1676,7 @@ export default function App() {
 
             {/* Column 3: Information */}
             <div>
-              <h4 className="text-white font-serif font-semibold text-sm uppercase tracking-wider mb-4">
+              <h4 className="text-white font-serif font-semibold text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
                 INFORMATION
               </h4>
               <ul className="space-y-2 text-xs sm:text-sm text-gray-300">
@@ -1565,7 +1704,7 @@ export default function App() {
 
             {/* Column 4: Contact Us & Newsletter */}
             <div id="contact">
-              <h4 className="text-white font-serif font-semibold text-sm uppercase tracking-wider mb-4">
+              <h4 className="text-white font-serif font-semibold text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
                 CONTACT US
               </h4>
               <div className="space-y-2.5 text-xs text-gray-300 mb-6">
@@ -1581,23 +1720,27 @@ export default function App() {
                   <svg className="w-4 h-4 text-[#dfb455] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
-                  <span>+91 94313 77488</span>
+                  <a href="tel:+919431377488" className="hover:text-[#dfb455] transition-colors">
+                    +91 94313 77488
+                  </a>
                 </p>
 
                 <p className="flex items-center gap-2">
                   <svg className="w-4 h-4 text-[#dfb455] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <span>info@gpsbagodar.edu.in</span>
+                  <a href="mailto:info@gpsbagodar.edu.in" className="hover:text-[#dfb455] transition-colors">
+                    info@gpsbagodar.edu.in
+                  </a>
                 </p>
               </div>
 
               {/* Newsletter subscription */}
-              <h4 className="text-white font-serif font-semibold text-sm uppercase tracking-wider mb-2">
+              <h4 className="text-white font-serif font-semibold text-xs sm:text-sm uppercase tracking-wider mb-2">
                 NEWSLETTER
               </h4>
               <p className="text-gray-300 text-xs mb-2.5">
-                Subscribe for important school announcements and circulars.
+                Subscribe for school circulars &amp; notices.
               </p>
               <form onSubmit={handleNewsletterSubmit} className="flex items-center gap-1.5">
                 <input
@@ -1610,7 +1753,7 @@ export default function App() {
                 />
                 <button
                   type="submit"
-                  aria-label="Subscribe"
+                  aria-label="Subscribe to newsletter"
                   className="bg-[#c59a3f] hover:bg-[#dfb455] text-white p-2 rounded transition-colors shrink-0 cursor-pointer"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1622,8 +1765,8 @@ export default function App() {
           </div>
 
           {/* Bottom Copyright and Legal links */}
-          <div className="pt-6 border-t border-gray-800 flex flex-wrap items-center justify-between gap-4 text-xs text-gray-400">
-            <p>© 2025 Gyanodaya Public School (GPS), Bagodar. All Rights Reserved. Affiliated to CBSE, New Delhi.</p>
+          <div className="pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] sm:text-xs text-gray-400 text-center sm:text-left">
+            <p>© 2025 Gyanodaya Public School (GPS), Bagodar. Affiliated to CBSE, New Delhi.</p>
             <div className="flex items-center gap-4">
               <a href="#privacy" className="hover:text-gray-200 transition-colors">
                 Privacy Policy
@@ -1648,7 +1791,7 @@ export default function App() {
           {/* Close button */}
           <button
             onClick={() => setLightboxIndex(null)}
-            className="absolute top-5 right-5 text-white/80 hover:text-white text-3xl font-bold p-2 z-50 cursor-pointer"
+            className="absolute top-4 sm:top-5 right-4 sm:right-5 text-white/80 hover:text-white text-2xl sm:text-3xl font-bold p-2 z-50 cursor-pointer"
           >
             ✕
           </button>
@@ -1659,9 +1802,10 @@ export default function App() {
               e.stopPropagation();
               setLightboxIndex((prev) => (prev! - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length);
             }}
-            className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer z-50"
+            aria-label="Previous photo"
+            className="absolute left-2 sm:left-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer z-50"
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -1674,19 +1818,19 @@ export default function App() {
             <img
               src={GALLERY_ITEMS[lightboxIndex].img}
               alt={GALLERY_ITEMS[lightboxIndex].title}
-              className="max-h-[72vh] max-w-full rounded-lg object-contain shadow-2xl"
+              className="max-h-[68vh] sm:max-h-[72vh] max-w-full rounded-lg object-contain shadow-2xl"
             />
-            <div className="mt-4 text-center text-white">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#dfb455] bg-white/10 px-3 py-1 rounded-full">
+            <div className="mt-3 sm:mt-4 text-center text-white px-4">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#dfb455] bg-white/10 px-3 py-0.5 sm:py-1 rounded-full">
                 {GALLERY_ITEMS[lightboxIndex].category}
               </span>
-              <h4 className="font-serif text-lg sm:text-xl font-bold mt-2">
+              <h4 className="font-serif text-base sm:text-xl font-bold mt-1.5 sm:mt-2">
                 {GALLERY_ITEMS[lightboxIndex].title}
               </h4>
               <p className="text-xs sm:text-sm text-gray-300 mt-1 max-w-md">
                 {GALLERY_ITEMS[lightboxIndex].desc}
               </p>
-              <p className="text-[11px] text-gray-400 mt-1">
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
                 {lightboxIndex + 1} of {GALLERY_ITEMS.length}
               </p>
             </div>
@@ -1698,9 +1842,10 @@ export default function App() {
               e.stopPropagation();
               setLightboxIndex((prev) => (prev! + 1) % GALLERY_ITEMS.length);
             }}
-            className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer z-50"
+            aria-label="Next photo"
+            className="absolute right-2 sm:right-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer z-50"
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -1716,7 +1861,7 @@ export default function App() {
           onClick={() => setAdmissionModalOpen(false)}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative border border-gray-100"
+            className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-5 sm:p-8 relative border border-gray-100 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -1731,7 +1876,7 @@ export default function App() {
             <div className="flex items-center gap-3 mb-5">
               <SchoolLogo className="w-10 h-10" />
               <div>
-                <h3 style={{ color: GREEN }} className="font-serif font-bold text-xl sm:text-2xl">
+                <h3 style={{ color: GREEN }} className="font-serif font-bold text-lg sm:text-2xl">
                   Admission Enquiry
                 </h3>
                 <p className="text-gray-500 text-xs">
@@ -1753,7 +1898,7 @@ export default function App() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleEnquirySubmit} className="space-y-3.5">
+              <form onSubmit={handleEnquirySubmit} className="space-y-3 sm:space-y-3.5">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">
                     Student's Full Name *
@@ -1855,36 +2000,38 @@ export default function App() {
             className="bg-white rounded-xl shadow-2xl max-w-2xl w-full overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-[#14452f] text-white p-4 flex items-center justify-between">
+            <div className="bg-[#14452f] text-white p-3.5 sm:p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <SchoolLogo className="w-8 h-8" />
-                <h3 className="font-serif font-bold text-lg">
-                  Virtual Campus Tour • Gyanodaya Public School, Bagodar
+                <SchoolLogo className="w-7 h-7 sm:w-8 sm:h-8" />
+                <h3 className="font-serif font-bold text-sm sm:text-lg truncate">
+                  Virtual Campus Tour • GPS Bagodar
                 </h3>
               </div>
               <button
                 onClick={() => setTourModalOpen(false)}
-                className="text-white/80 hover:text-white text-2xl font-bold cursor-pointer"
+                className="text-white/80 hover:text-white text-2xl font-bold cursor-pointer ml-2"
               >
                 ✕
               </button>
             </div>
             <div className="relative aspect-video bg-black flex items-center justify-center">
               <img
-                src="https://images.unsplash.com/photo-1562774053-701939374585?w=1200&h=675&fit=crop&auto=format"
+                src="https://images.unsplash.com/photo-1562774053-701939374585?w=1200&h=675&fit=crop&auto=format&q=80"
                 alt="Virtual Campus"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover opacity-80"
               />
-              <div className="absolute text-center text-white px-6">
-                <div className="w-16 h-16 rounded-full bg-[#c59a3f] text-white flex items-center justify-center mx-auto mb-3 shadow-xl animate-pulse">
-                  <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <div className="absolute text-center text-white px-4 sm:px-6">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#c59a3f] text-white flex items-center justify-center mx-auto mb-2.5 sm:mb-3 shadow-xl animate-pulse">
+                  <svg className="w-6 h-6 sm:w-8 sm:h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
-                <h4 className="font-serif font-bold text-xl drop-shadow">
+                <h4 className="font-serif font-bold text-lg sm:text-xl drop-shadow">
                   Interactive 360° Campus Tour
                 </h4>
-                <p className="text-xs sm:text-sm text-gray-200 mt-1 max-w-md mx-auto">
+                <p className="text-xs sm:text-sm text-gray-200 mt-1 max-w-md mx-auto hidden xs:block">
                   Experience our sprawling sports grounds, high-tech science laboratories, smart auditoriums, and lush campus quad.
                 </p>
                 <button
@@ -1893,9 +2040,9 @@ export default function App() {
                     setAdmissionModalOpen(true);
                   }}
                   style={{ backgroundColor: GOLD }}
-                  className="mt-4 text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded shadow-lg hover:brightness-110 cursor-pointer"
+                  className="mt-3 sm:mt-4 text-white text-[11px] sm:text-xs font-bold uppercase tracking-wider px-4 sm:px-5 py-2 sm:py-2.5 rounded shadow-lg hover:brightness-110 cursor-pointer"
                 >
-                  Schedule an In-Person Campus Visit
+                  Schedule Campus Visit
                 </button>
               </div>
             </div>
@@ -1910,7 +2057,7 @@ export default function App() {
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           aria-label="Scroll to top"
-          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-[#14452f] text-[#dfb455] shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer border-2 border-[#dfb455] group"
+          className="fixed bottom-16 sm:bottom-20 md:bottom-6 right-4 sm:right-6 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#14452f] text-[#dfb455] shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer border-2 border-[#dfb455] group"
         >
           {/* Circular SVG scroll progress indicator */}
           <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
@@ -1925,11 +2072,60 @@ export default function App() {
               className="transition-all duration-150"
             />
           </svg>
-          <svg className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
           </svg>
         </button>
       )}
+
+      {/* ======================================================== */}
+      {/* 15. MOBILE STICKY QUICK ACTION BAR (CONVERSION OPTIMIZED) */}
+      {/* ======================================================== */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0e3322]/98 backdrop-blur-md border-t border-[#1f5f40] px-2 py-1.5 flex items-center justify-around shadow-2xl">
+        <a
+          href="tel:+919431377488"
+          className="flex flex-col items-center justify-center gap-0.5 text-gray-200 hover:text-[#dfb455] py-1 px-2.5 rounded-lg active:scale-95 transition-transform"
+        >
+          <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          <span className="text-[10px] font-medium tracking-tight">Call Us</span>
+        </a>
+
+        <a
+          href="https://wa.me/919431377488"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center justify-center gap-0.5 text-gray-200 hover:text-emerald-400 py-1 px-2.5 rounded-lg active:scale-95 transition-transform"
+        >
+          <svg className="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.632.062-.976-.051-.309-.101-.689-.234-1.196-.453-2.144-.925-3.535-3.111-3.642-3.255-.106-.144-.872-1.159-.872-2.212 0-1.053.548-1.57.742-1.785.195-.214.424-.268.566-.268.143 0 .285.002.408.008.131.006.305-.05.477.362.179.428.611 1.488.665 1.595.054.107.089.232.018.375-.071.144-.107.233-.213.357-.107.125-.224.279-.32.375-.107.107-.219.224-.094.438.125.214.556.915 1.193 1.482.82.731 1.512.958 1.726 1.065.214.107.339.089.464-.054.125-.143.536-.625.679-.839.143-.214.286-.179.479-.107.195.071 1.23.58 1.443.687.214.107.357.161.41.25.054.089.054.518-.09.923z" />
+          </svg>
+          <span className="text-[10px] font-medium tracking-tight">WhatsApp</span>
+        </a>
+
+        <a
+          href="#about"
+          className="flex flex-col items-center justify-center gap-0.5 text-gray-200 hover:text-[#dfb455] py-1 px-2.5 rounded-lg active:scale-95 transition-transform"
+        >
+          <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span className="text-[10px] font-medium tracking-tight">Campus</span>
+        </a>
+
+        <button
+          onClick={() => setAdmissionModalOpen(true)}
+          style={{ backgroundColor: GOLD }}
+          className="flex items-center gap-1 text-white font-bold text-[11px] px-3 py-1.5 rounded-md shadow-md active:scale-95 transition-transform cursor-pointer"
+        >
+          <span>Apply</span>
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </button>
+      </div>
 
     </div>
   );
