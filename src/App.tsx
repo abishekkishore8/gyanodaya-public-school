@@ -1,5 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 
+import type {
+  FormSubmissionItem,
+  ImageAssetItem,
+  ImageAssetsDocument,
+  JobPosition,
+  NoticeCategoryData,
+  NoticeItemData,
+  SiteContentDocument,
+  UploadedImageResponse,
+} from "./shared/data";
+
 // Demo high-resolution school & campus photography
 const HERO_SLIDES = [
   {
@@ -28,221 +39,195 @@ const HERO_SLIDES = [
   },
 ];
 
+const INITIAL_IMAGE_ASSETS: ImageAssetsDocument = {
+  heroSlides: HERO_SLIDES.map((slide, index) => ({
+    id: `hero-${index + 1}`,
+    section: "hero",
+    label: `Hero Slide ${index + 1}`,
+    url: slide.img,
+    alt: slide.headline,
+  })),
+  academicBanners: [
+    {
+      id: "academics-all",
+      section: "academics",
+      label: "Academics Banner - All",
+      url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1000&h=700&fit=crop&auto=format&q=80",
+      alt: "Holistic learning classroom",
+    },
+    {
+      id: "academics-pre-primary",
+      section: "academics",
+      label: "Academics Banner - Pre Primary",
+      url: "https://images.unsplash.com/photo-1587691592099-24045742c181?w=1000&h=700&fit=crop&auto=format&q=80",
+      alt: "Pre primary classroom",
+    },
+    {
+      id: "academics-primary",
+      section: "academics",
+      label: "Academics Banner - Primary",
+      url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1000&h=700&fit=crop&auto=format&q=80",
+      alt: "Primary students learning",
+    },
+    {
+      id: "academics-middle",
+      section: "academics",
+      label: "Academics Banner - Middle",
+      url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1000&h=700&fit=crop&auto=format&q=80",
+      alt: "Middle school students in class",
+    },
+    {
+      id: "academics-senior",
+      section: "academics",
+      label: "Academics Banner - Senior",
+      url: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1000&h=700&fit=crop&auto=format&q=80",
+      alt: "Senior secondary students",
+    },
+  ],
+  facilities: [
+    {
+      id: "facility-1",
+      section: "facilities",
+      label: "Facility - Smart Classrooms",
+      url: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=420&fit=crop&auto=format",
+      alt: "Smart classroom",
+    },
+    {
+      id: "facility-2",
+      section: "facilities",
+      label: "Facility - STEM Labs",
+      url: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=420&fit=crop&auto=format",
+      alt: "Science lab",
+    },
+    {
+      id: "facility-3",
+      section: "facilities",
+      label: "Facility - Library",
+      url: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&h=420&fit=crop&auto=format",
+      alt: "Library interior",
+    },
+    {
+      id: "facility-4",
+      section: "facilities",
+      label: "Facility - Transport",
+      url: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=600&h=420&fit=crop&auto=format",
+      alt: "School transport",
+    },
+  ],
+  gallery: [
+    {
+      id: "gallery-1",
+      section: "gallery",
+      label: "Gallery - Classroom Discussions",
+      url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=900&h=675&fit=crop&auto=format&q=80",
+      alt: "Interactive classroom discussions",
+    },
+    {
+      id: "gallery-2",
+      section: "gallery",
+      label: "Gallery - Library Research",
+      url: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=900&h=675&fit=crop&auto=format&q=80",
+      alt: "Library research",
+    },
+    {
+      id: "gallery-3",
+      section: "gallery",
+      label: "Gallery - STEM Fair",
+      url: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=900&h=675&fit=crop&auto=format&q=80",
+      alt: "STEM fair",
+    },
+    {
+      id: "gallery-4",
+      section: "gallery",
+      label: "Gallery - Cultural Celebration",
+      url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=900&h=675&fit=crop&auto=format&q=80",
+      alt: "Cultural celebration",
+    },
+    {
+      id: "gallery-5",
+      section: "gallery",
+      label: "Gallery - Sports Day",
+      url: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&h=675&fit=crop&auto=format&q=80",
+      alt: "Sports day",
+    },
+    {
+      id: "gallery-6",
+      section: "gallery",
+      label: "Gallery - Green Campus",
+      url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&h=675&fit=crop&auto=format&q=80",
+      alt: "Green campus",
+    },
+  ],
+  misc: [
+    {
+      id: "about-campus",
+      section: "misc",
+      label: "About Section Campus Image",
+      url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&h=700&fit=crop&auto=format&q=80",
+      alt: "Gyanodaya Public School Students and Campus",
+    },
+  ],
+};
+
 const GREEN = "#14452f"; // Dark forest emerald green
 const GOLD = "#c59a3f"; // Warm golden yellow
 const GOLD_TEXT = "#dfb455";
+const NOTICE_TAG_THEMES = {
+  urgent: "bg-red-50 text-red-700 border-red-200",
+  success: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  warning: "bg-amber-50 text-amber-800 border-amber-200",
+  info: "bg-blue-50 text-blue-700 border-blue-200",
+  hiring: "bg-sky-50 text-sky-800 border-sky-200",
+  event: "bg-purple-50 text-purple-700 border-purple-200",
+} as const;
 
-// Custom High-Fidelity Vector Logo ("Awakening of Knowledge")
+type NoticeTagThemeKey = keyof typeof NOTICE_TAG_THEMES;
+
+function getNoticeTagColor(theme: NoticeTagThemeKey) {
+  return NOTICE_TAG_THEMES[theme];
+}
+
+function inferNoticeTagTheme(tag: string, categoryKey: NoticeCategoryData["id"]): NoticeTagThemeKey {
+  const normalizedTag = tag.trim().toUpperCase();
+
+  if (categoryKey === "recruitment") return "hiring";
+  if (categoryKey === "announcements") {
+    if (normalizedTag.includes("EVENT") || normalizedTag.includes("FEST") || normalizedTag.includes("CAMPUS")) return "event";
+    return "success";
+  }
+
+  if (normalizedTag.includes("MEETING") || normalizedTag.includes("DATE") || normalizedTag.includes("WARN")) return "warning";
+  if (normalizedTag.includes("TRANSPORT") || normalizedTag.includes("INFO") || normalizedTag.includes("UPDATE")) return "info";
+  return "urgent";
+}
+
+function normalizeNoticeItem(categoryKey: NoticeCategoryData["id"], item: NoticeItemData): NoticeItemData {
+  const theme = inferNoticeTagTheme(item.tag, categoryKey);
+  return {
+    ...item,
+    tagColor: getNoticeTagColor(theme),
+  };
+}
+
+function normalizeNoticeCategories(categories: NoticeCategoryData[]) {
+  return categories.map((category) => ({
+    ...category,
+    items: category.items.map((item) => normalizeNoticeItem(category.id, item)),
+  }));
+}
+
+const SCHOOL_LOGO_SRC = "/gps_logo-removebg-preview.png";
+
 export function SchoolLogo({ className = "w-12 h-12" }: { className?: string }) {
-  const rays = Array.from({ length: 36 }, (_, i) => i * 10);
-
   return (
-    <div className={`relative flex items-center justify-center shrink-0 ${className}`}>
-      <svg
-        viewBox="0 0 500 500"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full drop-shadow-sm select-none"
-      >
-        <defs>
-          <radialGradient id="sunburstGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#fff3b0" stopOpacity="0.9" />
-            <stop offset="35%" stopColor="#fed766" stopOpacity="0.75" />
-            <stop offset="70%" stopColor="#fec84d" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#fec84d" stopOpacity="0" />
-          </radialGradient>
-
-          <linearGradient id="ribbonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#e23c08" />
-            <stop offset="50%" stopColor="#f0541e" />
-            <stop offset="100%" stopColor="#d83606" />
-          </linearGradient>
-
-          <linearGradient id="goldFoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#fff8b5" />
-            <stop offset="50%" stopColor="#fed766" />
-            <stop offset="100%" stopColor="#e59819" />
-          </linearGradient>
-
-          <linearGradient id="quillGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#d83606" />
-            <stop offset="60%" stopColor="#f25c22" />
-            <stop offset="100%" stopColor="#ff7a3d" />
-          </linearGradient>
-        </defs>
-
-        {/* 1. SUNBURST RAYS BACKGROUND */}
-        <g id="sunburst-rays">
-          {rays.map((deg) => (
-            <polygon
-              key={deg}
-              points="250,250 240,15 260,15"
-              fill="url(#sunburstGrad)"
-              transform={`rotate(${deg} 250 250)`}
-            />
-          ))}
-          <circle cx="250" cy="250" r="140" fill="url(#sunburstGrad)" opacity="0.6" />
-        </g>
-
-        {/* 2. GREEN LAUREL WREATH */}
-        <g id="laurel-wreath" fill="#0c7844" stroke="#095c34" strokeWidth="1">
-          <path d="M152 145 C132 170 120 205 118 245 C116 285 130 325 158 355 C164 362 172 368 180 374 C168 362 140 320 138 270 C136 220 156 172 174 150 Z" />
-          <ellipse cx="140" cy="160" rx="14" ry="24" transform="rotate(-35 140 160)" />
-          <ellipse cx="122" cy="195" rx="14" ry="24" transform="rotate(-20 122 195)" />
-          <ellipse cx="112" cy="235" rx="14" ry="24" transform="rotate(-5 112 235)" />
-          <ellipse cx="114" cy="275" rx="14" ry="24" transform="rotate(12 114 275)" />
-          <ellipse cx="126" cy="315" rx="14" ry="24" transform="rotate(30 126 315)" />
-          <ellipse cx="148" cy="350" rx="14" ry="24" transform="rotate(48 148 350)" />
-          
-          <ellipse cx="160" cy="180" rx="12" ry="20" transform="rotate(-15 160 180)" />
-          <ellipse cx="145" cy="215" rx="12" ry="20" transform="rotate(0 145 215)" />
-          <ellipse cx="140" cy="255" rx="12" ry="20" transform="rotate(15 140 255)" />
-          <ellipse cx="148" cy="295" rx="12" ry="20" transform="rotate(32 148 295)" />
-          <ellipse cx="170" cy="330" rx="12" ry="20" transform="rotate(50 170 330)" />
-
-          <path d="M348 145 C368 170 380 205 382 245 C384 285 370 325 342 355 C336 362 328 368 320 374 C332 362 360 320 362 270 C364 220 344 172 326 150 Z" />
-          <ellipse cx="360" cy="160" rx="14" ry="24" transform="rotate(35 360 160)" />
-          <ellipse cx="378" cy="195" rx="14" ry="24" transform="rotate(20 378 195)" />
-          <ellipse cx="388" cy="235" rx="14" ry="24" transform="rotate(5 388 235)" />
-          <ellipse cx="386" cy="275" rx="14" ry="24" transform="rotate(-12 386 275)" />
-          <ellipse cx="374" cy="315" rx="14" ry="24" transform="rotate(-30 374 315)" />
-          <ellipse cx="352" cy="350" rx="14" ry="24" transform="rotate(-48 352 350)" />
-          
-          <ellipse cx="340" cy="180" rx="12" ry="20" transform="rotate(15 340 180)" />
-          <ellipse cx="355" cy="215" rx="12" ry="20" transform="rotate(0 355 215)" />
-          <ellipse cx="360" cy="255" rx="12" ry="20" transform="rotate(-15 360 255)" />
-          <ellipse cx="352" cy="295" rx="12" ry="20" transform="rotate(-32 352 295)" />
-          <ellipse cx="330" cy="330" rx="12" ry="20" transform="rotate(-50 330 330)" />
-        </g>
-
-        {/* 3. HEAD SILHOUETTE */}
-        <g id="mind-head" transform="translate(205, 120)">
-          <path
-            d="M45 5 C72 5 90 24 90 52 C90 70 82 82 72 90 L72 105 L28 105 L28 92 C20 88 12 78 10 70 L24 70 L24 62 L12 62 L8 50 L18 48 L15 40 L28 40 C28 20 35 5 45 5 Z"
-            fill="#f37023"
-            stroke="#d85207"
-            strokeWidth="3"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M45 14 C65 14 78 28 78 50 C78 64 72 74 64 80 L62 96 L38 96 L38 84 C30 80 24 72 22 66"
-            fill="none"
-            stroke="#ffffff"
-            strokeWidth="4.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </g>
-
-        {/* 4. OPEN BOOK */}
-        <g id="open-book" transform="translate(195, 238)">
-          <path
-            d="M55 24 L5 38 L8 98 L55 84 L102 98 L105 38 Z"
-            fill="#1e184e"
-            stroke="#110d33"
-            strokeWidth="3"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M55 24 L10 38 L14 90 L55 78 Z"
-            fill="#ffffff"
-            stroke="#1e184e"
-            strokeWidth="2.5"
-            strokeLinejoin="round"
-          />
-          <line x1="22" y1="48" x2="48" y2="40" stroke="#1e184e" strokeWidth="1.5" />
-          <line x1="22" y1="58" x2="48" y2="50" stroke="#1e184e" strokeWidth="1.5" />
-          <line x1="23" y1="68" x2="48" y2="60" stroke="#1e184e" strokeWidth="1.5" />
-          <line x1="24" y1="78" x2="48" y2="70" stroke="#1e184e" strokeWidth="1.5" />
-
-          <path
-            d="M55 24 L100 38 L96 90 L55 78 Z"
-            fill="#ffffff"
-            stroke="#1e184e"
-            strokeWidth="2.5"
-            strokeLinejoin="round"
-          />
-          <line x1="62" y1="40" x2="88" y2="48" stroke="#1e184e" strokeWidth="1.5" />
-          <line x1="62" y1="50" x2="88" y2="58" stroke="#1e184e" strokeWidth="1.5" />
-          <line x1="62" y1="60" x2="87" y2="68" stroke="#1e184e" strokeWidth="1.5" />
-          <line x1="62" y1="70" x2="86" y2="78" stroke="#1e184e" strokeWidth="1.5" />
-        </g>
-
-        {/* 5. INK POT & QUILL PEN */}
-        <path
-          d="M239 320 C239 316 244 314 250 314 C256 314 261 316 261 320 L264 332 C264 336 258 338 250 338 C242 338 236 336 236 332 Z"
-          fill="#e65100"
-          stroke="#b23c00"
-          strokeWidth="2"
-        />
-        <rect x="245" y="311" width="10" height="4" rx="1.5" fill="#f57c00" stroke="#b23c00" strokeWidth="1" />
-
-        <path
-          d="M210 324 C230 300 270 260 325 218 C285 240 252 270 236 310 Z"
-          fill="url(#quillGrad)"
-          stroke="#b23c00"
-          strokeWidth="1.5"
-        />
-        <path
-          d="M210 324 C240 285 285 245 325 218 C270 258 245 288 230 322 Z"
-          fill="#ff6e40"
-        />
-
-        {/* 6. RIBBON BANNER */}
-        <g id="ribbon-banner">
-          <path
-            d="M85 365 L40 278 L120 305 L80 340 Z"
-            fill="#e65100"
-            stroke="#bf360c"
-            strokeWidth="1.5"
-          />
-          <polygon points="40,278 120,305 75,320" fill="#f57c00" />
-
-          <path
-            d="M415 365 L460 278 L380 305 L420 340 Z"
-            fill="#e65100"
-            stroke="#bf360c"
-            strokeWidth="1.5"
-          />
-          <polygon points="460,278 380,305 425,320" fill="#f57c00" />
-
-          <path
-            d="M92 320 C110 308 140 308 160 325 C145 345 110 345 92 320 Z"
-            fill="url(#goldFoldGrad)"
-            stroke="#e59819"
-            strokeWidth="1.5"
-          />
-
-          <path
-            d="M408 320 C390 308 360 308 340 325 C355 345 390 345 408 320 Z"
-            fill="url(#goldFoldGrad)"
-            stroke="#e59819"
-            strokeWidth="1.5"
-          />
-
-          <path
-            d="M90 330 C170 345 330 345 410 330 C418 358 412 375 400 385 C320 398 180 398 100 385 C88 375 82 358 90 330 Z"
-            fill="url(#ribbonGrad)"
-            stroke="#c83204"
-            strokeWidth="2"
-          />
-
-          <text
-            x="250"
-            y="368"
-            fill="#ffffff"
-            fontSize="26"
-            fontFamily="'Brush Script MT', 'Great Vibes', 'Caveat', 'Playfair Display', cursive, serif"
-            fontStyle="italic"
-            fontWeight="bold"
-            textAnchor="middle"
-            letterSpacing="1"
-            className="drop-shadow"
-          >
-            Awakening of Knowledge
-          </text>
-        </g>
-      </svg>
+    <div className={`relative flex items-center justify-center shrink-0 overflow-visible ${className}`}>
+      <img
+        src={SCHOOL_LOGO_SRC}
+        alt="Gyanodaya Public School logo"
+        className="block h-full w-full object-contain object-center drop-shadow-sm select-none"
+        loading="eager"
+        decoding="async"
+      />
     </div>
   );
 }
@@ -326,8 +311,8 @@ function AcademicStageIcon({ type, className = "w-6 h-6 text-[#14452f]" }: { typ
   }
 }
 
-// Announcements / News Ticker items
-const ANNOUNCEMENTS = [
+// Default Initial Announcements / News Ticker items
+const INITIAL_ANNOUNCEMENTS = [
   "📢 Admissions Open for Academic Session 2025–26 (Nursery to Class XII) at GPS Bagodar",
   "💼 Faculty Recruitment 2025-26 Active: Walk-in & Online Applications Open for PGT, TGT, PRT",
   "🏆 Gyanodaya Public School students win District Inter-School Science & Math Fair",
@@ -337,13 +322,14 @@ const ANNOUNCEMENTS = [
 ];
 
 const PLAYSTORE_PARENT_APP_URL = "https://play.google.com/store/search?q=gyanodaya+public+school+bagodar&c=apps";
+const DEFAULT_PARENTS_LOGIN_URL = "https://play.google.com/store/search?q=gyanodaya+public+school+bagodar&c=apps";
 
 // Top bar navigation links
 const TOP_NAV = [
   { label: "Notice Board", href: "#notice-board" },
   { label: "Careers & Hiring", href: "#recruitment" },
   { label: "News & Circulars", href: "#notice-board" },
-  { label: "Parents Login", href: PLAYSTORE_PARENT_APP_URL, isExternal: true },
+  { label: "Parents Login", href: DEFAULT_PARENTS_LOGIN_URL, isExternal: true },
 ];
 
 // Main navigation bar links with dropdown submenu structure
@@ -363,6 +349,17 @@ const MAIN_NAV = [
   },
   { label: "NOTICE BOARD", href: "#notice-board" },
   {
+    label: "ONLINE FORMS",
+    href: "#online-forms",
+    hasDropdown: true,
+    subItems: [
+      { label: "Online Admission Form", href: "#online-forms" },
+      { label: "General & Academic Enquiry", href: "#online-forms" },
+      { label: "Book Campus Visit & Tour", href: "#online-forms" },
+      { label: "Download Prospectus & Fees", href: "#online-forms" },
+    ],
+  },
+  {
     label: "FACILITIES",
     href: "#facilities",
     hasDropdown: true,
@@ -380,7 +377,7 @@ const MAIN_NAV = [
     subItems: [
       { label: "Admission Criteria 2025–26", href: "#admissions" },
       { label: "Fee Structure & Guidelines", href: "#admissions" },
-      { label: "Online Admission Enquiry", href: "#admissions" },
+      { label: "Online Admission Form", href: "#online-forms" },
     ],
   },
   { label: "GALLERY", href: "#gallery" },
@@ -716,192 +713,149 @@ const GALLERY_ITEMS = [
   },
 ];
 
-// Notice Board Categories & Filter Tabs
-const NOTICE_TABS = [
-  { id: "all", label: "All Updates", icon: "📌", count: "8" },
-  { id: "notices", label: "Official Circulars", icon: "📄", count: "3" },
-  { id: "announcements", label: "Announcements", icon: "📢", count: "3" },
-  { id: "recruitment", label: "Career & Recruitment", icon: "💼", count: "5" },
-  { id: "exams", label: "Exams & Results", icon: "📝", count: "2" },
-];
-
-export interface NoticeItem {
-  id: string;
-  category: "notices" | "announcements" | "recruitment" | "exams";
-  title: string;
-  refNo: string;
-  date: string;
-  day: string;
-  month: string;
-  year: string;
-  badge: string;
-  badgeColor: "red" | "emerald" | "amber" | "blue" | "purple";
-  isPinned?: boolean;
-  summary: string;
-  fullDetails: string[];
-  fileSize?: string;
-  audience: string;
-  actionText?: string;
-  jobId?: string;
-}
-
-export interface JobPosition {
-  id: string;
-  title: string;
-  dept: string;
-  type: string;
-  vacancies: string;
-  experience: string;
-  qualification: string;
-  payScale: string;
-  deadline: string;
-  location: string;
-  highlights: string[];
-  description: string;
-}
-
-// Official Notices & Announcements Data
-const NOTICES_DATA: NoticeItem[] = [
+// Default 3 Structured Institutional Notice Categories for School Bulletin Board
+const INITIAL_NOTICE_CATEGORIES: NoticeCategoryData[] = [
   {
-    id: "notice-cbse-2025",
-    category: "notices",
-    title: "CBSE Class X & XII Board Examination 2025: Practical & Theory Guidelines",
-    refNo: "GPS/CIR/2025/118",
-    date: "12 Mar 2025",
-    day: "12",
-    month: "MAR",
-    year: "2025",
-    badge: "URGENT",
-    badgeColor: "red",
-    isPinned: true,
-    summary:
-      "Mandatory guidelines for CBSE Class X & XII board examinees regarding admit card collection, reporting protocols, and practical project evaluations.",
-    fullDetails: [
-      "All students appearing for the CBSE Board Examinations 2025 must collect their verified Admit Cards from the Principal's Office between 9:00 AM and 1:30 PM on working days.",
-      "Reporting time at the board examination center is strictly 09:30 AM with proper school uniform and authorized stationery in transparent pouches.",
-      "Special doubt-clearing clinics and subject mentorship will remain operational daily until examination conclusion.",
+    id: "notices",
+    label: "Official Circulars",
+    sublabel: "CBSE & Academic Notices",
+    badge: "3 Updates",
+    items: [
+      {
+        id: "not-1",
+        title: "CBSE Class X & XII Board Exam: Admit Card & Center Protocols",
+        date: "12 Mar 2025",
+        day: "12",
+        month: "MAR",
+        tag: "URGENT",
+        tagColor: "bg-red-50 text-red-700 border-red-200",
+        desc: "Class X & XII admit cards available at Principal Office. Strict 9:30 AM reporting in full school uniform.",
+      },
+      {
+        id: "not-2",
+        title: "Annual Final Examination Datesheet (Classes Nursery to IX)",
+        date: "25 Feb 2025",
+        day: "25",
+        month: "FEB",
+        tag: "EXAMS",
+        tagColor: "bg-amber-50 text-amber-800 border-amber-200",
+        desc: "Final promotional examinations commence 15th March. Detailed syllabus blueprints shared with students.",
+      },
+      {
+        id: "not-3",
+        title: "Revised Safe Bus Routes & Live GPS Tracking App Access",
+        date: "01 Mar 2025",
+        day: "01",
+        month: "MAR",
+        tag: "TRANSPORT",
+        tagColor: "bg-blue-50 text-blue-700 border-blue-200",
+        desc: "Upgraded bus tracking active for Bagodar, Saria, Suriya, Dumri & Atka via the Parents Mobile App.",
+      },
     ],
-    fileSize: "PDF · 1.4 MB",
-    audience: "Class X & XII Students & Parents",
-    actionText: "Download Circular PDF",
   },
   {
-    id: "notice-recruitment-2025",
-    category: "recruitment",
-    title: "Annual Faculty & Staff Recruitment 2025–26: PGT, TGT, PRT & Sports Mentors",
-    refNo: "GPS/HR/2025/034",
-    date: "10 Mar 2025",
-    day: "10",
-    month: "MAR",
-    year: "2025",
-    badge: "HIRING ACTIVE",
-    badgeColor: "emerald",
-    isPinned: true,
-    summary:
-      "Inviting applications from qualified, passionate educators and administrative professionals. Attractive CBSE salary matrix, EPF, free transport & housing aid.",
-    fullDetails: [
-      "Gyanodaya Public School, Bagodar invites experienced and energetic educators for PGT (Physics, Maths, Chemistry), TGT (English, Social Science), PRT (All Subjects), and Physical Education Mentors.",
-      "Candidates must possess appropriate Post-Graduate/Graduate degrees with B.Ed from recognized universities with high English communication proficiency.",
-      "Shortlisted applicants will undergo a written evaluation followed by classroom demo and interview with the Academic Selection Board.",
+    id: "announcements",
+    label: "Announcements",
+    sublabel: "Admissions & Events",
+    badge: "Active",
+    items: [
+      {
+        id: "ann-1",
+        title: "Admissions Open for Session 2025–26 (Nursery to Class XII)",
+        date: "08 Mar 2025",
+        day: "08",
+        month: "MAR",
+        tag: "ADMISSIONS",
+        tagColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
+        desc: "Phase-II Registration live for all grades. Merit scholarships up to 50% for 90%+ scorers & athletes.",
+      },
+      {
+        id: "ann-2",
+        title: "Inter-School Science, Robotics & Mathematical Innovation Fest",
+        date: "04 Mar 2025",
+        day: "04",
+        month: "MAR",
+        tag: "EVENT",
+        tagColor: "bg-purple-50 text-purple-700 border-purple-200",
+        desc: "25+ CBSE schools participating in 120+ working STEM models, robotics displays & quiz competitions.",
+      },
+      {
+        id: "ann-3",
+        title: "Annual Sports Championship & Cultural Heritage Meet 2025",
+        date: "15 Apr 2025",
+        day: "15",
+        month: "APR",
+        tag: "SPORTS",
+        tagColor: "bg-rose-50 text-rose-700 border-rose-200",
+        desc: "Athletic track events, martial arts demo, musical choir, and annual prize distribution ceremony.",
+      },
     ],
-    fileSize: "PDF · 980 KB",
-    audience: "Educators & Job Seekers",
-    actionText: "View Open Positions",
-    jobId: "pgt-physics",
   },
   {
-    id: "notice-admission-guidelines",
-    category: "announcements",
-    title: "Admission Session 2025–26: Phase-II Entrance Test & Registration Open",
-    refNo: "GPS/ADM/2025/082",
-    date: "08 Mar 2025",
-    day: "08",
-    month: "MAR",
-    year: "2025",
-    badge: "NEW",
-    badgeColor: "amber",
-    isPinned: false,
-    summary:
-      "Phase-II Registration for Nursery to Class IX & XI is now live. Limited seats available in Science & Commerce streams with merit scholarships.",
-    fullDetails: [
-      "Online and on-campus registration for the academic session 2025–26 is ongoing. Entrance test for Class I to IX will be conducted on the 3rd Saturday of each month.",
-      "Documents required at the time of admission: Birth Certificate, 4 Passport Photos, Aadhaar Card copy, and Previous Class Report Card / Transfer Certificate.",
-      "Scholarships up to 50% tuition waiver available for students scoring 90%+ in previous annual exams or state-level sports medalists.",
+    id: "recruitment",
+    label: "Latest Recruitment",
+    sublabel: "Faculty & Staff Careers",
+    badge: "5 Positions",
+    items: [
+      {
+        id: "rec-1",
+        title: "PGT – Physics & Mathematics (Classes XI & XII)",
+        date: "30 Apr 2025",
+        day: "30",
+        month: "APR",
+        tag: "CBSE SCALE",
+        tagColor: "bg-sky-50 text-sky-800 border-sky-200",
+        desc: "M.Sc + B.Ed with 3+ yrs experience. Salary: ₹35k–₹55k/mo + EPF + Staff Bus Transit + Housing Aid.",
+      },
+      {
+        id: "rec-2",
+        title: "TGT – English & Social Science (Classes VI to X)",
+        date: "30 Apr 2025",
+        day: "30",
+        month: "APR",
+        tag: "FULL TIME",
+        tagColor: "bg-indigo-50 text-indigo-800 border-indigo-200",
+        desc: "M.A / B.A + B.Ed with fluent English communication. Salary: ₹25k–₹40k/mo + staff bus transit.",
+      },
+      {
+        id: "rec-3",
+        title: "PRT Primary Teachers & Sports Coaches",
+        date: "15 May 2025",
+        day: "15",
+        month: "MAY",
+        tag: "OPENINGS",
+        tagColor: "bg-teal-50 text-teal-800 border-teal-200",
+        desc: "Graduation + D.El.Ed / B.P.Ed. Activity-based discovery teaching and sports coaching roles.",
+      },
     ],
-    fileSize: "PDF · 2.1 MB",
-    audience: "Prospective Parents & Guardians",
-    actionText: "Download Brochure & Form",
-  },
-  {
-    id: "notice-science-exhibition",
-    category: "announcements",
-    title: "Inter-School Science, Robotics & Mathematical Innovation Fest (SRIF 2025)",
-    refNo: "GPS/EVT/2025/065",
-    date: "04 Mar 2025",
-    day: "04",
-    month: "MAR",
-    year: "2025",
-    badge: "CAMPUS EVENT",
-    badgeColor: "blue",
-    summary:
-      "Grand science exhibition featuring 120+ working STEM models, robotics displays, AI demonstrations, and science quiz competitions.",
-    fullDetails: [
-      "Gyanodaya Public School is hosting the District Science & Robotics Innovation Fest. Over 25 CBSE schools from Giridih, Bokaro, and Hazaribagh will participate.",
-      "Parents are cordially invited to visit student exhibitions on Saturday between 10:00 AM and 4:00 PM at the Main Auditorium.",
-      "Chief Guest: Eminent scientists from BIT Mesra and District Education Officers.",
-    ],
-    fileSize: "PDF · 1.1 MB",
-    audience: "All Students, Parents & Guests",
-    actionText: "Download Schedule PDF",
-  },
-  {
-    id: "notice-bus-routes",
-    category: "notices",
-    title: "Revised Safe School Bus Routes & Real-Time GPS Tracking App Access",
-    refNo: "GPS/TRN/2025/019",
-    date: "01 Mar 2025",
-    day: "01",
-    month: "MAR",
-    year: "2025",
-    badge: "TRANSPORT",
-    badgeColor: "purple",
-    summary:
-      "New GPS tracking routes operational for Bagodar, Saria, Suriya, Dumri, Atka & Bishnugarh. Download the Parents App for live bus tracking.",
-    fullDetails: [
-      "Our school transport fleet has been upgraded with automated speed governors, CCTV cameras, and synchronized GPS tracking modules.",
-      "Parents can view live bus movement, estimated arrival timings, and morning pickup notifications through the GPS Parents Mobile App on Google Play.",
-      "For bus route inquiries or driver contact info, please contact Transport In-Charge at +91 94313 77488.",
-    ],
-    fileSize: "PDF · 850 KB",
-    audience: "Bus Commuter Parents",
-    actionText: "Download Route Schedule",
-  },
-  {
-    id: "notice-datesheet-term2",
-    category: "exams",
-    title: "Annual Examination Datesheet 2024–25 for Classes Nursery to VIII & IX",
-    refNo: "GPS/EXAM/2025/098",
-    date: "25 Feb 2025",
-    day: "25",
-    month: "FEB",
-    year: "2025",
-    badge: "EXAM SCHEDULE",
-    badgeColor: "red",
-    summary:
-      "Complete timetable, revision blueprint, and syllabus guidelines for final promotional examinations commencing from 15th March.",
-    fullDetails: [
-      "The Annual Promotional Examinations for Classes Nursery to VIII & IX are scheduled from 15th March to 28th March 2025.",
-      "Maximum marks, syllabus distribution, and sample question paper blueprints have been distributed in classrooms and uploaded to the student portal.",
-      "Result Declaration & Parent-Teacher Meeting (PTM) will take place on 5th April 2025.",
-    ],
-    fileSize: "PDF · 1.6 MB",
-    audience: "Classes Nursery to IX",
-    actionText: "Download Datesheet PDF",
   },
 ];
 
-// Open Career / Recruitment Positions Data
-const RECRUITMENT_POSITIONS: JobPosition[] = [
+// Helper to render Category Icon
+function NoticeCategoryIcon({ id }: { id: string }) {
+  if (id === "notices") {
+    return (
+      <svg className="w-5 h-5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    );
+  }
+  if (id === "announcements") {
+    return (
+      <svg className="w-5 h-5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="w-5 h-5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
+// Default Open Career / Recruitment Positions Data
+const INITIAL_RECRUITMENT_POSITIONS: JobPosition[] = [
   {
     id: "pgt-physics-maths",
     title: "PGT – Physics & Mathematics",
@@ -1003,27 +957,235 @@ const FAQS = [
   },
 ];
 
+const INITIAL_SUBMISSIONS: FormSubmissionItem[] = [
+  {
+    id: "GPS-ADM-8492",
+    type: "admission",
+    title: "Class XI (Science - PCM) Admission",
+    name: "Rahul Kumar Verma",
+    phone: "+91 98351 22419",
+    email: "verma.rahul2010@gmail.com",
+    submittedAt: "10 Mar 2025, 02:45 PM",
+    status: "Pending",
+    details: {
+      "Applying For": "Class XI (Science - PCM with Computer Science)",
+      "Gender": "Male",
+      "Date of Birth": "14-07-2009",
+      "Parent Name": "Suresh Prasad Verma (Govt. Employee)",
+      "Mother Name": "Sunita Devi",
+      "Address": "Near Bus Stand, Bagodar, Giridih",
+      "Previous School": "DAV Public School, 91.4%",
+      "School Bus Transport": "Yes (Route: Bagodar - Sariya)",
+      "Hostel Facility": "No",
+    },
+  },
+  {
+    id: "GPS-VISIT-3104",
+    type: "visit",
+    title: "Campus Tour & STEM Lab Visit",
+    name: "Dr. Ananya Mukherjee",
+    phone: "+91 94311 88320",
+    email: "ananya.m@aiims.edu",
+    submittedAt: "09 Mar 2025, 11:15 AM",
+    status: "Reviewed",
+    details: {
+      "Prospective Grade": "Class VI & Class VIII (2 Children)",
+      "Preferred Date": "18 Mar 2025",
+      "Time Slot": "Morning Slot: 09:30 AM – 11:30 AM",
+      "Visitors Count": "3 Persons",
+      "Key Interest Areas": "Robotics Lab, Science Labs, Library, Sports Ground",
+      "Notes": "Relocating from Kolkata to Giridih district next month.",
+    },
+  },
+  {
+    id: "GPS-ENQ-1940",
+    type: "enquiry",
+    title: "Hostel & Transport Fee Query",
+    name: "Manoj Singh",
+    phone: "+91 87094 55123",
+    email: "manoj.singh.giridih@yahoo.com",
+    submittedAt: "08 Mar 2025, 04:30 PM",
+    status: "Contacted",
+    details: {
+      "Subject": "Fee Structure & Payment Options",
+      "Student Grade": "Grade 9",
+      "Message": "Would like to know the quarterly fee installment schedule and boarding charges for boy hostel.",
+      "Preferred Mode": "WhatsApp / Phone Call",
+      "Best Time": "Evening 4 PM - 7 PM",
+    },
+  },
+];
+
 export default function App() {
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [dataLoadError, setDataLoadError] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSubNavOpen, setMobileSubNavOpen] = useState<string | null>(null);
+  const [useCompactHeader, setUseCompactHeader] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHoveringHero, setIsHoveringHero] = useState(false);
 
+  // Dynamic School Data with API Persistence
+  const [announcements, setAnnouncements] = useState<string[]>(INITIAL_ANNOUNCEMENTS);
+
+  const [noticeCategories, setNoticeCategories] = useState<NoticeCategoryData[]>(INITIAL_NOTICE_CATEGORIES);
+
+  const [recruitmentPositions, setRecruitmentPositions] = useState<JobPosition[]>(INITIAL_RECRUITMENT_POSITIONS);
+  const [imageAssets, setImageAssets] = useState<ImageAssetsDocument>(INITIAL_IMAGE_ASSETS);
+  const [academicSession, setAcademicSession] = useState("2025–26");
+
+  // Admin Authentication & Modal States
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem("gps_admin_logged_in") === "true";
+    } catch {
+      return false;
+    }
+  });
+  const [adminLoginModalOpen, setAdminLoginModalOpen] = useState(false);
+  const [adminDashboardOpen, setAdminDashboardOpen] = useState(false);
+  const [adminTab, setAdminTab] = useState<"ticker" | "notices" | "recruitment" | "images" | "submissions" | "settings">("ticker");
+
+  // Admin Login Credentials State
+  const [adminUsernameInput, setAdminUsernameInput] = useState("");
+  const [adminPasswordInput, setAdminPasswordInput] = useState("");
+  const [adminLoginError, setAdminLoginError] = useState<string | null>(null);
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
+  const [imageUploadState, setImageUploadState] = useState<Record<string, boolean>>({});
+  const [sessionDraft, setSessionDraft] = useState("2025–26");
+  const [parentsLoginUrl, setParentsLoginUrl] = useState(DEFAULT_PARENTS_LOGIN_URL);
+  const [parentsLoginUrlDraft, setParentsLoginUrlDraft] = useState(DEFAULT_PARENTS_LOGIN_URL);
+
+  // Online Forms & Submissions State
+  const [formSubmissions, setFormSubmissions] = useState<FormSubmissionItem[]>(INITIAL_SUBMISSIONS);
+  const [activeFormTab, setActiveFormTab] = useState<"admission" | "enquiry" | "visit" | "prospectus">("admission");
+  
+  // 1. Admission Form State
+  const [admissionForm, setAdmissionForm] = useState({
+    studentName: "",
+    dob: "",
+    gender: "Male",
+    grade: "Class I",
+    stream: "Science (PCM)",
+    session: academicSession,
+    fatherName: "",
+    fatherOccupation: "",
+    motherName: "",
+    motherOccupation: "",
+    phone: "",
+    email: "",
+    address: "",
+    city: "Bagodar, Giridih",
+    prevSchool: "",
+    prevPercentage: "",
+    needTransport: "Yes",
+    needHostel: "No",
+    remarks: "",
+    agreed: true,
+  });
+  const [admissionSubmitting, setAdmissionSubmitting] = useState(false);
+
+  // 2. General Enquiry Form State
+  const [generalEnquiryForm, setGeneralEnquiryForm] = useState({
+    fullName: "",
+    phone: "",
+    email: "",
+    subject: "Fee Structure & Payment Schedule",
+    grade: "Class VI",
+    message: "",
+    contactMode: "Phone Call",
+    bestTime: "Morning (9:00 AM – 12:00 PM)",
+  });
+  const [enquirySubmitting, setEnquirySubmitting] = useState(false);
+
+  // 3. Campus Visit Form State
+  const [campusVisitForm, setCampusVisitForm] = useState({
+    visitorName: "",
+    phone: "",
+    email: "",
+    childGrade: "Class VI",
+    visitDate: "",
+    timeSlot: "Morning Slot (09:30 AM – 11:30 AM)",
+    visitorsCount: "2 Persons",
+    facilities: ["Smart Classrooms", "Science & STEM Labs", "Library"],
+    specialRequests: "",
+  });
+  const [visitSubmitting, setVisitSubmitting] = useState(false);
+
+  // 4. Prospectus Form State
+  const [prospectusForm, setProspectusForm] = useState({
+    parentName: "",
+    phone: "",
+    email: "",
+    grade: "Class I – V (Primary)",
+  });
+  const [prospectusSubmitting, setProspectusSubmitting] = useState(false);
+
+  // Confirmation Success Dialog
+  const [submissionSuccessData, setSubmissionSuccessData] = useState<{
+    id: string;
+    type: string;
+    title: string;
+    applicantName: string;
+    phone: string;
+    date: string;
+    keyDetails: { label: string; value: string }[];
+  } | null>(null);
+
+  // Submissions Admin Filter & Search
+  const [submissionsFilter, setSubmissionsFilter] = useState<"all" | "admission" | "enquiry" | "visit" | "prospectus">("all");
+  const [submissionsSearch, setSubmissionsSearch] = useState("");
+
+  // Notice Item Form Modal / Editor State
+  const [editingCategoryKey, setEditingCategoryKey] = useState<"notices" | "announcements" | "recruitment">("notices");
+  const [noticeFormModalOpen, setNoticeFormModalOpen] = useState(false);
+  const [editingNoticeId, setEditingNoticeId] = useState<string | null>(null);
+  const [noticeFormData, setNoticeFormData] = useState({
+    title: "",
+    date: "15 Mar 2025",
+    day: "15",
+    month: "MAR",
+    tag: "URGENT",
+    tagTheme: "urgent" as NoticeTagThemeKey,
+    desc: "",
+  });
+
+  // Announcement Ticker Editor State
+  const [newAnnouncementText, setNewAnnouncementText] = useState("");
+  const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState<number | null>(null);
+  const [editingAnnouncementText, setEditingAnnouncementText] = useState("");
+
+  // Job Editor State
+  const [jobEditorModalOpen, setJobEditorModalOpen] = useState(false);
+  const [editingJobId, setEditingJobId] = useState<string | null>(null);
+  const [jobEditorFormData, setJobEditorFormData] = useState<JobPosition>({
+    id: "",
+    title: "",
+    dept: "Senior Secondary",
+    type: "Full Time · Permanent",
+    vacancies: "1 Position",
+    experience: "2+ Years CBSE Experience",
+    qualification: "Post-Graduation + B.Ed",
+    payScale: "CBSE 7th Pay Matrix + EPF",
+    deadline: "30 April 2025",
+    location: "Bagodar Campus, Giridih",
+    highlights: ["Staff Transport", "EPF Benefits"],
+    description: "",
+  });
+
   // Interactive Modals & States
   const [admissionModalOpen, setAdmissionModalOpen] = useState(false);
-  const [tourModalOpen, setTourModalOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("all");
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Notice Board & Recruitment State
-  const [noticeFilter, setNoticeFilter] = useState("all");
-  const [noticeSearch, setNoticeSearch] = useState("");
-  const [selectedNotice, setSelectedNotice] = useState<NoticeItem | null>(null);
+  // Notice Board & Recruitment Modal State
+  const [selectedNotice, setSelectedNotice] = useState<NoticeItemData | null>(null);
+  const [selectedNoticeCategory, setSelectedNoticeCategory] = useState<NoticeCategoryData | null>(null);
   const [jobModalOpen, setJobModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobPosition | null>(null);
   const [jobForm, setJobForm] = useState({
@@ -1049,18 +1211,188 @@ export default function App() {
   const [newsletterEmail, setNewsletterEmail] = useState("");
 
   const sliderTimerRef = useRef<number | null>(null);
+  const formSubmissionsRef = useRef<FormSubmissionItem[]>(formSubmissions);
+
+  const openNoticeArchive = (categoryId: "notices" | "announcements" | "recruitment") => {
+    const category = noticeCategories.find((item) => item.id === categoryId);
+    if (!category) {
+      return;
+    }
+    setSelectedNoticeCategory(category);
+  };
+
+  useEffect(() => {
+    formSubmissionsRef.current = formSubmissions;
+  }, [formSubmissions]);
+
+  const persistSiteContent = async (nextContent: SiteContentDocument) => {
+    const response = await fetch("/api/site-content", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(nextContent),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save site content.");
+    }
+
+    return (await response.json()) as SiteContentDocument;
+  };
+
+  const applySiteContent = (content: SiteContentDocument) => {
+    setAcademicSession(content.academicSession || "2025–26");
+    setSessionDraft(content.academicSession || "2025–26");
+    setParentsLoginUrl(content.parentsLoginUrl || DEFAULT_PARENTS_LOGIN_URL);
+    setParentsLoginUrlDraft(content.parentsLoginUrl || DEFAULT_PARENTS_LOGIN_URL);
+    setAnnouncements(content.announcements);
+    setNoticeCategories(normalizeNoticeCategories(content.noticeCategories));
+    setRecruitmentPositions(content.recruitmentPositions);
+    setFormSubmissions(content.formSubmissions);
+    setImageAssets(content.imageAssets);
+    setAdmissionForm((prev) => ({
+      ...prev,
+      session: content.academicSession || "2025–26",
+    }));
+  };
+
+  const saveSiteContent = async (nextContent: SiteContentDocument, successMessage?: string) => {
+    const savedContent = await persistSiteContent(nextContent);
+    applySiteContent(savedContent);
+    if (successMessage) {
+      showToast(successMessage);
+    }
+    return savedContent;
+  };
+
+  const buildSiteContent = (overrides?: Partial<SiteContentDocument>): SiteContentDocument => ({
+    academicSession,
+    parentsLoginUrl,
+    announcements,
+    noticeCategories,
+    recruitmentPositions,
+    formSubmissions,
+    imageAssets,
+    ...overrides,
+  });
+
+  const saveFormSubmissions = async (
+    updater: (current: FormSubmissionItem[]) => FormSubmissionItem[],
+    successMessage?: string,
+  ) => {
+    const nextSubmissions = updater(formSubmissionsRef.current);
+    return saveSiteContent(buildSiteContent({ formSubmissions: nextSubmissions }), successMessage);
+  };
+
+  const getImageAsset = (collection: keyof ImageAssetsDocument, id: string) => {
+    const item = imageAssets[collection].find((asset) => asset.id === id);
+    return item || INITIAL_IMAGE_ASSETS[collection].find((asset) => asset.id === id);
+  };
+
+  const heroSlides = HERO_SLIDES.map((slide, index) => {
+    const asset = getImageAsset("heroSlides", `hero-${index + 1}`);
+    return {
+      ...slide,
+      img: asset?.url || slide.img,
+      alt: asset?.alt || slide.headline,
+    };
+  });
+  const safeActiveSlide = heroSlides.length === 0 ? 0 : Math.min(activeSlide, heroSlides.length - 1);
+  const currentHeroSlide = heroSlides[safeActiveSlide] || HERO_SLIDES[0];
+
+  const academicCardsData = Object.fromEntries(
+    Object.entries(ACADEMICS_CARDS_DATA).map(([key, value]) => {
+      const assetId = key === "all" ? "academics-all" : `academics-${key}`;
+      const asset = getImageAsset("academicBanners", assetId);
+      return [
+        key,
+        {
+          ...value,
+          stageBanner: {
+            ...value.stageBanner,
+            image: asset?.url || value.stageBanner.image,
+          },
+        },
+      ];
+    }),
+  ) as typeof ACADEMICS_CARDS_DATA;
+
+  const facilitiesList = FACILITIES_LIST.map((facility, index) => {
+    const asset = getImageAsset("facilities", `facility-${index + 1}`);
+    return {
+      ...facility,
+      img: asset?.url || facility.img,
+    };
+  });
+
+  const galleryItems = imageAssets.gallery.map((asset, index) => {
+    const fallback = GALLERY_ITEMS[index];
+    const cleanTitle = asset.label.replace(/^Gallery\s*-\s*/i, "").trim();
+
+    return {
+      img: asset.url,
+      title: cleanTitle || fallback?.title || `Gallery Photo ${index + 1}`,
+      category: fallback?.category || "Campus Life",
+      desc: asset.alt || fallback?.desc || "Moments from Gyanodaya Public School.",
+    };
+  });
+
+  const aboutCampusImage = getImageAsset("misc", "about-campus");
+  const campusSupportImages = imageAssets.misc;
 
   // Auto-play Hero slider every 5.5 seconds (pauses on hover)
   useEffect(() => {
     if (isHoveringHero) return;
     sliderTimerRef.current = window.setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+      setActiveSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5500);
 
     return () => {
       if (sliderTimerRef.current) clearInterval(sliderTimerRef.current);
     };
-  }, [isHoveringHero]);
+  }, [heroSlides.length, isHoveringHero]);
+
+  useEffect(() => {
+    if (heroSlides.length === 0) {
+      if (activeSlide !== 0) {
+        setActiveSlide(0);
+      }
+      return;
+    }
+
+    if (activeSlide >= heroSlides.length) {
+      setActiveSlide(0);
+    }
+  }, [activeSlide, heroSlides.length]);
+
+  useEffect(() => {
+    const { body, documentElement } = document;
+    const previousBodyOverflow = body.style.overflow;
+    const previousBodyTouchAction = body.style.touchAction;
+    const previousHtmlOverflow = documentElement.style.overflow;
+
+    if (mobileMenuOpen) {
+      body.style.overflow = "hidden";
+      body.style.touchAction = "none";
+      documentElement.style.overflow = "hidden";
+    }
+
+    return () => {
+      body.style.overflow = previousBodyOverflow;
+      body.style.touchAction = previousBodyTouchAction;
+      documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    const updateHeaderMode = () => {
+      setUseCompactHeader(window.innerWidth < 1680);
+    };
+
+    updateHeaderMode();
+    window.addEventListener("resize", updateHeaderMode);
+
+    return () => window.removeEventListener("resize", updateHeaderMode);
+  }, []);
 
   // Track scroll position & calculate scroll percentage
   useEffect(() => {
@@ -1081,23 +1413,524 @@ export default function App() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (lightboxIndex !== null) {
         if (e.key === "Escape") setLightboxIndex(null);
-        if (e.key === "ArrowRight") setLightboxIndex((prev) => (prev! + 1) % GALLERY_ITEMS.length);
-        if (e.key === "ArrowLeft") setLightboxIndex((prev) => (prev! - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length);
+        if (e.key === "ArrowRight") setLightboxIndex((prev) => (prev! + 1) % galleryItems.length);
+        if (e.key === "ArrowLeft") setLightboxIndex((prev) => (prev! - 1 + galleryItems.length) % galleryItems.length);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [lightboxIndex]);
 
+  useEffect(() => {
+    const loadSiteContent = async () => {
+      try {
+        const response = await fetch("/api/site-content");
+        if (!response.ok) throw new Error("Failed to load site content.");
+        const data = (await response.json()) as SiteContentDocument;
+        applySiteContent(data);
+        setDataLoadError(null);
+      } catch (error) {
+        setDataLoadError(error instanceof Error ? error.message : "Failed to load site content.");
+        showToast("⚠️ Could not connect to gps_school_website. Content editing is disabled until the database is reachable.");
+      } finally {
+        setIsDataLoading(false);
+      }
+    };
+
+    void loadSiteContent();
+  }, []);
+
+  // URL Hash & Link Listener for Admin Access (#admin, #admin-login, ?admin=true)
+  useEffect(() => {
+    const checkAdminUrlAccess = () => {
+      const hash = window.location.hash.toLowerCase();
+      const search = new URLSearchParams(window.location.search);
+      const isParamAdmin =
+        search.get("admin") === "true" ||
+        search.get("admin") === "login" ||
+        search.get("admin") === "portal" ||
+        search.get("admin") === "dashboard";
+
+      if (
+        hash === "#admin" ||
+        hash === "#admin-login" ||
+        hash === "#admin-portal" ||
+        hash === "#admin-dashboard" ||
+        hash === "#dashboard" ||
+        hash === "#adminlogin" ||
+        isParamAdmin
+      ) {
+        if (isAdminLoggedIn) {
+          setAdminDashboardOpen(true);
+        } else {
+          setAdminLoginModalOpen(true);
+        }
+      }
+    };
+
+    checkAdminUrlAccess();
+    window.addEventListener("hashchange", checkAdminUrlAccess);
+    window.addEventListener("popstate", checkAdminUrlAccess);
+
+    return () => {
+      window.removeEventListener("hashchange", checkAdminUrlAccess);
+      window.removeEventListener("popstate", checkAdminUrlAccess);
+    };
+  }, [isAdminLoggedIn]);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
+  const handleUpdateImageAsset = async (collection: keyof ImageAssetsDocument, assetId: string, updates: Partial<ImageAssetItem>) => {
+    const nextAssets: ImageAssetsDocument = {
+      ...imageAssets,
+      [collection]: imageAssets[collection].map((asset) => (asset.id === assetId ? { ...asset, ...updates } : asset)),
+    };
+    try {
+      await saveSiteContent(buildSiteContent({ imageAssets: nextAssets }), "🖼️ Image updated successfully.");
+    } catch {
+      showToast("⚠️ Image update failed because gps_school_website could not be updated.");
+    }
+  };
+
+  const handleUploadImageAsset = async (collection: keyof ImageAssetsDocument, assetId: string, file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    setImageUploadState((prev) => ({ ...prev, [assetId]: true }));
+    try {
+      const response = await fetch("/api/uploads/image", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: "Upload failed." }));
+        throw new Error(errorData.message || "Upload failed.");
+      }
+      const uploaded = (await response.json()) as UploadedImageResponse;
+      await handleUpdateImageAsset(collection, assetId, { url: uploaded.url });
+    } catch (error) {
+      showToast(error instanceof Error ? `⚠️ ${error.message}` : "⚠️ Image upload failed.");
+    } finally {
+      setImageUploadState((prev) => ({ ...prev, [assetId]: false }));
+    }
+  };
+
+  const handleAddGalleryImage = async (file: File) => {
+    setImageUploadState((prev) => ({ ...prev, galleryNew: true }));
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await fetch("/api/uploads/image", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: "Upload failed." }));
+        throw new Error(errorData.message || "Upload failed.");
+      }
+
+      const uploaded = (await response.json()) as UploadedImageResponse;
+      const nextGallery = [
+        {
+          id: `gallery-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          section: "gallery" as const,
+          label: `Gallery - ${file.name.replace(/\.[^.]+$/, "") || "New Photo"}`,
+          url: uploaded.url,
+          alt: file.name.replace(/\.[^.]+$/, "") || "School gallery image",
+        },
+        ...imageAssets.gallery,
+      ];
+
+      await saveSiteContent(buildSiteContent({ imageAssets: { ...imageAssets, gallery: nextGallery } }), "🖼️ New gallery photo added.");
+    } catch (error) {
+      showToast(error instanceof Error ? `⚠️ ${error.message}` : "⚠️ Gallery upload failed.");
+    } finally {
+      setImageUploadState((prev) => ({ ...prev, galleryNew: false }));
+    }
+  };
+
+  const handleDeleteGalleryImage = async (assetId: string) => {
+    const nextGallery = imageAssets.gallery.filter((asset) => asset.id !== assetId);
+
+    try {
+      await saveSiteContent(buildSiteContent({ imageAssets: { ...imageAssets, gallery: nextGallery } }), "🗑️ Gallery photo removed.");
+    } catch {
+      showToast("⚠️ Gallery deletion failed because gps_school_website could not be updated.");
+    }
+  };
+
+  const handleSaveParentsLoginUrl = async () => {
+    const nextUrl = parentsLoginUrlDraft.trim();
+
+    if (!nextUrl) {
+      showToast("⚠️ Parents login link cannot be empty.");
+      return;
+    }
+
+    try {
+      new URL(nextUrl);
+    } catch {
+      showToast("⚠️ Please enter a valid parents login URL.");
+      return;
+    }
+
+    try {
+      await saveSiteContent(buildSiteContent({ parentsLoginUrl: nextUrl }), "🔗 Parents login link updated.");
+      setParentsLoginUrl(nextUrl);
+      setParentsLoginUrlDraft(nextUrl);
+    } catch {
+      showToast("⚠️ Parents login link could not be updated in gps_school_website.");
+    }
+  };
+
+  const handleSaveAcademicSession = async () => {
+    const nextSession = sessionDraft.trim();
+
+    if (!nextSession) {
+      showToast("⚠️ Academic session cannot be empty.");
+      return;
+    }
+
+    try {
+      await saveSiteContent(buildSiteContent({ academicSession: nextSession }), "📘 Academic session updated.");
+      setAcademicSession(nextSession);
+      setSessionDraft(nextSession);
+      setAdmissionForm((prev) => ({ ...prev, session: nextSession }));
+    } catch {
+      showToast("⚠️ Academic session could not be updated in gps_school_website.");
+    }
+  };
+
+  // Online Application & Enquiry Form Submission Handlers
+  const handleOnlineAdmissionSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const submittedAdmissionForm = {
+      ...admissionForm,
+      studentName: String(formData.get("studentName") || admissionForm.studentName).trim(),
+      dob: String(formData.get("dob") || admissionForm.dob),
+      gender: String(formData.get("gender") || admissionForm.gender),
+      grade: String(formData.get("grade") || admissionForm.grade),
+      stream: String(formData.get("stream") || admissionForm.stream),
+      fatherName: String(formData.get("fatherName") || admissionForm.fatherName).trim(),
+      fatherOccupation: String(formData.get("fatherOccupation") || admissionForm.fatherOccupation).trim(),
+      motherName: String(formData.get("motherName") || admissionForm.motherName).trim(),
+      phone: String(formData.get("phone") || admissionForm.phone).trim(),
+      email: String(formData.get("email") || admissionForm.email).trim(),
+      address: String(formData.get("address") || admissionForm.address).trim(),
+      city: String(formData.get("city") || admissionForm.city).trim(),
+      prevSchool: String(formData.get("prevSchool") || admissionForm.prevSchool).trim(),
+      prevPercentage: String(formData.get("prevPercentage") || admissionForm.prevPercentage).trim(),
+      needTransport: String(formData.get("needTransport") || admissionForm.needTransport),
+      agreed: Boolean(formData.get("agreed")),
+    };
+    if (!submittedAdmissionForm.studentName || !submittedAdmissionForm.phone || !submittedAdmissionForm.fatherName) {
+      showToast("⚠️ Please fill in student name, primary phone, and father/guardian name.");
+      return;
+    }
+    setAdmissionForm(submittedAdmissionForm);
+    setAdmissionSubmitting(true);
+    setTimeout(() => {
+      const refId = `GPS-ADM-${Math.floor(1000 + Math.random() * 9000)}`;
+      const streamSuffix =
+        submittedAdmissionForm.grade.includes("XI") || submittedAdmissionForm.grade.includes("XII")
+          ? ` (${submittedAdmissionForm.stream})`
+          : "";
+
+      const newSubmission: FormSubmissionItem = {
+        id: refId,
+        type: "admission",
+        title: `${submittedAdmissionForm.grade}${streamSuffix} Admission Application`,
+        name: submittedAdmissionForm.studentName,
+        phone: submittedAdmissionForm.phone,
+        email: submittedAdmissionForm.email || undefined,
+        submittedAt: new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }),
+        status: "Pending",
+        details: {
+          "Student Name": submittedAdmissionForm.studentName,
+          "Applying For": `${submittedAdmissionForm.grade}${streamSuffix}`,
+          "Gender": submittedAdmissionForm.gender,
+          "Date of Birth": submittedAdmissionForm.dob || "Not specified",
+          "Session": submittedAdmissionForm.session,
+          "Father/Guardian": `${submittedAdmissionForm.fatherName} (${submittedAdmissionForm.fatherOccupation || "Not specified"})`,
+          "Mother Name": submittedAdmissionForm.motherName || "Not specified",
+          "Phone / WhatsApp": submittedAdmissionForm.phone,
+          "Email": submittedAdmissionForm.email || "Not specified",
+          "Residential Address": `${submittedAdmissionForm.address}, ${submittedAdmissionForm.city}`,
+          "Previous School": submittedAdmissionForm.prevSchool ? `${submittedAdmissionForm.prevSchool} (Marks: ${submittedAdmissionForm.prevPercentage || "N/A"})` : "New Admission / Pre-Primary",
+          "School Bus Transport": submittedAdmissionForm.needTransport,
+          "Hostel Facility": submittedAdmissionForm.needHostel,
+          "Remarks / Talents": submittedAdmissionForm.remarks.trim() || "None",
+        },
+      };
+
+      setAdmissionSubmitting(false);
+
+      setSubmissionSuccessData({
+        id: refId,
+        type: "Online Admission Application",
+        title: `Application for ${submittedAdmissionForm.grade}${streamSuffix}`,
+        applicantName: submittedAdmissionForm.studentName,
+        phone: submittedAdmissionForm.phone,
+        date: newSubmission.submittedAt,
+        keyDetails: [
+          { label: "Reference Number", value: refId },
+          { label: "Target Class / Stream", value: `${submittedAdmissionForm.grade}${streamSuffix}` },
+          { label: "Parent / Contact", value: `${submittedAdmissionForm.fatherName} (${submittedAdmissionForm.phone})` },
+          { label: "School Transport", value: submittedAdmissionForm.needTransport },
+          { label: "Next Step", value: "Counselor callback & campus document verification within 24h" },
+        ],
+      });
+
+      void saveFormSubmissions((current) => [newSubmission, ...current], `🎉 Admission application ${refId} submitted successfully!`).catch(() => {
+        showToast("⚠️ Admission submission failed because gps_school_website could not be updated.");
+      });
+    }, 800);
+  };
+
+  const handleGeneralEnquirySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const submittedEnquiryForm = {
+      ...generalEnquiryForm,
+      fullName: String(formData.get("fullName") || generalEnquiryForm.fullName).trim(),
+      phone: String(formData.get("phone") || generalEnquiryForm.phone).trim(),
+      email: String(formData.get("email") || generalEnquiryForm.email).trim(),
+      subject: String(formData.get("subject") || generalEnquiryForm.subject),
+      contactMode: String(formData.get("contactMode") || generalEnquiryForm.contactMode),
+      message: String(formData.get("message") || generalEnquiryForm.message).trim(),
+    };
+    if (!submittedEnquiryForm.fullName || !submittedEnquiryForm.phone || !submittedEnquiryForm.message) {
+      showToast("⚠️ Please provide full name, contact number, and your message.");
+      return;
+    }
+    setGeneralEnquiryForm(submittedEnquiryForm);
+    setEnquirySubmitting(true);
+    setTimeout(() => {
+      const refId = `GPS-ENQ-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newSubmission: FormSubmissionItem = {
+        id: refId,
+        type: "enquiry",
+        title: submittedEnquiryForm.subject,
+        name: submittedEnquiryForm.fullName,
+        phone: submittedEnquiryForm.phone,
+        email: submittedEnquiryForm.email || undefined,
+        submittedAt: new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }),
+        status: "Pending",
+        details: {
+          "Inquirer Name": submittedEnquiryForm.fullName,
+          "Subject Topic": submittedEnquiryForm.subject,
+          "Grade of Interest": submittedEnquiryForm.grade,
+          "Contact Number": submittedEnquiryForm.phone,
+          "Email Address": submittedEnquiryForm.email || "Not provided",
+          "Message": submittedEnquiryForm.message,
+          "Preferred Contact Mode": submittedEnquiryForm.contactMode,
+          "Best Time to Connect": submittedEnquiryForm.bestTime,
+        },
+      };
+
+      setEnquirySubmitting(false);
+
+      setSubmissionSuccessData({
+        id: refId,
+        type: "General & Academic Enquiry",
+        title: submittedEnquiryForm.subject,
+        applicantName: submittedEnquiryForm.fullName,
+        phone: submittedEnquiryForm.phone,
+        date: newSubmission.submittedAt,
+        keyDetails: [
+          { label: "Enquiry ID", value: refId },
+          { label: "Enquiry Topic", value: submittedEnquiryForm.subject },
+          { label: "Preferred Mode", value: submittedEnquiryForm.contactMode },
+          { label: "Preferred Time", value: submittedEnquiryForm.bestTime },
+          { label: "Expected Response", value: "Within 2 to 4 working hours by GPS helpdesk" },
+        ],
+      });
+
+      void saveFormSubmissions((current) => [newSubmission, ...current], `✅ Enquiry ${refId} received! Helpdesk will connect with you.`).catch(() => {
+        showToast("⚠️ Enquiry submission failed because gps_school_website could not be updated.");
+      });
+    }, 700);
+  };
+
+  const handleCampusVisitSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const submittedVisitForm = {
+      ...campusVisitForm,
+      visitorName: String(formData.get("visitorName") || campusVisitForm.visitorName).trim(),
+      phone: String(formData.get("phone") || campusVisitForm.phone).trim(),
+      email: String(formData.get("email") || campusVisitForm.email).trim(),
+      visitDate: String(formData.get("visitDate") || campusVisitForm.visitDate),
+      timeSlot: String(formData.get("timeSlot") || campusVisitForm.timeSlot),
+      visitorsCount: String(formData.get("visitorsCount") || campusVisitForm.visitorsCount),
+      specialRequests: String(formData.get("specialRequests") || campusVisitForm.specialRequests).trim(),
+    };
+    if (!submittedVisitForm.visitorName || !submittedVisitForm.phone || !submittedVisitForm.visitDate) {
+      showToast("⚠️ Please provide visitor name, phone number, and preferred date.");
+      return;
+    }
+    setCampusVisitForm(submittedVisitForm);
+    setVisitSubmitting(true);
+    setTimeout(() => {
+      const refId = `GPS-VISIT-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newSubmission: FormSubmissionItem = {
+        id: refId,
+        type: "visit",
+        title: `Campus Tour Appointment (${submittedVisitForm.visitDate})`,
+        name: submittedVisitForm.visitorName,
+        phone: submittedVisitForm.phone,
+        email: submittedVisitForm.email || undefined,
+        submittedAt: new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }),
+        status: "Pending",
+        details: {
+          "Visitor Name": submittedVisitForm.visitorName,
+          "Preferred Date": submittedVisitForm.visitDate,
+          "Time Slot": submittedVisitForm.timeSlot,
+          "Child's Grade": submittedVisitForm.childGrade,
+          "Guests Count": submittedVisitForm.visitorsCount,
+          "Interest Areas": submittedVisitForm.facilities.join(", ") || "General Campus",
+          "Contact Phone": submittedVisitForm.phone,
+          "Email": submittedVisitForm.email || "Not provided",
+          "Special Requests": submittedVisitForm.specialRequests || "None",
+        },
+      };
+
+      setVisitSubmitting(false);
+
+      setSubmissionSuccessData({
+        id: refId,
+        type: "School Campus Tour Appointment Pass",
+        title: `Visit Scheduled on ${submittedVisitForm.visitDate}`,
+        applicantName: submittedVisitForm.visitorName,
+        phone: submittedVisitForm.phone,
+        date: newSubmission.submittedAt,
+        keyDetails: [
+          { label: "Appointment Pass ID", value: refId },
+          { label: "Scheduled Date", value: submittedVisitForm.visitDate },
+          { label: "Time Window", value: submittedVisitForm.timeSlot },
+          { label: "Visitors", value: submittedVisitForm.visitorsCount },
+          { label: "Reception Venue", value: "Visitor Lounge, Administrative Block, GPS Main Campus, Bagodar" },
+        ],
+      });
+
+      void saveFormSubmissions((current) => [newSubmission, ...current], `🏫 Campus visit pass ${refId} created! See you on campus.`).catch(() => {
+        showToast("⚠️ Campus visit request failed because gps_school_website could not be updated.");
+      });
+    }, 700);
+  };
+
+  const handleProspectusSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const submittedProspectusForm = {
+      ...prospectusForm,
+      parentName: String(formData.get("parentName") || prospectusForm.parentName).trim(),
+      phone: String(formData.get("phone") || prospectusForm.phone).trim(),
+      email: String(formData.get("email") || prospectusForm.email).trim(),
+      grade: String(formData.get("grade") || prospectusForm.grade),
+    };
+    if (!submittedProspectusForm.parentName || !submittedProspectusForm.phone) {
+      showToast("⚠️ Please provide parent name and contact number.");
+      return;
+    }
+    setProspectusForm(submittedProspectusForm);
+    setProspectusSubmitting(true);
+    setTimeout(() => {
+      const refId = `GPS-DOC-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newSubmission: FormSubmissionItem = {
+        id: refId,
+        type: "prospectus",
+        title: `Prospectus & Fee Chart Request (${submittedProspectusForm.grade})`,
+        name: submittedProspectusForm.parentName,
+        phone: submittedProspectusForm.phone,
+        email: submittedProspectusForm.email || undefined,
+        submittedAt: new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }),
+        status: "Approved",
+        details: {
+          "Parent Name": submittedProspectusForm.parentName,
+          "Phone / WhatsApp": submittedProspectusForm.phone,
+          "Email": submittedProspectusForm.email || "Not provided",
+          "Target Wing / Class": submittedProspectusForm.grade,
+        },
+      };
+
+      setProspectusSubmitting(false);
+
+      void saveFormSubmissions((current) => [newSubmission, ...current], "📄 Prospectus details recorded! Opening admission details...").catch(() => {
+        showToast("⚠️ Prospectus request failed because gps_school_website could not be updated.");
+      });
+      setAdmissionModalOpen(true);
+    }, 600);
+  };
+
+  const handleUpdateSubmissionStatus = (id: string, newStatus: FormSubmissionItem["status"]) => {
+    void saveFormSubmissions(
+      (current) => current.map((s) => (s.id === id ? { ...s, status: newStatus } : s)),
+      `Updated submission ${id} to "${newStatus}"`,
+    ).catch(() => {
+      showToast("⚠️ Submission status update failed because gps_school_website could not be updated.");
+    });
+  };
+
+  const handleDeleteSubmission = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this submission record?")) {
+      void saveFormSubmissions((current) => current.filter((s) => s.id !== id), "Submission record removed.").catch(() => {
+        showToast("⚠️ Submission deletion failed because gps_school_website could not be updated.");
+      });
+    }
+  };
+
   const handleEnquirySubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const submittedEnquiryForm = {
+      ...enquiryForm,
+      studentName: String(formData.get("studentName") || enquiryForm.studentName).trim(),
+      grade: String(formData.get("grade") || enquiryForm.grade),
+      parentName: String(formData.get("parentName") || enquiryForm.parentName).trim(),
+      phone: String(formData.get("phone") || enquiryForm.phone).trim(),
+      email: String(formData.get("email") || enquiryForm.email).trim(),
+    };
+
+    if (!submittedEnquiryForm.studentName || !submittedEnquiryForm.parentName || !submittedEnquiryForm.phone) {
+      showToast("⚠️ Please provide student name, parent name, and phone number.");
+      return;
+    }
+
+    setEnquiryForm(submittedEnquiryForm);
     setFormSubmitted(true);
     setTimeout(() => {
+      const refId = `GPS-ADM-ENQ-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newSubmission: FormSubmissionItem = {
+        id: refId,
+        type: "admission",
+        title: `Admission Enquiry (${submittedEnquiryForm.grade})`,
+        name: submittedEnquiryForm.studentName,
+        phone: submittedEnquiryForm.phone,
+        email: submittedEnquiryForm.email || undefined,
+        submittedAt: new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }),
+        status: "Pending",
+        details: {
+          "Student Name": submittedEnquiryForm.studentName,
+          "Grade Applying For": submittedEnquiryForm.grade,
+          "Parent / Guardian Name": submittedEnquiryForm.parentName,
+          "Phone Number": submittedEnquiryForm.phone,
+          "Email Address": submittedEnquiryForm.email || "Not provided",
+          "Session": academicSession,
+          "Source": "Admission Enquiry Modal",
+        },
+      };
+
+      void saveFormSubmissions((current) => [newSubmission, ...current], `🎉 Admission enquiry ${refId} submitted successfully!`).catch(() => {
+        showToast("⚠️ Admission enquiry failed because gps_school_website could not be updated.");
+      });
+
       setFormSubmitted(false);
       setAdmissionModalOpen(false);
       setEnquiryForm({ studentName: "", grade: "Grade 1 - 5", parentName: "", phone: "", email: "" });
@@ -1131,6 +1964,269 @@ export default function App() {
     setNewsletterEmail("");
   };
 
+  // ==========================================
+  // ADMIN PANEL HANDLERS (API PERSISTENCE)
+  // ==========================================
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAdminLoginError(null);
+
+    try {
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: adminUsernameInput, password: adminPasswordInput }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: "Invalid username or password." }));
+        throw new Error(errorData.message || "Invalid username or password.");
+      }
+
+      setIsAdminLoggedIn(true);
+      sessionStorage.setItem("gps_admin_logged_in", "true");
+      setAdminLoginModalOpen(false);
+      setAdminDashboardOpen(true);
+      showToast("👑 Welcome Administrator! Management Portal is now active.");
+    } catch (error) {
+      setAdminLoginError(error instanceof Error ? error.message : "Invalid username or password.");
+    }
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminLoggedIn(false);
+    sessionStorage.removeItem("gps_admin_logged_in");
+    setAdminDashboardOpen(false);
+    showToast("Logged out of Administrator Portal.");
+  };
+
+  // 1. Ticker Announcements Handlers
+  const handleAddAnnouncement = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAnnouncementText.trim()) return;
+    const updated = [newAnnouncementText.trim(), ...announcements];
+    void saveSiteContent(buildSiteContent({ announcements: updated }), "📢 News ticker announcement added live!").catch(() => {
+      showToast("⚠️ Announcement creation failed because gps_school_website could not be updated.");
+    });
+    setNewAnnouncementText("");
+  };
+
+  const handleSaveEditedAnnouncement = (index: number) => {
+    if (!editingAnnouncementText.trim()) return;
+    const updated = [...announcements];
+    updated[index] = editingAnnouncementText.trim();
+    void saveSiteContent(buildSiteContent({ announcements: updated }), "✅ Announcement updated!").catch(() => {
+      showToast("⚠️ Announcement update failed because gps_school_website could not be updated.");
+    });
+    setEditingAnnouncementIdx(null);
+  };
+
+  const handleDeleteAnnouncement = (index: number) => {
+    const updated = announcements.filter((_, i) => i !== index);
+    void saveSiteContent(buildSiteContent({ announcements: updated }), "🗑️ Announcement removed from ticker.").catch(() => {
+      showToast("⚠️ Announcement deletion failed because gps_school_website could not be updated.");
+    });
+  };
+
+  const handleMoveAnnouncement = (index: number, direction: "up" | "down") => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= announcements.length) return;
+    const updated = [...announcements];
+    const temp = updated[index];
+    updated[index] = updated[targetIndex];
+    updated[targetIndex] = temp;
+    void saveSiteContent(buildSiteContent({ announcements: updated })).catch(() => {
+      showToast("⚠️ Announcement reorder failed because gps_school_website could not be updated.");
+    });
+  };
+
+  // 2. Notice Board Items Handlers
+  const openAddNoticeModal = (categoryKey: "notices" | "announcements" | "recruitment") => {
+    setEditingCategoryKey(categoryKey);
+    setEditingNoticeId(null);
+    setNoticeFormData({
+      title: "",
+      date: "15 Mar 2025",
+      day: "15",
+      month: "MAR",
+      tag: categoryKey === "notices" ? "URGENT" : categoryKey === "announcements" ? "ADMISSIONS" : "OPENINGS",
+      tagTheme: categoryKey === "notices" ? "urgent" : categoryKey === "announcements" ? "success" : "hiring",
+      desc: "",
+    });
+    setNoticeFormModalOpen(true);
+  };
+
+  const openEditNoticeModal = (categoryKey: "notices" | "announcements" | "recruitment", notice: NoticeItemData) => {
+    setEditingCategoryKey(categoryKey);
+    setEditingNoticeId(notice.id);
+    setNoticeFormData({
+      title: notice.title,
+      date: notice.date,
+      day: notice.day,
+      month: notice.month,
+      tag: notice.tag,
+      tagTheme: inferNoticeTagTheme(notice.tag, categoryKey),
+      desc: notice.desc,
+    });
+    setNoticeFormModalOpen(true);
+  };
+
+  const handleSaveNotice = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!noticeFormData.title.trim()) return;
+
+    const updatedCategories = noticeCategories.map((cat) => {
+      if (cat.id === editingCategoryKey) {
+        if (editingNoticeId) {
+          // Edit existing item
+          const updatedItems = cat.items.map((item) => {
+            if (item.id === editingNoticeId) {
+              return {
+                ...item,
+                title: noticeFormData.title.trim(),
+                date: noticeFormData.date.trim(),
+                day: noticeFormData.day.trim(),
+                month: noticeFormData.month.trim().toUpperCase(),
+                tag: noticeFormData.tag.trim().toUpperCase(),
+                tagColor: getNoticeTagColor(noticeFormData.tagTheme),
+                desc: noticeFormData.desc.trim(),
+              };
+            }
+            return item;
+          });
+          return { ...cat, items: updatedItems };
+        } else {
+          // Add new item
+          const newItem: NoticeItemData = {
+            id: `notice-${Date.now()}`,
+            title: noticeFormData.title.trim(),
+            date: noticeFormData.date.trim(),
+            day: noticeFormData.day.trim(),
+            month: noticeFormData.month.trim().toUpperCase(),
+            tag: noticeFormData.tag.trim().toUpperCase(),
+            tagColor: getNoticeTagColor(noticeFormData.tagTheme),
+            desc: noticeFormData.desc.trim(),
+          };
+          return { ...cat, items: [newItem, ...cat.items] };
+        }
+      }
+      return cat;
+    });
+
+    const normalizedCategories = normalizeNoticeCategories(updatedCategories);
+
+    void saveSiteContent(
+      buildSiteContent({ noticeCategories: normalizedCategories }),
+      editingNoticeId ? "✅ Notice updated successfully!" : "📌 New notice added to Notice Board!",
+    ).catch(() => {
+      showToast("⚠️ Notice board update failed because gps_school_website could not be updated.");
+    });
+    setNoticeFormModalOpen(false);
+  };
+
+  const handleDeleteNotice = (categoryKey: string, noticeId: string) => {
+    const updatedCategories = noticeCategories.map((cat) => {
+      if (cat.id === categoryKey) {
+        return { ...cat, items: cat.items.filter((item) => item.id !== noticeId) };
+      }
+      return cat;
+    });
+    void saveSiteContent(buildSiteContent({ noticeCategories: updatedCategories }), "🗑️ Notice deleted from board.").catch(() => {
+      showToast("⚠️ Notice deletion failed because gps_school_website could not be updated.");
+    });
+  };
+
+  // 3. Recruitment Position Handlers
+  const openAddJobModal = () => {
+    setEditingJobId(null);
+    setJobEditorFormData({
+      id: `job-${Date.now()}`,
+      title: "",
+      dept: "Senior Secondary (Classes XI & XII)",
+      type: "Full Time · Permanent",
+      vacancies: "1 Position",
+      experience: "2+ Years CBSE Experience",
+      qualification: "M.Sc / M.A + B.Ed",
+      payScale: "CBSE 7th Pay Matrix + EPF + Staff Bus",
+      deadline: "30 April 2025",
+      location: "Bagodar Campus, Giridih",
+      highlights: ["Staff Transport", "EPF Benefits", "Child Fee Subsidy"],
+      description: "",
+    });
+    setJobEditorModalOpen(true);
+  };
+
+  const openEditJobModal = (job: JobPosition) => {
+    setEditingJobId(job.id);
+    setJobEditorFormData({ ...job });
+    setJobEditorModalOpen(true);
+  };
+
+  const handleSaveJobPosition = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!jobEditorFormData.title.trim()) return;
+
+    let updatedJobs: JobPosition[];
+    if (editingJobId) {
+      updatedJobs = recruitmentPositions.map((job) =>
+        job.id === editingJobId ? { ...jobEditorFormData, title: jobEditorFormData.title.trim() } : job
+      );
+    } else {
+      updatedJobs = [{ ...jobEditorFormData, id: `job-${Date.now()}`, title: jobEditorFormData.title.trim() }, ...recruitmentPositions];
+    }
+
+    void saveSiteContent(
+      buildSiteContent({ recruitmentPositions: updatedJobs }),
+      editingJobId ? "✅ Job opening updated!" : "💼 New Job Vacancy published!",
+    ).catch(() => {
+      showToast("⚠️ Job vacancy update failed because gps_school_website could not be updated.");
+    });
+    setJobEditorModalOpen(false);
+  };
+
+  const handleDeleteJobPosition = (jobId: string) => {
+    const updatedJobs = recruitmentPositions.filter((job) => job.id !== jobId);
+    void saveSiteContent(buildSiteContent({ recruitmentPositions: updatedJobs }), "🗑️ Job vacancy removed.").catch(() => {
+      showToast("⚠️ Job vacancy deletion failed because gps_school_website could not be updated.");
+    });
+  };
+
+  // 4. Reset to Default Data
+  const handleResetToDefaults = () => {
+    if (window.confirm("Are you sure you want to reset all News Ticker, Notice Board, and Recruitment data back to factory defaults?")) {
+      void saveSiteContent(
+        buildSiteContent({
+          announcements: INITIAL_ANNOUNCEMENTS,
+          noticeCategories: INITIAL_NOTICE_CATEGORIES,
+          recruitmentPositions: INITIAL_RECRUITMENT_POSITIONS,
+        }),
+        "🔄 All data restored to school default values!",
+      ).catch(() => {
+        showToast("⚠️ Reset failed because gps_school_website could not be updated.");
+      });
+    }
+  };
+
+  if (dataLoadError) {
+    return (
+      <div className="min-h-screen bg-[#f8f6ef] text-gray-800 flex items-center justify-center px-6">
+        <div className="max-w-lg rounded-3xl border border-[#dfb455]/40 bg-white p-8 text-center shadow-xl">
+          <h1 className="text-2xl font-semibold text-[#14452f]">Database connection required</h1>
+          <p className="mt-4 text-sm leading-6 text-gray-600">
+            This website is configured to load content only from the gps_school_website database. The page is blocked until the backend can read that database successfully.
+          </p>
+          <p className="mt-3 text-xs text-red-700">{dataLoadError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-[#14452f] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0f3524]"
+          >
+            Retry database connection
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white text-gray-800 font-sans antialiased selection:bg-[#c59a3f] selection:text-white pb-16 md:pb-0 overflow-x-hidden w-full max-w-full">
 
@@ -1138,7 +2234,7 @@ export default function App() {
       {/* 0. INTERACTIVE TOAST NOTIFICATION */}
       {/* ======================================================== */}
       {toastMessage && (
-        <div className="fixed top-3 sm:top-5 right-3 sm:right-5 left-3 sm:left-auto z-[100] animate-slide-down bg-[#14452f] text-white px-4 sm:px-5 py-3 rounded-xl shadow-2xl border-2 border-[#dfb455] flex items-center gap-3 text-xs sm:text-sm font-medium max-w-sm sm:max-w-md">
+        <div className="fixed top-3 sm:top-5 right-3 sm:right-5 left-3 sm:left-auto z-[130] animate-slide-down bg-[#14452f] text-white px-4 sm:px-5 py-3 rounded-xl shadow-2xl border-2 border-[#dfb455] flex items-center gap-3 text-xs sm:text-sm font-medium max-w-sm sm:max-w-md">
           <span className="text-base sm:text-xl">🔔</span>
           <span className="flex-1">{toastMessage}</span>
           <button
@@ -1155,10 +2251,10 @@ export default function App() {
       {/* 1. TOP UTILITY HEADER BAR */}
       {/* ======================================================== */}
       <div style={{ backgroundColor: GREEN }} className="text-white text-[11px] sm:text-xs tracking-wide relative z-40 border-b border-white/10">
-        <div className="max-w-[1240px] mx-auto px-3 sm:px-4 py-1.5 flex items-center justify-between gap-x-2">
+        <div className="max-w-[1240px] mx-auto px-3 sm:px-4 py-1.5 flex items-center justify-between gap-x-2 min-w-0">
           {/* Left Contact Details */}
           {/* Left Contact & Location Info */}
-          <div className="flex items-center gap-x-2.5 sm:gap-x-4 text-gray-200 truncate">
+          <div className="flex items-center gap-x-2.5 sm:gap-x-4 text-gray-200 truncate min-w-0 flex-1">
             <a
               href="tel:+919431377488"
               className="flex items-center gap-1.5 hover:text-[#dfb455] transition-colors group shrink-0"
@@ -1190,18 +2286,19 @@ export default function App() {
           </div>
 
           {/* Right Links & Gold CTA */}
-          <div className="flex items-center gap-x-2 sm:gap-x-3.5 shrink-0">
+          <div className="flex items-center gap-x-2 sm:gap-x-3 shrink-0">
             {TOP_NAV.map((item) => (
               <a
                 key={item.label}
-                href={item.href}
+                href={item.label === "Parents Login" ? parentsLoginUrl : item.href}
                 target={item.isExternal ? "_blank" : undefined}
                 rel={item.isExternal ? "noopener noreferrer" : undefined}
-                className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 text-xs hidden xl:inline-block cursor-pointer"
+                className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 text-xs hidden 2xl:inline-block cursor-pointer"
               >
                 {item.label}
               </a>
             ))}
+
             <button
               onClick={() => setAdmissionModalOpen(true)}
               style={{ backgroundColor: GOLD }}
@@ -1214,7 +2311,7 @@ export default function App() {
       </div>
 
       {/* ======================================================== */}
-      {/* 1.5. LIVE NEWS & NOTICE TICKER MARQUEE */}
+      {/* 1.5. LIVE NEWS & NOTICE TICKER MARQUEE (DYNAMIC STATE) */}
       {/* ======================================================== */}
       <div className="bg-[#0e3322] text-white py-1.5 border-b border-[#1f5f40] overflow-hidden flex items-center text-xs w-full">
         <div className="px-2.5 sm:px-3.5 bg-[#c59a3f] text-[#14452f] font-bold text-[9px] sm:text-[11px] uppercase tracking-wider py-0.5 rounded-r shrink-0 z-10 flex items-center gap-1.5 shadow">
@@ -1223,7 +2320,7 @@ export default function App() {
         </div>
         <div className="overflow-hidden whitespace-nowrap flex-1 relative">
           <div className="animate-marquee flex items-center gap-8 sm:gap-12 font-medium text-gray-200 cursor-pointer text-[10.5px] sm:text-xs">
-            {ANNOUNCEMENTS.concat(ANNOUNCEMENTS).map((item, idx) => (
+            {announcements.concat(announcements).map((item, idx) => (
               <span
                 key={idx}
                 onClick={() => setAdmissionModalOpen(true)}
@@ -1234,17 +2331,33 @@ export default function App() {
             ))}
           </div>
         </div>
+
+        {/* Quick Admin Ticker Edit Shortcut when logged in */}
+        {isAdminLoggedIn && (
+          <button
+            onClick={() => {
+              setAdminTab("ticker");
+              setAdminDashboardOpen(true);
+            }}
+            className="hidden md:flex items-center gap-1 px-2.5 py-0.5 bg-[#dfb455] text-[#14452f] text-[10px] font-bold uppercase tracking-wider shrink-0 z-10 ml-2 rounded-l cursor-pointer hover:bg-white transition-colors"
+            title="Manage Ticker Items"
+          >
+            <span>✏️ Edit News</span>
+          </button>
+        )}
       </div>
 
       {/* ======================================================== */}
       {/* 2. MAIN NAVBAR WITH LOGO, PARENTS LOGIN AND SEARCH */}
       {/* ======================================================== */}
       <header className={`sticky top-0 z-50 bg-white transition-all duration-300 w-full ${scrolled ? "shadow-md py-1.5 sm:py-2" : "border-b border-gray-100 py-2 sm:py-2.5"}`}>
-        <div className="max-w-[1360px] mx-auto px-3 sm:px-5 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="max-w-[1360px] mx-auto px-3 sm:px-5 flex items-center justify-between gap-2 sm:gap-4 min-w-0">
           
           {/* Logo & School Name */}
-          <a href="#home" className="flex items-center gap-2 sm:gap-2.5 group shrink-0 min-w-0">
-            <SchoolLogo className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 group-hover:scale-105 transition-transform duration-300 shrink-0" />
+          <a href="#home" className="flex items-center gap-2.5 sm:gap-3 group shrink-0 min-w-0">
+            <div className="flex items-center justify-center shrink-0 rounded-full bg-white/90 ring-1 ring-[#14452f]/10 p-1">
+              <SchoolLogo className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 lg:w-14 lg:h-14 group-hover:scale-105 transition-transform duration-300 shrink-0" />
+            </div>
             <div className="flex flex-col truncate">
               <span
                 style={{ color: GREEN }}
@@ -1261,8 +2374,8 @@ export default function App() {
             </div>
           </a>
 
-          {/* Desktop Navigation Links (Visible on xl+ screens: 1200px+) */}
-          <nav className="hidden xl:flex items-center gap-4 2xl:gap-6">
+          {/* Desktop Navigation Links (Visible only when there is enough width for the full nav) */}
+          <nav className={`${useCompactHeader ? "hidden" : "flex"} items-center gap-4 2xl:gap-5 min-w-0 flex-1 justify-center`}>
             {MAIN_NAV.map((item) => (
               <div key={item.label} className="relative group/menu py-2">
                 <a
@@ -1300,7 +2413,7 @@ export default function App() {
           </nav>
 
           {/* Right Action Icons & Buttons (Search, Parents Login, Enquire, Tablet/Mobile Menu) */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 shrink-0 min-w-0">
             {/* Search Icon */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
@@ -1314,24 +2427,25 @@ export default function App() {
 
             {/* PARENTS LOGIN BUTTON - REDIRECTS TO PLAY STORE APP ON ALL SCREEN SIZES */}
             <a
-              href={PLAYSTORE_PARENT_APP_URL}
+              href={parentsLoginUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[10px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-lg transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
+              className="inline-flex items-center gap-1 sm:gap-1.5 border border-[#14452f] bg-[#f0faf5] hover:bg-[#14452f] text-[#14452f] hover:text-white text-[10px] sm:text-xs font-bold px-2 sm:px-3 2xl:px-3 py-1.5 rounded-lg transition-all duration-200 uppercase tracking-[0.08em] sm:tracking-[0.12em] 2xl:tracking-wider cursor-pointer shadow-xs active:scale-95 group shrink-0"
               aria-label="Parents Login Play Store App"
             >
               {/* Google Play / Android Icon */}
               <svg className="w-3.5 h-3.5 text-[#c59a3f] group-hover:text-[#dfb455] transition-colors shrink-0" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3.609 1.814L13.793 12 3.61 22.186c-.368-.328-.61-.83-.61-1.426V3.24c0-.596.242-1.098.609-1.426zm11.246 11.248l2.257 2.257-11.83 6.643 9.573-8.9zm0-2.124L5.282 2.038l11.83 6.643-2.257 2.257zm1.487 1.062l3.435 1.932c.708.398.708 1.05 0 1.448l-3.435 1.932-2.115-2.115 2.115-3.197z" />
               </svg>
-              <span className="whitespace-nowrap">Parents Login</span>
+              <span className="hidden min-[420px]:inline whitespace-nowrap">Parents Login</span>
+              <span className="min-[420px]:hidden whitespace-nowrap">Parents</span>
             </a>
 
             {/* Enquire Button (visible on sm+) */}
             <button
               onClick={() => setAdmissionModalOpen(true)}
               style={{ backgroundColor: GREEN }}
-              className="hidden sm:inline-flex items-center gap-1.5 text-white text-xs font-semibold px-3 sm:px-3.5 py-1.5 rounded-lg hover:brightness-110 transition-all shadow-sm uppercase tracking-wider cursor-pointer shrink-0"
+              className={`${useCompactHeader ? "hidden" : "inline-flex"} items-center gap-1.5 text-white text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 2xl:px-3.5 py-1.5 rounded-lg hover:brightness-110 transition-all shadow-sm uppercase tracking-[0.08em] sm:tracking-wider cursor-pointer shrink-0`}
             >
               <span>Enquire</span>
               <svg className="w-3.5 h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1339,11 +2453,11 @@ export default function App() {
               </svg>
             </button>
 
-            {/* Mobile & Tablet Hamburger toggle button (visible on < xl) */}
+            {/* Compact navigation toggle button (visible until the full desktop nav fits comfortably) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? "Close menu" : "Open navigation menu"}
-              className="xl:hidden flex items-center gap-1 p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100 shrink-0 border border-gray-200"
+              className={`${useCompactHeader ? "flex" : "hidden"} items-center gap-1 p-1.5 sm:p-2 text-gray-700 hover:text-[#14452f] focus:outline-none cursor-pointer rounded-lg hover:bg-gray-100 shrink-0 border border-gray-200`}
             >
               <svg className="w-5 h-5 sm:w-5.5 sm:h-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {mobileMenuOpen ? (
@@ -1362,22 +2476,28 @@ export default function App() {
         {/* ======================================================== */}
         {mobileMenuOpen && (
           <div
-            className="xl:hidden fixed inset-0 top-[70px] sm:top-[76px] z-50 bg-black/60 backdrop-blur-xs flex justify-end animate-fade-in"
+            className={`${useCompactHeader ? "flex" : "xl:hidden flex"} fixed inset-0 top-[70px] sm:top-[76px] z-50 bg-[#0b1f15]/55 backdrop-blur-sm justify-end sm:justify-end animate-fade-in`}
             onClick={() => setMobileMenuOpen(false)}
           >
             <div
-              className="bg-white w-full sm:max-w-md h-[calc(100vh-70px)] sm:h-[calc(100vh-76px)] overflow-y-auto p-4 sm:p-5 shadow-2xl border-l border-gray-200 animate-slide-down flex flex-col gap-3"
+              className="w-full min-[380px]:w-[92vw] sm:w-[24rem] md:w-[25rem] max-w-full h-[calc(100dvh-70px)] sm:h-[calc(100dvh-76px)] max-h-[calc(100dvh-70px)] sm:max-h-[calc(100dvh-76px)] overflow-y-auto overscroll-contain px-3 py-3 pb-4 min-[380px]:px-4 min-[380px]:py-4 sm:px-4 sm:py-4 shadow-2xl border-l border-[#d7e4dc] animate-slide-down flex flex-col gap-3 bg-[linear-gradient(180deg,#fcfdfb_0%,#f4f8f4_100%)]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Drawer Header */}
-              <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-                <div className="flex items-center gap-2">
-                  <SchoolLogo className="w-6 h-6" />
-                  <span className="font-serif font-bold text-sm text-[#14452f]">Navigation Menu</span>
+              <div className="flex items-start justify-between rounded-[1.25rem] border border-[#dbe7df] bg-white/92 px-3 py-3 shadow-sm min-[380px]:px-3.5">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="rounded-full bg-[#f4fbf7] p-1.5 ring-1 ring-[#14452f]/10 shrink-0">
+                    <SchoolLogo className="w-6 h-6 min-[380px]:w-7 min-[380px]:h-7" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[9px] min-[380px]:text-[10px] font-bold uppercase tracking-[0.2em] text-[#c59a3f]">GPS Bagodar</p>
+                    <span className="font-serif font-bold text-[12px] min-[380px]:text-[13px] sm:text-sm text-[#14452f] block truncate">Explore Campus Sections</span>
+                    <p className="text-[10px] text-gray-500 mt-0.5 leading-snug">Admissions, academics and contact links in one place.</p>
+                  </div>
                 </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-1 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+                  className="p-1.5 min-[380px]:p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 shrink-0"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1387,33 +2507,33 @@ export default function App() {
 
               {/* Quick Parent Portal Banner in Drawer */}
               <a
-                href={PLAYSTORE_PARENT_APP_URL}
+                href={parentsLoginUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setMobileMenuOpen(false)}
-                className="bg-[#f0faf5] border border-[#14452f]/20 rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-[#e4f5ed] transition-colors shadow-xs"
+                className="bg-[#f0faf5] border border-[#14452f]/15 rounded-2xl p-3 flex items-center justify-between gap-2.5 cursor-pointer hover:bg-[#e7f5ee] transition-colors shadow-sm"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-[#14452f] text-[#dfb455] flex items-center justify-center font-bold text-sm shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-[#14452f] text-[#dfb455] flex items-center justify-center font-bold text-xs shrink-0">
                     📱
                   </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-[#14452f] uppercase tracking-wider">Parents Login App</h4>
-                    <p className="text-[10.5px] text-gray-500">Official GPS Mobile App on Play Store</p>
+                  <div className="min-w-0">
+                    <h4 className="text-[10px] min-[380px]:text-[11px] font-bold text-[#14452f] uppercase tracking-[0.12em]">Parents Login App</h4>
+                    <p className="text-[9.5px] min-[380px]:text-[10px] text-gray-500 leading-snug">Official GPS mobile app on Play Store</p>
                   </div>
                 </div>
-                <span className="text-[11px] font-bold text-[#14452f] bg-white px-2.5 py-1 rounded-md shadow-xs border border-gray-200 whitespace-nowrap">Open App ↗</span>
+                <span className="text-[9.5px] min-[380px]:text-[10px] font-bold text-[#14452f] bg-white px-2 py-1.5 rounded-xl shadow-xs border border-gray-200 whitespace-nowrap shrink-0">Open App ↗</span>
               </a>
 
               {/* Quick Search */}
-              <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2">
+              <div className="flex items-center gap-2 rounded-2xl border border-white/70 bg-white/80 px-3 py-2.5 shadow-sm">
                 <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input
                   type="text"
                   placeholder="Search GPS Bagodar..."
-                  className="bg-transparent text-xs text-gray-800 w-full focus:outline-none"
+                  className="bg-transparent text-[10.5px] min-[380px]:text-[11px] sm:text-xs text-gray-800 w-full focus:outline-none placeholder:text-gray-400"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       showToast("🔍 Searching school records...");
@@ -1424,21 +2544,21 @@ export default function App() {
               </div>
 
               {/* Main Navigation Links */}
-              <div className="flex flex-col divide-y divide-gray-100 text-sm font-semibold text-gray-800">
+              <div className="flex flex-col gap-1.5 text-sm font-semibold text-gray-800">
                 {MAIN_NAV.map((item) => (
-                  <div key={item.label} className="py-0.5">
-                    <div className="flex items-center justify-between">
+                  <div key={item.label} className="rounded-xl border border-[#dbe7df] bg-white/92 px-2.5 min-[380px]:px-3 py-1 shadow-sm">
+                    <div className="flex items-center justify-between gap-2">
                       <a
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="py-2.5 px-1 hover:text-[#14452f] flex-1 text-xs sm:text-sm tracking-wide"
+                        className="py-2.5 pr-2 hover:text-[#14452f] flex-1 text-[10.5px] min-[380px]:text-[11px] sm:text-[12px] tracking-[0.1em] min-[380px]:tracking-[0.12em] uppercase leading-tight"
                       >
                         {item.label}
                       </a>
                       {item.hasDropdown && (
                         <button
                           onClick={() => setMobileSubNavOpen(mobileSubNavOpen === item.label ? null : item.label)}
-                          className="p-2 text-gray-400 hover:text-[#14452f] cursor-pointer"
+                          className="p-1.5 text-gray-400 hover:text-[#14452f] cursor-pointer rounded-full hover:bg-[#f4f8f4]"
                           aria-label={`Toggle ${item.label} submenu`}
                         >
                           <svg
@@ -1455,15 +2575,15 @@ export default function App() {
 
                     {/* Collapsible Submenu */}
                     {item.subItems && mobileSubNavOpen === item.label && (
-                      <div className="pl-4 py-1.5 flex flex-col gap-1 bg-[#f9faf9] rounded-md animate-slide-down">
+                      <div className="pl-3 pr-1 pb-2 flex flex-col gap-1 bg-[#f7faf7] rounded-xl animate-slide-down border border-[#edf3ee]">
                         {item.subItems.map((sub) => (
                           <a
                             key={sub.label}
                             href={sub.href}
                             onClick={() => setMobileMenuOpen(false)}
-                            className="py-1.5 text-xs text-gray-600 hover:text-[#14452f] font-normal"
+                            className="py-1.5 text-[10.5px] min-[380px]:text-[11px] text-gray-600 hover:text-[#14452f] font-medium leading-snug"
                           >
-                            • {sub.label}
+                            {sub.label}
                           </a>
                         ))}
                       </div>
@@ -1473,11 +2593,11 @@ export default function App() {
               </div>
 
               {/* Quick Contact & Action Buttons */}
-              <div className="pt-2.5 mt-auto border-t border-gray-100 flex flex-col gap-2">
+              <div className="pt-3 mt-auto border-t border-[#dbe7df] flex flex-col gap-2 bg-[linear-gradient(180deg,rgba(244,248,244,0)_0%,rgba(244,248,244,0.92)_18%,rgba(244,248,244,1)_100%)]">
                 <div className="grid grid-cols-2 gap-2">
                   <a
                     href="tel:+919431377488"
-                    className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-gray-100 text-gray-800 text-xs font-semibold hover:bg-gray-200 active:scale-95"
+                    className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white text-gray-800 text-[10.5px] min-[380px]:text-[11px] font-semibold hover:bg-gray-50 active:scale-95 border border-[#dbe7df] shadow-sm"
                   >
                     <span>📞 Call Us</span>
                   </a>
@@ -1485,7 +2605,7 @@ export default function App() {
                     href="https://wa.me/919431377488"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-semibold hover:bg-emerald-100 active:scale-95"
+                    className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-50 text-emerald-800 text-[10.5px] min-[380px]:text-[11px] font-semibold hover:bg-emerald-100 active:scale-95 border border-emerald-100 shadow-sm"
                   >
                     <span>💬 WhatsApp</span>
                   </a>
@@ -1497,7 +2617,7 @@ export default function App() {
                     setAdmissionModalOpen(true);
                   }}
                   style={{ backgroundColor: GOLD }}
-                  className="w-full text-white font-bold text-xs py-3 rounded-lg text-center uppercase tracking-wider shadow-md hover:brightness-110 cursor-pointer active:scale-98"
+                  className="w-full text-white font-bold text-[10.5px] min-[380px]:text-[11px] py-3 rounded-2xl text-center uppercase tracking-[0.14em] min-[380px]:tracking-[0.18em] shadow-lg hover:brightness-110 cursor-pointer active:scale-98"
                 >
                   Apply for Admission 2025–26
                 </button>
@@ -1544,24 +2664,24 @@ export default function App() {
         {/* Animated countdown progress bar on top */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-white/10 z-30">
           <div
-            key={activeSlide}
+            key={safeActiveSlide}
             className="h-full bg-[#dfb455] transition-all duration-[5500ms] ease-linear"
             style={{ width: isHoveringHero ? "100%" : "100%" }}
           />
         </div>
 
         {/* Dynamic Hero Slide Images with Smooth Crossfade */}
-        {HERO_SLIDES.map((slide, idx) => (
+        {heroSlides.map((slide, idx) => (
           <div
             key={idx}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              activeSlide === idx ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-105"
+              safeActiveSlide === idx ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-105"
             }`}
             style={{ transition: "opacity 1s ease-in-out, transform 8s ease-out" }}
           >
             <img
               src={slide.img}
-              alt={slide.headline}
+              alt={slide.alt}
               loading={idx === 0 ? "eager" : "lazy"}
               decoding="async"
               className="w-full h-full object-cover object-center"
@@ -1579,7 +2699,7 @@ export default function App() {
 
         {/* Carousel Arrow Buttons (visible on sm+) */}
         <button
-          onClick={() => setActiveSlide((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1))}
+          onClick={() => setActiveSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))}
           aria-label="Previous Slide"
           className="hidden sm:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-white/60 bg-black/30 hover:bg-black/60 text-white items-center justify-center transition-all hover:scale-110 cursor-pointer backdrop-blur-xs shadow-lg"
         >
@@ -1588,7 +2708,7 @@ export default function App() {
           </svg>
         </button>
         <button
-          onClick={() => setActiveSlide((prev) => (prev === HERO_SLIDES.length - 1 ? 0 : prev + 1))}
+          onClick={() => setActiveSlide((prev) => (prev === heroSlides.length - 1 ? 0 : prev + 1))}
           aria-label="Next Slide"
           className="hidden sm:flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-white/60 bg-black/30 hover:bg-black/60 text-white items-center justify-center transition-all hover:scale-110 cursor-pointer backdrop-blur-xs shadow-lg"
         >
@@ -1599,13 +2719,13 @@ export default function App() {
 
         {/* Carousel Dot Indicators */}
         <div className="absolute bottom-14 sm:bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/35 px-3 py-1.5 rounded-full backdrop-blur-xs">
-          {HERO_SLIDES.map((_, dotIndex) => (
+          {heroSlides.map((_, dotIndex) => (
             <button
               key={dotIndex}
               onClick={() => setActiveSlide(dotIndex)}
               aria-label={`Go to slide ${dotIndex + 1}`}
               className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                activeSlide === dotIndex ? "w-6 sm:w-7 bg-[#dfb455]" : "w-2 bg-white/50 hover:bg-white/90"
+                safeActiveSlide === dotIndex ? "w-6 sm:w-7 bg-[#dfb455]" : "w-2 bg-white/50 hover:bg-white/90"
               }`}
             />
           ))}
@@ -1613,23 +2733,23 @@ export default function App() {
 
         {/* Hero Content Container */}
         <div className="relative z-10 h-full max-w-[1240px] mx-auto px-4 sm:px-8 md:px-10 flex flex-col justify-center pb-8 sm:pb-0">
-          <div key={activeSlide} className="max-w-xl animate-fade-in-up">
+          <div key={safeActiveSlide} className="max-w-xl animate-fade-in-up">
             
             {/* Badge */}
             <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#dfb455] text-[9.5px] sm:text-xs font-semibold tracking-wider uppercase mb-2.5 sm:mb-4">
               <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#dfb455] animate-ping" />
-              <span>{HERO_SLIDES[activeSlide].tag}</span>
+              <span>{currentHeroSlide.tag}</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-[50px] font-bold text-white leading-[1.18] sm:leading-[1.15] mb-2.5 sm:mb-4 drop-shadow-md">
-              {HERO_SLIDES[activeSlide].headline.split(", ")[0]},
+              {currentHeroSlide.headline.split(", ")[0]},
               <br />
-              {HERO_SLIDES[activeSlide].headline.split(", ")[1] ? (
+              {currentHeroSlide.headline.split(", ")[1] ? (
                 <span>
-                  {HERO_SLIDES[activeSlide].headline.split(", ")[1].split(" ")[0]}{" "}
+                  {currentHeroSlide.headline.split(", ")[1].split(" ")[0]}{" "}
                   <span style={{ color: GOLD_TEXT }}>
-                    {HERO_SLIDES[activeSlide].headline.split(", ")[1].split(" ").slice(1).join(" ")}
+                    {currentHeroSlide.headline.split(", ")[1].split(" ").slice(1).join(" ")}
                   </span>
                 </span>
               ) : (
@@ -1639,7 +2759,7 @@ export default function App() {
 
             {/* Sub-headline */}
             <p className="text-white/90 text-xs sm:text-sm md:text-base leading-relaxed mb-5 sm:mb-7 max-w-md font-light line-clamp-3 sm:line-clamp-none">
-              {HERO_SLIDES[activeSlide].subtitle}
+              {currentHeroSlide.subtitle}
             </p>
 
             {/* Action Buttons */}
@@ -1654,30 +2774,20 @@ export default function App() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </button>
-
-              <button
-                onClick={() => setTourModalOpen(true)}
-                className="border border-white/80 text-white font-semibold text-xs sm:text-sm px-4 sm:px-6 py-2.5 sm:py-3.5 rounded flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-white hover:text-[#14452f] transition-all uppercase tracking-wider backdrop-blur-xs cursor-pointer hover:scale-105 active:scale-95"
-              >
-                <span>CAMPUS TOUR</span>
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#dfb455]" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </button>
             </div>
           </div>
         </div>
       </section>
 
       {/* ======================================================== */}
-      {/* 4. FIVE FEATURE HIGHLIGHTS FLOATING CARD (RESPONSIVE GRID) */}
+      {/* 5. FIVE FEATURE HIGHLIGHTS (RESPONSIVE GRID) */}
       {/* ======================================================== */}
-      <div className="relative z-20 max-w-[1140px] mx-auto px-3 sm:px-4 -mt-8 sm:-mt-10 md:-mt-14">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 overflow-hidden">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 my-10 sm:my-14">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200/80 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 overflow-hidden">
           {HIGHLIGHT_CARDS.map((card, cIdx) => (
             <div
               key={card.title}
-              className={`p-3.5 sm:p-4 md:p-6 flex flex-col items-center text-center group hover:bg-[#f9fbf9] transition-all duration-300 cursor-pointer hover:-translate-y-1 ${
+              className={`p-4 sm:p-5 md:p-6 flex flex-col items-center text-center group hover:bg-[#f9fbf9] transition-all duration-300 cursor-pointer hover:-translate-y-1 ${
                 cIdx === 4 ? "col-span-2 sm:col-span-1 border-t sm:border-t-0" : ""
               }`}
             >
@@ -1699,31 +2809,197 @@ export default function App() {
       </div>
 
       {/* ======================================================== */}
+      {/* 4. INSTITUTIONAL NOTICE BOARD (2ND SECTION - 3 CATEGORIES) */}
+      {/* ======================================================== */}
+      <section
+        id="notice-board"
+        className="py-14 sm:py-18 bg-gradient-to-b from-[#f2f6f3] via-[#f7faf8] to-white border-b border-gray-200/90 relative overflow-hidden"
+      >
+        {/* Anchor targets */}
+        <div id="notices" className="absolute -top-24" />
+        <div id="announcements" className="absolute -top-24" />
+        <div id="recruitment" className="absolute -top-24" />
+        <div id="career" className="absolute -top-24" />
+
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          
+          {/* Section Header */}
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 bg-[#14452f]/10 text-[#14452f] px-3.5 py-1 rounded-full text-[11px] font-bold tracking-[0.16em] uppercase mb-2.5">
+              <span className="w-2 h-2 rounded-full bg-[#dfb455] animate-ping" />
+              <span>GPS BAGODAR • OFFICIAL NOTICE DESK</span>
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+              Notice Board &amp; <span className="text-[#14452f] italic font-normal">Latest Updates</span>
+            </h2>
+            <p className="text-gray-600 text-xs sm:text-sm mt-1.5 max-w-lg mx-auto leading-relaxed">
+              Access verified CBSE circulars, campus event announcements, and active faculty recruitment notices updated daily.
+            </p>
+          </div>
+
+          {/* 3 Unified Institutional Columns */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+            {noticeCategories.map((cat, catIdx) => (
+              <div
+                key={cat.id}
+                className="bg-white rounded-2xl border border-gray-200/90 shadow-sm hover:shadow-lg hover:border-[#14452f]/40 transition-all duration-300 flex flex-col justify-between group overflow-hidden h-full"
+              >
+                {/* Column Header Bar */}
+                <div className="bg-[#14452f] p-4 sm:p-4.5 border-b-2 border-[#dfb455] flex items-center justify-between gap-3 text-white">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/15">
+                      <NoticeCategoryIcon id={cat.id} />
+                    </div>
+                    <div>
+                      <h3 className="font-serif font-bold text-base sm:text-lg leading-tight tracking-wide text-white">
+                        {cat.label}
+                      </h3>
+                      <div className="text-[11px] text-gray-200/90 font-normal mt-0.5">
+                        {cat.sublabel}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    {isAdminLoggedIn && (
+                      <button
+                        onClick={() => openAddNoticeModal(cat.id)}
+                        className="bg-white/20 hover:bg-[#dfb455] hover:text-[#14452f] text-white px-2 py-0.5 rounded transition-colors text-[10.5px] font-bold cursor-pointer"
+                        title={`Add new notice to ${cat.label}`}
+                      >
+                        ➕ Add
+                      </button>
+                    )}
+                    <span className="text-[10.5px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shrink-0 bg-[#dfb455] text-[#14452f]">
+                      {cat.badge || `${cat.items.length} Items`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Notice Items List */}
+                <div className="p-4 sm:p-5 flex-1 flex flex-col divide-y divide-gray-100 bg-white">
+                  {cat.items.length === 0 ? (
+                    <div className="py-8 text-center text-gray-400 text-xs italic">
+                      No notices currently posted in this category.
+                    </div>
+                  ) : (
+                    cat.items.map((item, itemIdx) => (
+                      <div
+                        key={item.id || itemIdx}
+                        className="flex items-start gap-3 py-3.5 first:pt-0 last:pb-0 group/item cursor-pointer hover:bg-[#f7faf8] rounded-xl p-2 -mx-1 transition-all relative"
+                        onClick={() => {
+                          if (cat.id === "recruitment") {
+                            setSelectedJob(recruitmentPositions[0] || INITIAL_RECRUITMENT_POSITIONS[0]);
+                            setJobForm((prev) => ({ ...prev, position: recruitmentPositions[0]?.title || "Teaching Faculty" }));
+                            setJobModalOpen(true);
+                          } else {
+                            setSelectedNotice(item);
+                          }
+                        }}
+                      >
+                        {/* Left Date Stamp Badge */}
+                        <div className="w-12 sm:w-14 shrink-0 bg-[#f0faf5] border border-[#14452f]/15 rounded-lg py-1.5 px-1 flex flex-col items-center justify-center leading-none text-center group-hover/item:border-[#14452f]/40 transition-colors">
+                          <span className="text-xs sm:text-sm font-bold text-[#14452f]">{item.day}</span>
+                          <span className="text-[9px] font-bold text-[#c59a3f] uppercase mt-0.5">{item.month}</span>
+                        </div>
+
+                        {/* Right Notice Information */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1.5 mb-1">
+                            <span className={`text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${item.tagColor}`}>
+                              {item.tag}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              {isAdminLoggedIn && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openEditNoticeModal(cat.id, item);
+                                  }}
+                                  className="text-gray-400 hover:text-[#14452f] text-xs p-0.5"
+                                  title="Edit this notice"
+                                >
+                                  ✏️
+                                </button>
+                              )}
+                              <span className="text-[10px] text-gray-400 font-medium group-hover/item:text-[#14452f] transition-colors shrink-0">
+                                Details →
+                              </span>
+                            </div>
+                          </div>
+
+                          <h4 className="text-xs sm:text-[13px] font-bold text-gray-900 group-hover/item:text-[#14452f] transition-colors leading-snug line-clamp-2">
+                            {item.title}
+                          </h4>
+                          <p className="text-gray-500 text-[11px] leading-relaxed mt-0.5 line-clamp-2 font-normal">
+                            {item.desc}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Column Action Footer */}
+                <div className="p-3.5 bg-[#f9faf9] border-t border-gray-100 flex items-center justify-between text-xs">
+                  <span className="text-[11px] text-gray-500 font-medium flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Verified Desk</span>
+                  </span>
+                  <div className="flex items-center gap-2">
+                    {isAdminLoggedIn && (
+                      <button
+                        onClick={() => {
+                          setAdminTab("notices");
+                          setEditingCategoryKey(cat.id);
+                          setAdminDashboardOpen(true);
+                        }}
+                        className="text-[11px] font-bold text-[#14452f] bg-white border border-gray-200 px-2 py-0.5 rounded shadow-2xs hover:bg-[#f0faf5] cursor-pointer"
+                      >
+                        ⚙️ Manage
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        if (cat.id === "recruitment") {
+                          setSelectedJob(recruitmentPositions[0] || INITIAL_RECRUITMENT_POSITIONS[0]);
+                          setJobForm((prev) => ({ ...prev, position: recruitmentPositions[0]?.title || "Faculty" }));
+                          setJobModalOpen(true);
+                        } else {
+                          openNoticeArchive(cat.id);
+                        }
+                      }}
+                      className="text-[#14452f] hover:text-[#c59a3f] font-bold text-xs flex items-center gap-1 cursor-pointer transition-colors"
+                    >
+                      <span>{cat.id === "recruitment" ? "Apply Online" : "View All"}</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* ======================================================== */}
       {/* 5. WELCOME TO GYANODAYA PUBLIC SCHOOL (ABOUT SECTION) */}
       {/* ======================================================== */}
       <section id="about" className="py-14 sm:py-20 bg-white">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-8 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           
-          {/* Left Campus Photo with Interactive Video Teaser */}
-          <div className="relative rounded-xl overflow-hidden shadow-xl group">
+          {/* Left Campus Photo */}
+          <div className="relative rounded-[1.5rem] overflow-hidden shadow-xl group border border-[#e6ece8] bg-[#f7faf8]">
             <img
-              src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&h=700&fit=crop&auto=format&q=80"
-              alt="Gyanodaya Public School Students and Campus"
+              src={aboutCampusImage?.url || "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&h=700&fit=crop&auto=format&q=80"}
+              alt={aboutCampusImage?.alt || "Gyanodaya Public School Students and Campus"}
               loading="lazy"
               decoding="async"
               className="w-full h-[300px] sm:h-[400px] md:h-[420px] object-cover object-center group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-black/25 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-              <button
-                onClick={() => setTourModalOpen(true)}
-                aria-label="Play Virtual Campus Tour"
-                className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/90 hover:bg-[#c59a3f] text-[#14452f] hover:text-white flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-115 cursor-pointer animate-pulse-glow"
-              >
-                <svg className="w-6 h-6 sm:w-7 sm:h-7 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </button>
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b1f15]/55 via-[#0b1f15]/10 to-transparent group-hover:from-[#0b1f15]/62 transition-colors" />
             
             {/* Floating Experience Badge */}
             <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 bg-white/95 backdrop-blur-md px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg shadow-lg border border-gray-100 flex items-center gap-2.5 sm:gap-3">
@@ -1807,57 +3083,57 @@ export default function App() {
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           
           {/* Section Header: Editorial & Balanced */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 pb-6 border-b border-gray-200/80">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14452f]/8 text-[#14452f] text-[11px] font-bold tracking-[0.16em] uppercase mb-3">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 sm:gap-6 mb-8 sm:mb-10 pb-5 sm:pb-6 border-b border-gray-200/80 text-center lg:text-left">
+            <div className="max-w-2xl mx-auto lg:mx-0">
+              <div className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-[#14452f]/8 text-[#14452f] text-[10px] sm:text-[11px] font-bold tracking-[0.14em] sm:tracking-[0.16em] uppercase mb-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#c59a3f]" />
                 <span>ACADEMIC EXCELLENCE & CURRICULUM</span>
               </div>
-              <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-[1.15]">
-                Nurturing Intellect, <br className="hidden sm:inline" />
+              <h2 className="font-serif text-[1.85rem] sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-[1.08] sm:leading-[1.15] max-w-[13ch] sm:max-w-none mx-auto lg:mx-0">
+                Nurturing Intellect, <br className="hidden md:inline" />
                 <span className="italic font-normal text-[#14452f]">Shaping Leaders of Tomorrow.</span>
               </h2>
             </div>
             
-            <p className="text-gray-600 text-xs sm:text-sm lg:max-w-md leading-relaxed">
-              {(ACADEMICS_CARDS_DATA[activeTab] || ACADEMICS_CARDS_DATA.all).tagline}
+            <p className="text-gray-600 text-[11px] sm:text-sm lg:max-w-md leading-relaxed max-w-[34rem] mx-auto lg:mx-0">
+              {(academicCardsData[activeTab] || academicCardsData.all).tagline}
             </p>
           </div>
 
           {/* Key Academic Metrics Ticker */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-10">
+          <div className="flex md:grid md:grid-cols-4 gap-3 overflow-x-auto overscroll-x-contain no-scrollbar [-webkit-overflow-scrolling:touch] pb-2 md:pb-0 mb-8 sm:mb-10 snap-x snap-mandatory">
             {ACADEMIC_HIGHLIGHTS.map((stat, i) => (
               <div
                 key={i}
-                className="bg-white/90 backdrop-blur-xs p-4 sm:p-5 rounded-xl border border-gray-200/70 shadow-xs hover:shadow-md hover:border-[#14452f]/30 transition-all group"
+                className="min-w-[9.5rem] md:min-w-0 bg-white/95 backdrop-blur-xs p-3 sm:p-5 rounded-2xl border border-gray-200/70 shadow-xs hover:shadow-md hover:border-[#14452f]/30 transition-all group shrink-0 snap-start"
               >
-                <div className="text-2xl sm:text-3xl font-serif font-bold text-[#14452f] group-hover:text-[#c59a3f] transition-colors">
+                <div className="text-xl sm:text-3xl font-serif font-bold text-[#14452f] group-hover:text-[#c59a3f] transition-colors">
                   {stat.value}
                 </div>
-                <div className="text-xs font-semibold text-gray-900 mt-1">{stat.label}</div>
-                <div className="text-[11px] text-gray-500 mt-0.5">{stat.detail}</div>
+                <div className="text-[11px] sm:text-xs font-semibold text-gray-900 mt-1 leading-snug">{stat.label}</div>
+                <div className="text-[10px] sm:text-[11px] text-gray-500 mt-0.5 leading-snug">{stat.detail}</div>
               </div>
             ))}
           </div>
 
           {/* Segmented Stage Switcher Pills */}
-          <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar pb-3 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="flex items-stretch gap-2.5 overflow-x-auto overscroll-x-contain no-scrollbar [-webkit-overflow-scrolling:touch] pb-3 mb-7 sm:mb-8 px-0.5 sm:px-0 snap-x snap-mandatory">
             {ACADEMIC_TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`group px-4 sm:px-5 py-2.5 rounded-xl text-left transition-all shrink-0 cursor-pointer border ${
+                  className={`group min-w-[11rem] max-w-[11rem] sm:min-w-[10.5rem] sm:max-w-none md:min-w-0 px-3.5 py-3 sm:px-5 rounded-2xl text-left transition-all cursor-pointer border shrink-0 snap-start ${
                     isActive
-                      ? "bg-[#14452f] text-white border-[#14452f] shadow-md shadow-[#14452f]/15"
-                      : "bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-50/80"
+                      ? "bg-gradient-to-br from-[#14452f] to-[#1f5a3d] text-white border-[#14452f] shadow-lg shadow-[#14452f]/15"
+                      : "bg-white/95 text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-50/80"
                   }`}
                 >
-                  <div className={`text-xs sm:text-sm font-bold tracking-wide ${isActive ? "text-white" : "text-gray-900 group-hover:text-[#14452f]"}`}>
+                  <div className={`text-xs sm:text-sm font-bold tracking-normal sm:tracking-wide leading-tight whitespace-normal break-words ${isActive ? "text-white" : "text-gray-900 group-hover:text-[#14452f]"}`}>
                     {tab.label}
                   </div>
-                  <div className={`text-[10px] ${isActive ? "text-[#dfb455]" : "text-gray-500"}`}>
+                  <div className={`text-[10px] mt-1.5 leading-snug whitespace-normal break-words ${isActive ? "text-[#dfb455]" : "text-gray-500"}`}>
                     {tab.subtitle}
                   </div>
                 </button>
@@ -1867,13 +3143,13 @@ export default function App() {
 
           {/* Academic Content Stage Canvas */}
           {(() => {
-            const currentData = ACADEMICS_CARDS_DATA[activeTab] || ACADEMICS_CARDS_DATA.all;
+            const currentData = academicCardsData[activeTab] || academicCardsData.all;
             return (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 items-stretch">
                 
                 {/* Stage Feature Overview Showcase (5 columns) */}
-                <div className="lg:col-span-5 bg-[#0d2e20] text-white rounded-2xl overflow-hidden border border-[#1e5038] shadow-xl flex flex-col justify-between relative group">
-                  <div className="relative h-56 sm:h-64 overflow-hidden">
+                <div className="lg:col-span-5 bg-[#0d2e20] text-white rounded-[1.75rem] overflow-hidden border border-[#1e5038] shadow-xl flex flex-col justify-between relative group">
+                  <div className="relative h-52 sm:h-64 overflow-hidden">
                     <img
                       src={currentData.stageBanner.image}
                       alt={currentData.stageBanner.title}
@@ -1882,27 +3158,27 @@ export default function App() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0d2e20] via-[#0d2e20]/40 to-transparent" />
                     
-                    <div className="absolute top-3.5 left-3.5 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/15 text-[10.5px] font-semibold tracking-wider text-[#dfb455] uppercase">
+                    <div className="absolute top-3 left-3 sm:top-3.5 sm:left-3.5 bg-black/60 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-white/15 text-[9.5px] sm:text-[10.5px] font-semibold tracking-wider text-[#dfb455] uppercase">
                       CBSE Affiliated · GPS Bagodar
                     </div>
                   </div>
 
-                  <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between relative z-10 -mt-6">
+                  <div className="p-4 sm:p-7 flex-1 flex flex-col justify-between relative z-10 -mt-5 sm:-mt-6">
                     <div>
-                      <h3 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight mb-1">
+                      <h3 className="font-serif text-lg sm:text-2xl font-bold text-white tracking-tight mb-1 leading-tight">
                         {currentData.stageBanner.title}
                       </h3>
-                      <p className="text-[#dfb455] text-xs font-semibold uppercase tracking-wider mb-4">
+                      <p className="text-[#dfb455] text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-3 sm:mb-4">
                         {currentData.stageBanner.subtitle}
                       </p>
                       
-                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed mb-6 font-light">
+                      <p className="text-gray-300 text-[11px] sm:text-sm leading-relaxed mb-5 sm:mb-6 font-light">
                         {currentData.description}
                       </p>
 
-                      <div className="space-y-2.5 pt-4 border-t border-white/10">
+                      <div className="space-y-2 pt-4 border-t border-white/10">
                         {currentData.stageBanner.features.map((feat, idx) => (
-                          <div key={idx} className="flex items-start gap-2.5 text-xs text-gray-200">
+                          <div key={idx} className="flex items-start gap-2.5 text-[11px] sm:text-xs text-gray-200 leading-snug bg-white/0 rounded-xl">
                             <span className="w-4 h-4 rounded-full bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center text-[10px] shrink-0 mt-0.5 font-bold">✓</span>
                             <span>{feat}</span>
                           </div>
@@ -1910,17 +3186,19 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="pt-6 mt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+                    <div className="pt-5 mt-5 border-t border-white/10 flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3">
                       <button
                         onClick={() => setAdmissionModalOpen(true)}
                         style={{ backgroundColor: GOLD }}
-                        className="text-white text-xs font-bold px-4 py-2.5 rounded-lg hover:brightness-110 transition-all uppercase tracking-wider cursor-pointer shadow-sm active:scale-95"
+                        className="w-full sm:w-auto text-white text-[11px] sm:text-xs font-bold px-4 py-2.5 rounded-lg hover:brightness-110 transition-all uppercase tracking-wider cursor-pointer shadow-sm active:scale-95"
                       >
                         Apply for Admission
                       </button>
                       <button
-                        onClick={() => setTourModalOpen(true)}
-                        className="text-xs font-semibold text-gray-300 hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
+                        onClick={() => {
+                          window.location.hash = "online-forms";
+                        }}
+                        className="text-[11px] sm:text-xs font-semibold text-gray-300 hover:text-white flex items-center justify-center sm:justify-start gap-1 cursor-pointer transition-colors w-full sm:w-auto"
                       >
                         <span>Schedule Campus Visit</span>
                         <span>→</span>
@@ -1930,32 +3208,32 @@ export default function App() {
                 </div>
 
                 {/* Structured Subject & Learning Cards (7 columns) */}
-                <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 content-start">
+                <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 content-start">
                   {currentData.cards.map((item, idx) => (
                     <div
                       key={idx}
-                      className="bg-white rounded-2xl p-6 sm:p-7 border border-gray-200/80 shadow-xs hover:shadow-xl hover:border-[#14452f]/30 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+                      className="bg-white rounded-[1.4rem] p-4 sm:p-7 border border-gray-200/80 shadow-xs hover:shadow-xl hover:border-[#14452f]/30 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
                     >
                       <div>
-                        <div className="flex items-center justify-between gap-2 mb-4">
-                          <div className="w-12 h-12 rounded-xl bg-[#f0faf5] border border-[#14452f]/10 flex items-center justify-center text-[#14452f] group-hover:bg-[#14452f] group-hover:text-[#dfb455] transition-colors">
-                            <AcademicStageIcon type={item.iconType} className="w-6 h-6 transition-transform group-hover:scale-110" />
+                        <div className="flex items-center justify-between gap-2 mb-3.5">
+                          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#f0faf5] border border-[#14452f]/10 flex items-center justify-center text-[#14452f] group-hover:bg-[#14452f] group-hover:text-[#dfb455] transition-colors">
+                            <AcademicStageIcon type={item.iconType} className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:scale-110" />
                           </div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-[#faf5ea] text-[#976a16] border border-[#dfb455]/40">
+                          <span className="text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-[#faf5ea] text-[#976a16] border border-[#dfb455]/40 shrink-0">
                             {item.badge}
                           </span>
                         </div>
 
-                        <h4 className="font-serif font-bold text-base sm:text-lg text-gray-900 group-hover:text-[#14452f] transition-colors mb-2 leading-snug">
+                        <h4 className="font-serif font-bold text-[15px] sm:text-lg text-gray-900 group-hover:text-[#14452f] transition-colors mb-2 leading-snug">
                           {item.title}
                         </h4>
 
-                        <p className="text-gray-600 text-xs sm:text-sm leading-relaxed font-normal">
+                        <p className="text-gray-600 text-[11px] sm:text-sm leading-relaxed font-normal">
                           {item.desc}
                         </p>
                       </div>
 
-                      <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between text-[11px] font-semibold text-[#14452f]">
+                      <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between text-[10.5px] sm:text-[11px] font-semibold text-[#14452f] gap-3">
                         <span className="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
                           <span>Explore Syllabus</span>
                           <span>→</span>
@@ -1969,391 +3247,6 @@ export default function App() {
               </div>
             );
           })()}
-
-        </div>
-      </section>
-
-      {/* ======================================================== */}
-      {/* 6.5. DIGITAL NOTICE BOARD, ANNOUNCEMENTS & RECRUITMENT DESK */}
-      {/* ======================================================== */}
-      <section
-        id="notice-board"
-        className="py-16 sm:py-24 bg-[#f2f6f3] border-t border-gray-200/80 relative overflow-hidden"
-      >
-        {/* Anchor targets for smooth scrolling from menus and footer */}
-        <div id="notices" className="absolute -top-24" />
-        <div id="announcements" className="absolute -top-24" />
-        <div id="recruitment" className="absolute -top-24" />
-        <div id="career" className="absolute -top-24" />
-
-        {/* Ambient background accents */}
-        <div className="absolute -top-24 right-10 w-96 h-96 bg-[#dfb455]/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 left-10 w-96 h-96 bg-[#14452f]/8 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          
-          {/* Section Header: Bulletin Themed */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 pb-6 border-b border-gray-300/80">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14452f] text-[#dfb455] text-[11px] font-bold tracking-[0.16em] uppercase mb-3 shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                <span>OFFICIAL BULLETIN &amp; CAREERS DESK</span>
-              </div>
-              <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-[1.15]">
-                Notice Board &amp; <br className="hidden sm:inline" />
-                <span className="italic font-normal text-[#14452f]">Latest Announcements</span>
-              </h2>
-            </div>
-            
-            {/* Live Indicator & Quick Actions */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 lg:self-end">
-              <div className="bg-white px-3.5 py-2 rounded-xl border border-gray-200/90 shadow-xs flex items-center gap-2.5 text-xs text-gray-700">
-                <span className="flex h-2.5 w-2.5 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600" />
-                </span>
-                <span className="font-semibold text-[#14452f]">Live Board</span>
-                <span className="text-gray-400">|</span>
-                <span className="text-gray-500">Updated Daily</span>
-              </div>
-
-              <button
-                onClick={() => {
-                  setNoticeFilter("recruitment");
-                  const elem = document.getElementById("recruitment-board");
-                  if (elem) elem.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="bg-[#14452f] hover:bg-[#1a583c] text-[#dfb455] text-xs font-bold px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-sm cursor-pointer hover:scale-102"
-              >
-                <span>💼 View Career Openings (5)</span>
-                <span>→</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Bulletin Search & Filter Bar */}
-          <div className="bg-white p-3 sm:p-4 rounded-2xl border border-gray-200/90 shadow-sm mb-8 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-            
-            {/* Category Filter Pills */}
-            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
-              {NOTICE_TABS.map((tab) => {
-                const isActive = noticeFilter === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setNoticeFilter(tab.id)}
-                    className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
-                      isActive
-                        ? "bg-[#14452f] text-white shadow-xs font-bold"
-                        : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-200/60"
-                    }`}
-                  >
-                    <span>{tab.icon}</span>
-                    <span>{tab.label}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                        isActive ? "bg-[#dfb455] text-[#14452f]" : "bg-gray-200 text-gray-600"
-                      }`}
-                    >
-                      {tab.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Notice Search Input */}
-            <div className="relative min-w-[240px] lg:min-w-[280px]">
-              <svg
-                className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text"
-                value={noticeSearch}
-                onChange={(e) => setNoticeSearch(e.target.value)}
-                placeholder="Search circulars, ref no, jobs..."
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-9 pr-3 py-2 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#14452f] focus:bg-white"
-              />
-              {noticeSearch && (
-                <button
-                  onClick={() => setNoticeSearch("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* ======================================================== */}
-          {/* SPECIAL SECTION: RECRUITMENT DESK (CAREER VACANCIES) */}
-          {/* ======================================================== */}
-          {(noticeFilter === "recruitment" || noticeFilter === "all") && (
-            <div id="recruitment-board" className="mb-12">
-              
-              {/* Recruitment Header Banner */}
-              <div className="bg-gradient-to-r from-[#0e3322] via-[#14452f] to-[#1e5a3f] text-white rounded-2xl p-6 sm:p-8 mb-6 shadow-xl border border-[#276b4c] relative overflow-hidden">
-                <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-[#dfb455]/10 rounded-full blur-2xl pointer-events-none" />
-                
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                  <div className="max-w-2xl">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#dfb455]/20 text-[#dfb455] text-[10.5px] font-bold uppercase tracking-wider mb-2.5">
-                      <span>💼 FACULTY &amp; STAFF HIRING DRIVE 2025–26</span>
-                    </div>
-                    <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white mb-2">
-                      Join Our Distinguished Teaching Community
-                    </h3>
-                    <p className="text-gray-200 text-xs sm:text-sm leading-relaxed font-light">
-                      Gyanodaya Public School (CBSE Affiliated, Bagodar) invites applications from passionate, visionary educators. We provide competitive salary packages, Employee Provident Fund (EPF), free staff transport, subsidized education for children, and ongoing CBSE faculty development programs.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
-                    <button
-                      onClick={() => {
-                        setSelectedJob(RECRUITMENT_POSITIONS[0]);
-                        setJobForm((prev) => ({ ...prev, position: RECRUITMENT_POSITIONS[0].title }));
-                        setJobModalOpen(true);
-                      }}
-                      style={{ backgroundColor: GOLD }}
-                      className="text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-xl hover:brightness-110 transition-all uppercase tracking-wider shadow-lg cursor-pointer hover:scale-102 text-center"
-                    >
-                      Apply Online for Job ↗
-                    </button>
-                    <a
-                      href="mailto:careers@gpsbagodar.edu.in"
-                      className="bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all text-center flex items-center justify-center gap-2"
-                    >
-                      <svg className="w-3.5 h-3.5 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      <span>careers@gpsbagodar.edu.in</span>
-                    </a>
-                  </div>
-                </div>
-
-                {/* Staff Perks Pill Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-6 pt-6 border-t border-white/10 text-xs text-gray-200">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center text-xs">✓</span>
-                    <span>CBSE 7th Pay Scale</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center text-xs">✓</span>
-                    <span>Free Staff Bus Transit</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center text-xs">✓</span>
-                    <span>EPF &amp; Gratuity Benefits</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center text-xs">✓</span>
-                    <span>Child Education Subsidy</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Active Recruitment Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {RECRUITMENT_POSITIONS.map((job) => (
-                  <div
-                    key={job.id}
-                    className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200/90 shadow-xs hover:shadow-xl hover:border-[#14452f]/40 transition-all duration-300 flex flex-col justify-between group relative hover:-translate-y-1"
-                  >
-                    {/* Brass Pin Top Header */}
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
-                          {job.type}
-                        </span>
-                        <div className="text-[11px] font-semibold text-gray-500 mt-1">
-                          {job.dept}
-                        </div>
-                      </div>
-
-                      <span className="text-xs font-bold text-[#14452f] bg-[#f0faf5] px-2.5 py-1 rounded-lg border border-[#14452f]/10">
-                        {job.vacancies}
-                      </span>
-                    </div>
-
-                    <div>
-                      <h4 className="font-serif text-base sm:text-lg font-bold text-gray-900 group-hover:text-[#14452f] transition-colors mb-2">
-                        {job.title}
-                      </h4>
-                      <p className="text-gray-600 text-xs leading-relaxed mb-4">
-                        {job.description}
-                      </p>
-
-                      <div className="space-y-1.5 text-xs text-gray-700 bg-gray-50/80 p-3 rounded-xl border border-gray-100 mb-4">
-                        <div className="flex items-start gap-1.5">
-                          <span className="font-semibold text-gray-900 shrink-0">🎓 Eligibility:</span>
-                          <span className="text-gray-600 truncate">{job.qualification}</span>
-                        </div>
-                        <div className="flex items-start gap-1.5">
-                          <span className="font-semibold text-gray-900 shrink-0">💼 Experience:</span>
-                          <span className="text-gray-600">{job.experience}</span>
-                        </div>
-                        <div className="flex items-start gap-1.5">
-                          <span className="font-semibold text-gray-900 shrink-0">💰 Salary:</span>
-                          <span className="text-[#14452f] font-medium">{job.payScale}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
-                      <span className="text-[10.5px] text-gray-400">
-                        Deadline: <strong className="text-gray-600 font-semibold">{job.deadline}</strong>
-                      </span>
-                      <button
-                        onClick={() => {
-                          setSelectedJob(job);
-                          setJobForm((prev) => ({ ...prev, position: job.title }));
-                          setJobModalOpen(true);
-                        }}
-                        style={{ backgroundColor: GREEN }}
-                        className="text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg hover:brightness-110 transition-all cursor-pointer shadow-xs active:scale-95"
-                      >
-                        Apply Now ↗
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-            </div>
-          )}
-
-          {/* ======================================================== */}
-          {/* NOTICE BOARD BULLETIN CARDS */}
-          {/* ======================================================== */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {NOTICES_DATA.filter((n) => {
-              const matchesFilter = noticeFilter === "all" || n.category === noticeFilter;
-              const matchesSearch =
-                !noticeSearch ||
-                n.title.toLowerCase().includes(noticeSearch.toLowerCase()) ||
-                n.refNo.toLowerCase().includes(noticeSearch.toLowerCase()) ||
-                n.summary.toLowerCase().includes(noticeSearch.toLowerCase());
-              return matchesFilter && matchesSearch;
-            }).map((notice) => (
-              <div
-                key={notice.id}
-                className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200/90 shadow-sm hover:shadow-2xl hover:border-[#14452f]/30 transition-all duration-300 flex flex-col justify-between group relative hover:-translate-y-1.5"
-              >
-                {/* Decorative Pin Badge */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-gradient-to-br from-[#dfb455] to-[#976a16] shadow-md border-2 border-white flex items-center justify-center text-white text-[9px] font-bold z-10">
-                  📌
-                </div>
-
-                <div>
-                  {/* Top Meta Bar */}
-                  <div className="flex items-center justify-between gap-2 pt-2 mb-3.5">
-                    <div className="flex items-center gap-2">
-                      <div className="flex flex-col items-center justify-center bg-[#f0faf5] border border-[#14452f]/20 rounded-lg px-2 py-1 leading-none text-center">
-                        <span className="text-xs font-bold text-[#14452f]">{notice.day}</span>
-                        <span className="text-[9px] font-semibold text-[#c59a3f] uppercase">{notice.month}</span>
-                      </div>
-                      <span className="text-[10px] font-mono font-semibold text-gray-500">
-                        {notice.refNo}
-                      </span>
-                    </div>
-
-                    <span
-                      className={`text-[9.5px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
-                        notice.badgeColor === "red"
-                          ? "bg-red-50 text-red-700 border-red-200"
-                          : notice.badgeColor === "emerald"
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                          : notice.badgeColor === "amber"
-                          ? "bg-amber-50 text-amber-800 border-amber-200"
-                          : notice.badgeColor === "purple"
-                          ? "bg-purple-50 text-purple-700 border-purple-200"
-                          : "bg-blue-50 text-blue-700 border-blue-200"
-                      }`}
-                    >
-                      {notice.badge}
-                    </span>
-                  </div>
-
-                  {/* Notice Title */}
-                  <h3
-                    onClick={() => setSelectedNotice(notice)}
-                    className="font-serif text-base sm:text-lg font-bold text-gray-900 group-hover:text-[#14452f] transition-colors mb-2 cursor-pointer leading-snug"
-                  >
-                    {notice.title}
-                  </h3>
-
-                  {/* Summary */}
-                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-4">
-                    {notice.summary}
-                  </p>
-                </div>
-
-                {/* Bottom Target & Action Buttons */}
-                <div className="pt-3.5 border-t border-gray-100 flex flex-col gap-2.5">
-                  <div className="flex items-center justify-between text-[11px] text-gray-500">
-                    <span className="truncate">🎯 Audience: <strong className="text-gray-700 font-semibold">{notice.audience}</strong></span>
-                    {notice.fileSize && <span className="text-[10px] font-mono text-gray-400 shrink-0">{notice.fileSize}</span>}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => {
-                        showToast(`📄 Downloading official notice PDF: ${notice.refNo}.pdf (${notice.fileSize || "1.2 MB"})...`);
-                      }}
-                      className="flex items-center justify-center gap-1.5 text-xs font-semibold py-2 px-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors cursor-pointer"
-                    >
-                      <svg className="w-3.5 h-3.5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                      <span>Download</span>
-                    </button>
-
-                    <button
-                      onClick={() => setSelectedNotice(notice)}
-                      style={{ backgroundColor: GREEN }}
-                      className="flex items-center justify-center gap-1 text-xs font-semibold py-2 px-2.5 rounded-lg text-white hover:brightness-110 transition-colors cursor-pointer shadow-xs"
-                    >
-                      <span>Read Notice</span>
-                      <span>→</span>
-                    </button>
-                  </div>
-                </div>
-
-              </div>
-            ))}
-          </div>
-
-          {/* Bottom Archive Notification Box */}
-          <div className="mt-10 bg-white p-4 sm:p-5 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#f0faf5] text-[#14452f] flex items-center justify-center font-bold text-lg shrink-0">
-                📁
-              </div>
-              <div>
-                <h4 className="text-xs sm:text-sm font-bold text-gray-900">
-                  Looking for past circulars or archived academic records?
-                </h4>
-                <p className="text-[11px] sm:text-xs text-gray-500">
-                  Access comprehensive archives for academic years 2022–2025 via the Student &amp; Parent Portal.
-                </p>
-              </div>
-            </div>
-
-            <a
-              href={PLAYSTORE_PARENT_APP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-[#14452f] hover:bg-[#1a583c] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all uppercase tracking-wider shrink-0"
-            >
-              Open Parents Portal ↗
-            </a>
-          </div>
 
         </div>
       </section>
@@ -2379,7 +3272,7 @@ export default function App() {
 
           {/* 4 Infrastructure Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10 sm:mb-12">
-            {FACILITIES_LIST.map((fac) => (
+            {facilitiesList.map((fac) => (
               <div
                 key={fac.title}
                 className="group bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col hover:-translate-y-1.5 cursor-pointer"
@@ -2422,7 +3315,7 @@ export default function App() {
           {/* View All Facilities CTA Button */}
           <div className="text-center">
             <button
-              onClick={() => setTourModalOpen(true)}
+              onClick={() => setAdmissionModalOpen(true)}
               style={{ borderColor: "#14452f", color: "#14452f" }}
               className="inline-flex items-center gap-2 border-2 text-xs sm:text-sm font-semibold px-6 py-2.5 rounded-sm hover:bg-[#14452f] hover:text-white transition-all uppercase tracking-wider cursor-pointer hover:scale-105"
             >
@@ -2469,7 +3362,7 @@ export default function App() {
 
           {/* 6 Gallery Photos Grid with Clean Responsive Breakpoints */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5">
-            {GALLERY_ITEMS.map((item, index) => (
+            {galleryItems.map((item, index) => (
               <div
                 key={index}
                 onClick={() => setLightboxIndex(index)}
@@ -2562,8 +3455,10 @@ export default function App() {
           {/* Left: Crest Icon + Text */}
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
             {/* School Emblem Logo */}
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/10 p-1 flex items-center justify-center shrink-0 border border-white/20 shadow-inner animate-float">
-              <SchoolLogo className="w-12 h-12 sm:w-14 sm:h-14" />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 p-1.5 flex items-center justify-center shrink-0 border border-white/20 shadow-inner animate-float">
+              <div className="w-full h-full rounded-full bg-white/95 flex items-center justify-center p-1.5">
+                <SchoolLogo className="w-12 h-12 sm:w-15 sm:h-15" />
+              </div>
             </div>
 
             {/* Title & Subtitle */}
@@ -2573,7 +3468,7 @@ export default function App() {
                 className="font-serif text-lg sm:text-2xl font-bold tracking-tight"
               >
                 Admissions Open for
-                <br className="sm:hidden" /> Academic Year 2025–26
+                <br className="sm:hidden" /> Academic Year {academicSession}
               </h3>
 
               {/* Vertical divider on medium screens */}
@@ -2601,17 +3496,873 @@ export default function App() {
       </section>
 
       {/* ======================================================== */}
+      {/* 9.5. ONLINE FORMS & SERVICES PORTAL */}
+      {/* ======================================================== */}
+      <section id="online-forms" className="py-16 sm:py-24 bg-gradient-to-b from-[#f8faf8] via-[#f3f7f4] to-white border-t border-gray-200 relative overflow-hidden">
+        {/* Background Subtle Institutional Grid */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#14452f_1px,transparent_1px)] [background-size:20px_20px]" />
+
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-8 relative z-10">
+          
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+            <span
+              style={{ color: GOLD }}
+              className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] inline-block mb-2 bg-[#dfb455]/10 px-3 py-1 rounded-full border border-[#dfb455]/30"
+            >
+              ADMISSIONS, ENQUIRIES & CAMPUS VISITS
+            </span>
+            <h2 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mt-1">
+              Online Application & Service Forms
+            </h2>
+            <div className="w-16 h-1 bg-[#14452f] mx-auto mt-4 mb-4 rounded-full" />
+            <p className="text-gray-600 text-xs sm:text-base leading-relaxed">
+              Complete your student registration, schedule a guided campus tour, or submit an academic enquiry directly to the school administrative cell.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Left Column: Quick Info & Document Checklist (4 Cols) */}
+            <div className="lg:col-span-4 space-y-6">
+              
+              {/* Helpline & Hours Card */}
+              <div className="bg-[#14452f] text-white p-6 rounded-2xl shadow-xl border-2 border-[#dfb455]/30 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#dfb455]/10 rounded-full blur-2xl pointer-events-none" />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-xl shrink-0 border border-white/20">
+                    📞
+                  </div>
+                  <div>
+                    <h3 className="font-serif font-bold text-base text-[#dfb455]">
+                      Admission Helpline
+                    </h3>
+                    <p className="text-xs text-gray-300">Direct Support & Desk Assistance</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 text-xs border-t border-white/15 pt-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300">Calling Line:</span>
+                    <a href="tel:+919431377488" className="font-bold text-white hover:text-[#dfb455]">
+                      +91 94313 77488
+                    </a>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300">WhatsApp Desk:</span>
+                    <a href="https://wa.me/919431377488" target="_blank" rel="noopener noreferrer" className="font-bold text-emerald-400 hover:underline">
+                      +91 94313 77488
+                    </a>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300">Email:</span>
+                    <span className="font-mono text-gray-200 truncate">admissions@gpsbagodar.edu.in</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300">Desk Hours:</span>
+                    <span className="font-medium text-white">Mon–Sat: 8:00 AM – 3:30 PM</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Documents Checklist Card */}
+              <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-md">
+                <div className="flex items-center gap-2.5 mb-4 text-[#14452f]">
+                  <span className="text-lg">📋</span>
+                  <h4 className="font-serif font-bold text-sm uppercase tracking-wider">
+                    Required Documents Checklist
+                  </h4>
+                </div>
+                <ul className="space-y-2.5 text-xs text-gray-600">
+                  {[
+                    "Original Municipal / Panchayat Birth Certificate",
+                    "4 Recent Passport-size Photographs of Student",
+                    "2 Passport-size Photographs of Parents / Guardian",
+                    "Previous Year Report Card / Marks Sheet (Class II+)",
+                    "Original Transfer Certificate (TC) from recognized school",
+                    "Copy of Student & Parents Aadhaar Card",
+                    "Blood Group & Medical Fitness Certificate",
+                  ].map((doc, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-emerald-600 font-bold shrink-0">✓</span>
+                      <span>{doc}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Campus Location Card */}
+              <div className="bg-[#f0faf5] p-5 rounded-2xl border border-[#14452f]/20">
+                <div className="flex items-start gap-3">
+                  <span className="text-xl">📍</span>
+                  <div className="text-xs">
+                    <h5 className="font-bold text-[#14452f] mb-1">GPS Bagodar Campus</h5>
+                    <p className="text-gray-600 leading-relaxed">
+                      National Highway 19 (Grand Trunk Road), Bagodar, Dist: Giridih, Jharkhand – 825322
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Right Column: Tabbed Interactive Form Portal (8 Cols) */}
+            <div className="lg:col-span-8 bg-white rounded-3xl shadow-xl border border-gray-200/80 overflow-hidden">
+              
+              {/* Form Navigation Tabs */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 bg-gray-100/90 p-1.5 border-b border-gray-200">
+                {[
+                  { id: "admission", label: "Admission Form" },
+                  { id: "enquiry", label: "General Enquiry" },
+                  { id: "visit", label: "Campus Visit" },
+                  { id: "prospectus", label: "Prospectus" },
+                ].map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setActiveFormTab(t.id as any)}
+                    className={`py-3 px-2 rounded-xl text-xs sm:text-[13px] font-bold transition-all flex items-center justify-center cursor-pointer ${
+                      activeFormTab === t.id
+                        ? "bg-white text-[#14452f] shadow-md border border-gray-200"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+                    }`}
+                  >
+                    <span className="truncate">{t.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Form Content Body */}
+              <div className="p-6 sm:p-8">
+
+                {/* FORM 1: ONLINE ADMISSION FORM */}
+                {activeFormTab === "admission" && (
+                  <form onSubmit={handleOnlineAdmissionSubmit} className="space-y-6">
+                    <div className="border-b border-gray-100 pb-4">
+                      <h3 className="font-serif font-bold text-lg sm:text-xl text-[#14452f]">
+                        Student Online Registration (Session {admissionForm.session})
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Apply online for Pre-Primary (Nursery, LKG, UKG), Primary, Middle, Secondary, and Senior Secondary (Science, Commerce, Arts).
+                      </p>
+                    </div>
+
+                    {/* Section: Student Profile */}
+                    <div>
+                      <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                        1. Student Details
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Student Full Name *
+                          </label>
+                          <input
+                            type="text"
+                            name="studentName"
+                            required
+                            value={admissionForm.studentName}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, studentName: e.target.value })}
+                            placeholder="e.g. Aryan Kumar Sharma"
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Gender *
+                          </label>
+                          <select
+                            name="gender"
+                            value={admissionForm.gender}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, gender: e.target.value })}
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          >
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Date of Birth
+                          </label>
+                          <input
+                            type="date"
+                            name="dob"
+                            value={admissionForm.dob}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, dob: e.target.value })}
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Class Applying For *
+                          </label>
+                          <select
+                            name="grade"
+                            value={admissionForm.grade}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, grade: e.target.value })}
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          >
+                            <option value="Nursery">Nursery (Play Group)</option>
+                            <option value="LKG">LKG (Lower Kindergarten)</option>
+                            <option value="UKG">UKG (Upper Kindergarten)</option>
+                            <option value="Class I">Class I</option>
+                            <option value="Class II">Class II</option>
+                            <option value="Class III">Class III</option>
+                            <option value="Class IV">Class IV</option>
+                            <option value="Class V">Class V</option>
+                            <option value="Class VI">Class VI</option>
+                            <option value="Class VII">Class VII</option>
+                            <option value="Class VIII">Class VIII</option>
+                            <option value="Class IX">Class IX</option>
+                            <option value="Class X">Class X</option>
+                            <option value="Class XI (Senior Secondary)">Class XI (Senior Secondary)</option>
+                            <option value="Class XII">Class XII</option>
+                          </select>
+                        </div>
+
+                        {(admissionForm.grade.includes("XI") || admissionForm.grade.includes("XII")) && (
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                              Stream Preference
+                            </label>
+                            <select
+                              name="stream"
+                              value={admissionForm.stream}
+                              onChange={(e) => setAdmissionForm({ ...admissionForm, stream: e.target.value })}
+                              className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                            >
+                              <option value="Science (PCM + CS/PE)">Science (PCM + CS/PE)</option>
+                              <option value="Science (PCB + Biotech/PE)">Science (PCB + Biotech/PE)</option>
+                              <option value="Commerce (Accounts, Eco, BST, Math/IP)">Commerce (Accounts, Eco, BST, Math/IP)</option>
+                              <option value="Humanities / Arts (Hist, Pol Sci, Geog, Eco)">Humanities / Arts (Hist, Pol Sci, Geog, Eco)</option>
+                            </select>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Section: Parent Information */}
+                    <div>
+                      <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                        2. Parent / Guardian Contact Information
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Father / Guardian Name *
+                          </label>
+                          <input
+                            type="text"
+                            name="fatherName"
+                            required
+                            value={admissionForm.fatherName}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, fatherName: e.target.value })}
+                            placeholder="e.g. Ramesh Chandra Sharma"
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Father Occupation
+                          </label>
+                          <input
+                            type="text"
+                            name="fatherOccupation"
+                            value={admissionForm.fatherOccupation}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, fatherOccupation: e.target.value })}
+                            placeholder="e.g. Business / Govt Service"
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Mother Name
+                          </label>
+                          <input
+                            type="text"
+                            name="motherName"
+                            value={admissionForm.motherName}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, motherName: e.target.value })}
+                            placeholder="e.g. Meena Devi"
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Primary Mobile / WhatsApp Number *
+                          </label>
+                          <input
+                            type="tel"
+                            name="phone"
+                            required
+                            value={admissionForm.phone}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, phone: e.target.value })}
+                            placeholder="e.g. +91 94313 77488"
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Email Address
+                          </label>
+                          <input
+                            type="email"
+                            name="email"
+                            value={admissionForm.email}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, email: e.target.value })}
+                            placeholder="e.g. parent@gmail.com"
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            City / Block / District
+                          </label>
+                          <input
+                            type="text"
+                            name="city"
+                            value={admissionForm.city}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, city: e.target.value })}
+                            placeholder="e.g. Bagodar, Giridih"
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+
+                        <div className="sm:col-span-2 md:col-span-3">
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Residential Address / Village
+                          </label>
+                          <input
+                            type="text"
+                            name="address"
+                            value={admissionForm.address}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, address: e.target.value })}
+                            placeholder="e.g. GT Road, Near SBI Bagodar Branch, Bagodar"
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section: Academic Background & Facilities */}
+                    <div>
+                      <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                        3. Facilities & Previous School
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Previous School Attended (if any)
+                          </label>
+                          <input
+                            type="text"
+                            name="prevSchool"
+                            value={admissionForm.prevSchool}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, prevSchool: e.target.value })}
+                            placeholder="e.g. St. Joseph Convent School"
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            Previous Grade / %
+                          </label>
+                          <input
+                            type="text"
+                            name="prevPercentage"
+                            value={admissionForm.prevPercentage}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, prevPercentage: e.target.value })}
+                            placeholder="e.g. 88.5% or Grade A"
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            School Bus Transport?
+                          </label>
+                          <select
+                            name="needTransport"
+                            value={admissionForm.needTransport}
+                            onChange={(e) => setAdmissionForm({ ...admissionForm, needTransport: e.target.value })}
+                            className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                          >
+                            <option value="Yes">Yes (Bus Route Required)</option>
+                            <option value="No">No (Self Conveyance)</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Declaration Checkbox */}
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 text-xs text-gray-600 flex items-start gap-2.5">
+                      <input
+                        type="checkbox"
+                        id="admission-agreed"
+                        name="agreed"
+                        required
+                        checked={admissionForm.agreed}
+                        onChange={(e) => setAdmissionForm({ ...admissionForm, agreed: e.target.checked })}
+                        className="mt-0.5 rounded text-[#14452f] focus:ring-[#14452f] cursor-pointer"
+                      />
+                      <label htmlFor="admission-agreed" className="cursor-pointer">
+                        I hereby declare that all information submitted in this application is true and complete to the best of my knowledge. I agree to comply with the rules and admission policies of Gyanodaya Public School (GPS), Bagodar.
+                      </label>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={admissionSubmitting}
+                      style={{ backgroundColor: GOLD }}
+                      className="w-full text-white font-bold py-3.5 rounded-xl text-xs sm:text-sm uppercase tracking-wider hover:brightness-110 transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99]"
+                    >
+                      {admissionSubmitting ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Submitting Registration...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Submit Online Admission Application ↗</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+
+                {/* FORM 2: GENERAL & ACADEMIC ENQUIRY */}
+                {activeFormTab === "enquiry" && (
+                  <form onSubmit={handleGeneralEnquirySubmit} className="space-y-6">
+                    <div className="border-b border-gray-100 pb-4">
+                      <h3 className="font-serif font-bold text-lg sm:text-xl text-[#14452f]">
+                        General & Academic Enquiry
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Have questions about fee structure, bus routes, syllabus, or facilities? Submit your query and our team will get back to you.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Full Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="fullName"
+                          required
+                          value={generalEnquiryForm.fullName}
+                          onChange={(e) => setGeneralEnquiryForm({ ...generalEnquiryForm, fullName: e.target.value })}
+                          placeholder="Your Full Name"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Contact Number *
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          required
+                          value={generalEnquiryForm.phone}
+                          onChange={(e) => setGeneralEnquiryForm({ ...generalEnquiryForm, phone: e.target.value })}
+                          placeholder="+91 94313 XXXXX"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={generalEnquiryForm.email}
+                          onChange={(e) => setGeneralEnquiryForm({ ...generalEnquiryForm, email: e.target.value })}
+                          placeholder="email@domain.com"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Enquiry Subject / Category *
+                        </label>
+                        <select
+                          name="subject"
+                          value={generalEnquiryForm.subject}
+                          onChange={(e) => setGeneralEnquiryForm({ ...generalEnquiryForm, subject: e.target.value })}
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        >
+                          <option value="Fee Structure & Payment Schedule">Fee Structure & Payment Schedule</option>
+                          <option value="Admission Eligibility & Guidelines">Admission Eligibility & Guidelines</option>
+                          <option value="School Bus Routes & Transport Details">School Bus Routes & Transport Details</option>
+                          <option value="Hostel & Boarding Facilities">Hostel & Boarding Facilities</option>
+                          <option value="Academic Curriculum & Board Affiliation">Academic Curriculum & Board Affiliation</option>
+                          <option value="Sports & Extra-Curricular Facilities">Sports & Extra-Curricular Facilities</option>
+                          <option value="Transfer Certificate (TC) & Bonafide">Transfer Certificate (TC) & Bonafide</option>
+                          <option value="Other Questions / Feedback">Other Questions / Feedback</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Preferred Contact Mode
+                        </label>
+                        <select
+                          name="contactMode"
+                          value={generalEnquiryForm.contactMode}
+                          onChange={(e) => setGeneralEnquiryForm({ ...generalEnquiryForm, contactMode: e.target.value })}
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        >
+                          <option value="Phone Call">Phone Call</option>
+                          <option value="WhatsApp Message">WhatsApp Message</option>
+                          <option value="Email">Email</option>
+                        </select>
+                      </div>
+
+                      <div className="sm:col-span-2 md:col-span-3">
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Your Message / Specific Question *
+                        </label>
+                        <textarea
+                          required
+                          name="message"
+                          rows={4}
+                          value={generalEnquiryForm.message}
+                          onChange={(e) => setGeneralEnquiryForm({ ...generalEnquiryForm, message: e.target.value })}
+                          placeholder="Please describe your query in detail..."
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={enquirySubmitting}
+                      style={{ backgroundColor: GREEN }}
+                      className="w-full text-white font-bold py-3.5 rounded-xl text-xs sm:text-sm uppercase tracking-wider hover:brightness-110 transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99]"
+                    >
+                      {enquirySubmitting ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Submitting Enquiry...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Submit Enquiry & Request Callback ↗</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+
+                {/* FORM 3: BOOK CAMPUS VISIT & TOUR */}
+                {activeFormTab === "visit" && (
+                  <form onSubmit={handleCampusVisitSubmit} className="space-y-6">
+                    <div className="border-b border-gray-100 pb-4">
+                      <h3 className="font-serif font-bold text-lg sm:text-xl text-[#14452f]">
+                        Schedule a School Campus Tour & Visit
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Visit GPS Bagodar to experience our smart classrooms, STEM robotics labs, sports grounds, and interact with our faculty mentors.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Parent / Visitor Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="visitorName"
+                          required
+                          value={campusVisitForm.visitorName}
+                          onChange={(e) => setCampusVisitForm({ ...campusVisitForm, visitorName: e.target.value })}
+                          placeholder="Your Full Name"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Contact Mobile / WhatsApp *
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          required
+                          value={campusVisitForm.phone}
+                          onChange={(e) => setCampusVisitForm({ ...campusVisitForm, phone: e.target.value })}
+                          placeholder="+91 94313 XXXXX"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={campusVisitForm.email}
+                          onChange={(e) => setCampusVisitForm({ ...campusVisitForm, email: e.target.value })}
+                          placeholder="visitor@gmail.com"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Preferred Visit Date *
+                        </label>
+                        <input
+                          type="date"
+                          name="visitDate"
+                          required
+                          value={campusVisitForm.visitDate}
+                          onChange={(e) => setCampusVisitForm({ ...campusVisitForm, visitDate: e.target.value })}
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Preferred Time Slot
+                        </label>
+                        <select
+                          name="timeSlot"
+                          value={campusVisitForm.timeSlot}
+                          onChange={(e) => setCampusVisitForm({ ...campusVisitForm, timeSlot: e.target.value })}
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        >
+                          <option value="Morning Slot (09:30 AM – 11:30 AM)">Morning Slot (09:30 AM – 11:30 AM)</option>
+                          <option value="Midday Slot (11:45 AM – 01:15 PM)">Midday Slot (11:45 AM – 01:15 PM)</option>
+                          <option value="Afternoon Slot (02:00 PM – 03:45 PM)">Afternoon Slot (02:00 PM – 03:45 PM)</option>
+                          <option value="Saturday Special (10:00 AM – 01:00 PM)">Saturday Special (10:00 AM – 01:00 PM)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Total Visitors
+                        </label>
+                        <select
+                          name="visitorsCount"
+                          value={campusVisitForm.visitorsCount}
+                          onChange={(e) => setCampusVisitForm({ ...campusVisitForm, visitorsCount: e.target.value })}
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        >
+                          <option value="1 Person">1 Person</option>
+                          <option value="2 Persons (Parents)">2 Persons (Parents)</option>
+                          <option value="3 Persons (Parents + Child)">3 Persons (Parents + Child)</option>
+                          <option value="4+ Persons (Family)">4+ Persons (Family)</option>
+                        </select>
+                      </div>
+
+                      <div className="sm:col-span-2 md:col-span-3">
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Special Requirements / Areas of Interest
+                        </label>
+                        <input
+                          type="text"
+                          name="specialRequests"
+                          value={campusVisitForm.specialRequests}
+                          onChange={(e) => setCampusVisitForm({ ...campusVisitForm, specialRequests: e.target.value })}
+                          placeholder="e.g. Would like to see the Physics lab, hostel rooms, and meet the Science coordinator"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={visitSubmitting}
+                      style={{ backgroundColor: GOLD }}
+                      className="w-full text-white font-bold py-3.5 rounded-xl text-xs sm:text-sm uppercase tracking-wider hover:brightness-110 transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99]"
+                    >
+                      {visitSubmitting ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Scheduling Visit...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Book Guided Campus Visit Pass ↗</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+
+                {/* FORM 4: PROSPECTUS & FEE CHART DOWNLOAD */}
+                {activeFormTab === "prospectus" && (
+                  <form onSubmit={handleProspectusSubmit} className="space-y-6">
+                    <div className="border-b border-gray-100 pb-4">
+                      <h3 className="font-serif font-bold text-lg sm:text-xl text-[#14452f]">
+                        Instant Prospectus & Fee Brochure Request
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Download the comprehensive GPS Bagodar School Prospectus (2025–26) containing curriculum highlights, fee slabs, transport routes, and code of conduct.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Parent / Guardian Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="parentName"
+                          required
+                          value={prospectusForm.parentName}
+                          onChange={(e) => setProspectusForm({ ...prospectusForm, parentName: e.target.value })}
+                          placeholder="Your Name"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Mobile / WhatsApp Number *
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          required
+                          value={prospectusForm.phone}
+                          onChange={(e) => setProspectusForm({ ...prospectusForm, phone: e.target.value })}
+                          placeholder="+91 94313 XXXXX"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={prospectusForm.email}
+                          onChange={(e) => setProspectusForm({ ...prospectusForm, email: e.target.value })}
+                          placeholder="your.email@gmail.com"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Target Class / Wing
+                        </label>
+                        <select
+                          name="grade"
+                          value={prospectusForm.grade}
+                          onChange={(e) => setProspectusForm({ ...prospectusForm, grade: e.target.value })}
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        >
+                          <option value="Pre-Primary (Nursery - UKG)">Pre-Primary (Nursery - UKG)</option>
+                          <option value="Class I – V (Primary)">Class I – V (Primary)</option>
+                          <option value="Class VI – VIII (Middle Wing)">Class VI – VIII (Middle Wing)</option>
+                          <option value="Class IX – X (Secondary)">Class IX – X (Secondary)</option>
+                          <option value="Class XI – XII (Senior Secondary Science/Commerce/Arts)">Class XI – XII (Senior Secondary)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Features summary */}
+                    <div className="bg-[#f0faf5] p-4 rounded-xl border border-[#14452f]/20 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-[#14452f]">
+                      <div className="flex items-center gap-1.5">
+                        <span>📑</span>
+                        <span className="font-semibold">Fee Breakdown</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span>🚌</span>
+                        <span className="font-semibold">Bus Route Map</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span>🏆</span>
+                        <span className="font-semibold">Scholarship Slabs</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span>🔬</span>
+                        <span className="font-semibold">STEM Labs Info</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={prospectusSubmitting}
+                      style={{ backgroundColor: GREEN }}
+                      className="w-full text-white font-bold py-3.5 rounded-xl text-xs sm:text-sm uppercase tracking-wider hover:brightness-110 transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99]"
+                    >
+                      {prospectusSubmitting ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Generating Brochure...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Download GPS Prospectus & Fee Brochure (PDF) 📥</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ======================================================== */}
       {/* 10. FOOTER */}
       {/* ======================================================== */}
       <footer style={{ backgroundColor: "#0e3322" }} className="text-white pt-12 sm:pt-16 pb-8 border-t border-black/20">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
+          <div className="mb-8 rounded-2xl border border-white/10 bg-white/5 px-4 py-4 sm:px-6 sm:py-5">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+              <div>
+                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.22em] text-[#dfb455]">
+                  Mandatory Disclosure
+                </p>
+                <h4 className="mt-1 font-serif text-lg sm:text-xl font-bold text-white">
+                  School Information & Public Disclosure
+                </h4>
+              </div>
+              <p className="max-w-3xl text-xs sm:text-sm leading-relaxed text-gray-300">
+                Gyanodaya Public School, Bagodar publishes its mandatory disclosure, admission information, fee details, academic policies, and statutory school information for parents and guardians. For the latest verified records, please contact the school office or request the current disclosure set from the administrative desk.
+              </p>
+            </div>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-8 mb-10 sm:mb-12">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-8 mb-10 sm:mb-12">
             
             {/* Column 1: School Brand & Description (2 cols on lg) */}
-            <div className="lg:col-span-2">
-              <div className="flex items-center gap-2.5 mb-4">
-                <SchoolLogo className="w-11 h-11 sm:w-12 sm:h-12" />
+            <div className="col-span-2 lg:col-span-2">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="rounded-full bg-white/95 p-1 ring-1 ring-white/10 shadow-sm shrink-0">
+                  <SchoolLogo className="w-12 h-12 sm:w-14 sm:h-14" />
+                </div>
                 <div className="flex flex-col">
                   <span className="font-serif font-bold text-lg sm:text-xl leading-none tracking-tight text-white">
                     GYANODAYA
@@ -2692,9 +4443,9 @@ export default function App() {
                   { label: "Admission Process", href: "#admissions" },
                   { label: "School Calendar", href: "#calendar" },
                   { label: "News & Events", href: "#news" },
-                  { label: "Career", href: "#career" },
-                  { label: "Alumni", href: "#alumni" },
-                  { label: "Parents Login", href: PLAYSTORE_PARENT_APP_URL, isExternal: true },
+                  { label: "Career & Jobs", href: "#recruitment" },
+                  { label: "Parents Login", href: parentsLoginUrl, isExternal: true },
+                  { label: isAdminLoggedIn ? "Admin Dashboard" : "Staff & Admin Login", href: "#admin", isAdminTrigger: true },
                 ].map((info) => (
                   <li key={info.label}>
                     <a
@@ -2702,7 +4453,11 @@ export default function App() {
                       target={info.isExternal ? "_blank" : undefined}
                       rel={info.isExternal ? "noopener noreferrer" : undefined}
                       onClick={(e) => {
-                        if (!info.isExternal) {
+                        if (info.isAdminTrigger) {
+                          e.preventDefault();
+                          if (isAdminLoggedIn) setAdminDashboardOpen(true);
+                          else setAdminLoginModalOpen(true);
+                        } else if (!info.isExternal) {
                           e.preventDefault();
                           setAdmissionModalOpen(true);
                         }
@@ -2717,7 +4472,7 @@ export default function App() {
             </div>
 
             {/* Column 4: Contact Us & Newsletter */}
-            <div id="contact">
+            <div id="contact" className="col-span-2 lg:col-span-1">
               <h4 className="text-white font-serif font-semibold text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
                 CONTACT US
               </h4>
@@ -2791,6 +4546,20 @@ export default function App() {
               </a>
             </div>
           </div>
+
+          <div className="pt-4 text-center text-[11px] sm:text-xs text-white/70">
+            <p>
+              Designed and Developed with ❤️{" "}
+              <a
+                href="https://www.vyntrox.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="font-bold text-[#dfb455] hover:text-white transition-colors"
+              >
+                Vyntrox
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
 
@@ -2814,7 +4583,7 @@ export default function App() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setLightboxIndex((prev) => (prev! - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length);
+              setLightboxIndex((prev) => (prev! - 1 + galleryItems.length) % galleryItems.length);
             }}
             aria-label="Previous photo"
             className="absolute left-2 sm:left-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer z-50"
@@ -2830,22 +4599,22 @@ export default function App() {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={GALLERY_ITEMS[lightboxIndex].img}
-              alt={GALLERY_ITEMS[lightboxIndex].title}
+              src={galleryItems[lightboxIndex].img}
+              alt={galleryItems[lightboxIndex].title}
               className="max-h-[68vh] sm:max-h-[72vh] max-w-full rounded-lg object-contain shadow-2xl"
             />
             <div className="mt-3 sm:mt-4 text-center text-white px-4">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#dfb455] bg-white/10 px-3 py-0.5 sm:py-1 rounded-full">
-                {GALLERY_ITEMS[lightboxIndex].category}
+                {galleryItems[lightboxIndex].category}
               </span>
               <h4 className="font-serif text-base sm:text-xl font-bold mt-1.5 sm:mt-2">
-                {GALLERY_ITEMS[lightboxIndex].title}
+                {galleryItems[lightboxIndex].title}
               </h4>
               <p className="text-xs sm:text-sm text-gray-300 mt-1 max-w-md">
-                {GALLERY_ITEMS[lightboxIndex].desc}
+                {galleryItems[lightboxIndex].desc}
               </p>
               <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
-                {lightboxIndex + 1} of {GALLERY_ITEMS.length}
+                {lightboxIndex + 1} of {galleryItems.length}
               </p>
             </div>
           </div>
@@ -2854,7 +4623,7 @@ export default function App() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setLightboxIndex((prev) => (prev! + 1) % GALLERY_ITEMS.length);
+              setLightboxIndex((prev) => (prev! + 1) % galleryItems.length);
             }}
             aria-label="Next photo"
             className="absolute right-2 sm:right-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer z-50"
@@ -2893,8 +4662,8 @@ export default function App() {
                 <h3 style={{ color: GREEN }} className="font-serif font-bold text-lg sm:text-2xl">
                   Admission Enquiry
                 </h3>
-                <p className="text-gray-500 text-xs">
-                  Academic Session 2025–26 • Nursery to Class XII
+                  <p className="text-gray-500 text-xs">
+                    Academic Session {academicSession} • Nursery to Class XII
                 </p>
               </div>
             </div>
@@ -2919,6 +4688,7 @@ export default function App() {
                   </label>
                   <input
                     type="text"
+                    name="studentName"
                     required
                     placeholder="Enter student's name"
                     value={enquiryForm.studentName}
@@ -2933,6 +4703,7 @@ export default function App() {
                       Grade Applying For *
                     </label>
                     <select
+                      name="grade"
                       value={enquiryForm.grade}
                       onChange={(e) => setEnquiryForm({ ...enquiryForm, grade: e.target.value })}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] bg-white"
@@ -2951,6 +4722,7 @@ export default function App() {
                     </label>
                     <input
                       type="text"
+                      name="parentName"
                       required
                       placeholder="Enter parent's name"
                       value={enquiryForm.parentName}
@@ -2967,6 +4739,7 @@ export default function App() {
                     </label>
                     <input
                       type="tel"
+                      name="phone"
                       required
                       placeholder="10-digit mobile number"
                       value={enquiryForm.phone}
@@ -2981,6 +4754,7 @@ export default function App() {
                     </label>
                     <input
                       type="email"
+                      name="email"
                       placeholder="parent@example.com"
                       value={enquiryForm.email}
                       onChange={(e) => setEnquiryForm({ ...enquiryForm, email: e.target.value })}
@@ -2998,68 +4772,6 @@ export default function App() {
                 </button>
               </form>
             )}
-          </div>
-        </div>
-      )}
-
-      {/* ======================================================== */}
-      {/* 13. CAMPUS VIRTUAL TOUR MODAL */}
-      {/* ======================================================== */}
-      {tourModalOpen && (
-        <div
-          className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 animate-scale-in"
-          onClick={() => setTourModalOpen(false)}
-        >
-          <div
-            className="bg-white rounded-xl shadow-2xl max-w-2xl w-full overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="bg-[#14452f] text-white p-3.5 sm:p-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <SchoolLogo className="w-7 h-7 sm:w-8 sm:h-8" />
-                <h3 className="font-serif font-bold text-sm sm:text-lg truncate">
-                  Virtual Campus Tour • GPS Bagodar
-                </h3>
-              </div>
-              <button
-                onClick={() => setTourModalOpen(false)}
-                className="text-white/80 hover:text-white text-2xl font-bold cursor-pointer ml-2"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="relative aspect-video bg-black flex items-center justify-center">
-              <img
-                src="https://images.unsplash.com/photo-1562774053-701939374585?w=1200&h=675&fit=crop&auto=format&q=80"
-                alt="Virtual Campus"
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover opacity-80"
-              />
-              <div className="absolute text-center text-white px-4 sm:px-6">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#c59a3f] text-white flex items-center justify-center mx-auto mb-2.5 sm:mb-3 shadow-xl animate-pulse">
-                  <svg className="w-6 h-6 sm:w-8 sm:h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-                <h4 className="font-serif font-bold text-lg sm:text-xl drop-shadow">
-                  Interactive 360° Campus Tour
-                </h4>
-                <p className="text-xs sm:text-sm text-gray-200 mt-1 max-w-md mx-auto hidden xs:block">
-                  Experience our sprawling sports grounds, high-tech science laboratories, smart auditoriums, and lush campus quad.
-                </p>
-                <button
-                  onClick={() => {
-                    setTourModalOpen(false);
-                    setAdmissionModalOpen(true);
-                  }}
-                  style={{ backgroundColor: GOLD }}
-                  className="mt-3 sm:mt-4 text-white text-[11px] sm:text-xs font-bold uppercase tracking-wider px-4 sm:px-5 py-2 sm:py-2.5 rounded shadow-lg hover:brightness-110 cursor-pointer"
-                >
-                  Schedule Campus Visit
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       )}
@@ -3119,7 +4831,7 @@ export default function App() {
         </a>
 
         <a
-          href={PLAYSTORE_PARENT_APP_URL}
+          href={parentsLoginUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center justify-center gap-0.5 text-[#dfb455] hover:text-white py-1 px-2 rounded-lg active:scale-95 transition-transform cursor-pointer"
@@ -3253,6 +4965,97 @@ export default function App() {
         </div>
       )}
 
+      {selectedNoticeCategory && (
+        <div
+          className="fixed inset-0 z-[124] bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 animate-scale-in"
+          onClick={() => setSelectedNoticeCategory(null)}
+        >
+          <div
+            className="bg-white rounded-[1.75rem] shadow-2xl max-w-4xl w-full border border-[#14452f]/15 max-h-[90vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-5 sm:px-7 py-5 border-b border-[#14452f]/10 bg-gradient-to-r from-[#f7fbf8] via-white to-[#f7fbf8]">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-12 h-12 rounded-2xl bg-[#14452f]/8 border border-[#14452f]/12 flex items-center justify-center shrink-0">
+                    <NoticeCategoryIcon id={selectedNoticeCategory.id} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] uppercase tracking-[0.24em] font-bold text-[#14452f]/70">
+                      Verified Desk Archive
+                    </p>
+                    <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#14452f] leading-tight">
+                      {selectedNoticeCategory.label}
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {selectedNoticeCategory.sublabel} • {selectedNoticeCategory.items.length} item{selectedNoticeCategory.items.length === 1 ? "" : "s"}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedNoticeCategory(null)}
+                  className="text-gray-400 hover:text-gray-700 text-2xl font-bold cursor-pointer shrink-0"
+                  aria-label="Close archive"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-110px)] bg-[#fcfdfc]">
+              {selectedNoticeCategory.items.length === 0 ? (
+                <div className="rounded-[1.5rem] border border-dashed border-[#14452f]/15 bg-white px-6 py-12 text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-[#14452f]/8 border border-[#14452f]/12 flex items-center justify-center mx-auto mb-4">
+                    <NoticeCategoryIcon id={selectedNoticeCategory.id} />
+                  </div>
+                  <h4 className="font-serif text-xl font-bold text-[#14452f]">No items published yet</h4>
+                  <p className="text-sm text-gray-500 mt-2 max-w-md mx-auto">
+                    This archive is currently empty. New verified updates will appear here as soon as they are published.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-3">
+                  {selectedNoticeCategory.items.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setSelectedNoticeCategory(null);
+                        setSelectedNotice(item);
+                      }}
+                      className="w-full text-left rounded-[1.35rem] border border-[#14452f]/10 bg-white p-4 sm:p-5 hover:border-[#14452f]/25 hover:shadow-lg transition-all cursor-pointer"
+                    >
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-14 sm:w-16 shrink-0 bg-[#f0faf5] border border-[#14452f]/15 rounded-xl py-2 px-1 flex flex-col items-center justify-center leading-none text-center">
+                          <span className="text-sm sm:text-base font-bold text-[#14452f]">{item.day}</span>
+                          <span className="text-[10px] font-bold text-[#c59a3f] uppercase mt-1">{item.month}</span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${item.tagColor}`}>
+                              {item.tag}
+                            </span>
+                            <span className="text-xs font-semibold text-[#14452f]">Open details →</span>
+                          </div>
+                          <h4 className="font-serif text-lg sm:text-xl font-bold text-gray-900 leading-snug">
+                            {item.title}
+                          </h4>
+                          <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+                            {item.desc}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-3 font-medium">
+                            Published on {item.date}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ======================================================== */}
       {/* 17. CAREER & RECRUITMENT APPLICATION MODAL */}
       {/* ======================================================== */}
@@ -3311,7 +5114,7 @@ export default function App() {
                     onChange={(e) => setJobForm({ ...jobForm, position: e.target.value })}
                     className="w-full border border-gray-300 rounded px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] bg-white font-medium"
                   >
-                    {RECRUITMENT_POSITIONS.map((j) => (
+                    {recruitmentPositions.map((j) => (
                       <option key={j.id} value={j.title}>
                         {j.title}
                       </option>
@@ -3423,7 +5226,1216 @@ export default function App() {
         </div>
       )}
 
+      {/* ======================================================== */}
+      {/* 17.5. FORM SUBMISSION SUCCESS RECEIPT MODAL */}
+      {/* ======================================================== */}
+      {submissionSuccessData && (
+        <div
+          className="fixed inset-0 z-[135] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-scale-in"
+          onClick={() => setSubmissionSuccessData(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative border-2 border-[#14452f]/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSubmissionSuccessData(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-3 text-3xl font-bold shadow-inner">
+                ✓
+              </div>
+              <span className="bg-[#dfb455]/15 text-[#14452f] text-[10.5px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-[#dfb455]/30">
+                {submissionSuccessData.type}
+              </span>
+              <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#14452f] mt-2">
+                Submission Successful!
+              </h3>
+              <p className="text-gray-500 text-xs mt-1">
+                Your application has been logged into the Gyanodaya Public School registry.
+              </p>
+            </div>
+
+            {/* Receipt Summary Card */}
+            <div className="bg-[#f0faf5] p-4 rounded-xl border border-[#14452f]/20 mb-6 space-y-2.5 text-xs">
+              {submissionSuccessData.keyDetails.map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between border-b border-[#14452f]/10 pb-1.5 last:border-0 last:pb-0">
+                  <span className="text-gray-500 font-medium">{item.label}:</span>
+                  <span className="font-bold text-[#14452f] text-right font-mono">{item.value}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-2.5">
+              <button
+                onClick={() => {
+                  window.print();
+                  showToast("🖨️ Opening print dialog for submission receipt...");
+                }}
+                className="w-full bg-[#14452f] hover:bg-[#1f5f40] text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-md flex items-center justify-center gap-2"
+              >
+                <span>🖨️ Print / Save Digital Receipt</span>
+              </button>
+              <button
+                onClick={() => setSubmissionSuccessData(null)}
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-colors cursor-pointer"
+              >
+                Done & Return to Website
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* 18. ADMIN LOGIN SCREEN MODAL */}
+      {/* ======================================================== */}
+      {adminLoginModalOpen && (
+        <div
+          className="fixed inset-0 z-[130] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 animate-scale-in"
+          onClick={() => setAdminLoginModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 relative border-2 border-[#14452f]/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setAdminLoginModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold cursor-pointer"
+            >
+              ✕
+            </button>
+
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-[#0e3322] text-[#dfb455] flex items-center justify-center mx-auto mb-3 shadow-lg border border-[#dfb455]/40">
+                <SchoolLogo className="w-10 h-10" />
+              </div>
+              <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#14452f]">
+                Administrator Portal
+              </h3>
+              <p className="text-gray-500 text-xs mt-1">
+                Gyanodaya Public School Management System
+              </p>
+            </div>
+
+            {/* Error Alert */}
+            {adminLoginError && (
+              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2">
+                <span>⚠️</span>
+                <span>{adminLoginError}</span>
+              </div>
+            )}
+
+            {/* Login Form */}
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wider">
+                  Admin Username / Email
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={adminUsernameInput}
+                  onChange={(e) => setAdminUsernameInput(e.target.value)}
+                  placeholder="admin"
+                  className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowAdminPassword(!showAdminPassword)}
+                    className="text-[11px] text-[#14452f] hover:underline font-semibold cursor-pointer"
+                  >
+                    {showAdminPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+                <input
+                  type={showAdminPassword ? "text" : "password"}
+                  required
+                  value={adminPasswordInput}
+                  onChange={(e) => setAdminPasswordInput(e.target.value)}
+                  placeholder="Enter administrator password"
+                  className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{ backgroundColor: GREEN }}
+                className="w-full text-white font-bold py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider hover:brightness-110 transition-all shadow-md mt-2 cursor-pointer active:scale-98"
+              >
+                Sign In to Admin Panel 🔐
+              </button>
+            </form>
+
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* 19. FULL ADMIN MANAGEMENT DASHBOARD MODAL */}
+      {/* ======================================================== */}
+      {adminDashboardOpen && (
+        <div
+          className="fixed inset-0 z-[130] bg-black/85 backdrop-blur-sm flex items-start justify-center p-2 sm:p-4 lg:p-6 animate-scale-in overflow-y-auto"
+          onClick={() => setAdminDashboardOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full min-h-0 flex flex-col overflow-hidden border-2 border-[#14452f]/30 mt-4 sm:mt-8 max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-2rem)] lg:max-h-[calc(100vh-3rem)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Admin Header */}
+            <div className="bg-[#0e3322] text-white p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b-2 border-[#dfb455]">
+              <div className="flex items-center gap-3">
+                <SchoolLogo className="w-9 h-9 sm:w-10 sm:h-10 shrink-0" />
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-serif font-bold text-base sm:text-xl text-white">
+                      GPS Bagodar Management Console
+                    </h3>
+                    <span className="bg-[#dfb455] text-[#0e3322] text-[9.5px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      Live Admin
+                    </span>
+                  </div>
+                  <p className="text-gray-300 text-xs mt-0.5">
+                    Manage notices, forms, recruitment, and website images in real-time
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 self-stretch lg:self-auto lg:justify-end">
+                <button
+                  onClick={handleAdminLogout}
+                  className="bg-red-900/60 hover:bg-red-800 text-red-200 text-xs px-3 py-1.5 rounded-lg border border-red-700/50 transition-colors cursor-pointer flex-1 sm:flex-none"
+                >
+                  Logout 🚪
+                </button>
+                <button
+                  onClick={() => setAdminDashboardOpen(false)}
+                  className="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex-1 sm:flex-none"
+                >
+                  View Live Site ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Admin Tab Navigation */}
+            <div className="bg-gray-100 px-3 sm:px-4 pt-3 border-b border-gray-200">
+              <div className="flex items-stretch gap-1 sm:gap-2 overflow-x-auto no-scrollbar pb-2">
+              {[
+                { id: "ticker", label: "📢 News Ticker", count: announcements.length },
+                { id: "notices", label: "📌 Notice Board", count: noticeCategories.reduce((acc, c) => acc + c.items.length, 0) },
+                { id: "images", label: "🖼️ Website Images", count: imageAssets.heroSlides.length + imageAssets.academicBanners.length + imageAssets.facilities.length + imageAssets.gallery.length + campusSupportImages.length },
+                { id: "submissions", label: "📥 Forms & Inquiries", count: formSubmissions.length },
+                { id: "settings", label: "⚙️ Site Settings", count: null },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setAdminTab(t.id as any)}
+                  className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-t-xl transition-all flex items-center gap-1.5 shrink-0 cursor-pointer whitespace-nowrap ${
+                    adminTab === t.id
+                      ? "bg-white text-[#14452f] shadow-xs border-t-2 border-[#14452f]"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-200/60"
+                  }`}
+                >
+                  <span>{t.label}</span>
+                  {t.count !== null && (
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-gray-200 text-gray-700 font-mono">
+                      {t.count}
+                    </span>
+                  )}
+                </button>
+              ))}
+              </div>
+            </div>
+
+            {/* Admin Body Content */}
+            <div className="p-3 sm:p-5 lg:p-6 overflow-y-auto overscroll-contain flex-1 min-h-0 bg-gray-50/50">
+
+              {/* TAB 1: NEWS TICKER MANAGER */}
+              {adminTab === "ticker" && (
+                <div className="space-y-5">
+                  <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-xs">
+                    <h4 className="font-serif font-bold text-sm sm:text-base text-[#14452f] mb-2">
+                      ➕ Add Live News Announcement
+                    </h4>
+                    <form onSubmit={handleAddAnnouncement} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                      <input
+                        type="text"
+                        value={newAnnouncementText}
+                        onChange={(e) => setNewAnnouncementText(e.target.value)}
+                        placeholder="e.g. 📢 Admissions Open 2025–26 or 🏆 Science Fair winners declared..."
+                        className="flex-1 bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                      />
+                      <button
+                        type="submit"
+                        style={{ backgroundColor: GREEN }}
+                        className="text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl hover:brightness-110 transition-all uppercase tracking-wider shrink-0 cursor-pointer shadow-xs"
+                      >
+                        Publish to Ticker
+                      </button>
+                    </form>
+                    <div className="flex items-center gap-1.5 mt-2.5 text-[11px] text-gray-500">
+                      <span>Quick Emojis:</span>
+                      {["📢", "🏆", "📅", "✨", "🚌", "💼", "🔬", "🎓"].map((em) => (
+                        <button
+                          key={em}
+                          type="button"
+                          onClick={() => setNewAnnouncementText((prev) => `${em} ${prev}`)}
+                          className="hover:bg-gray-200 p-1 rounded text-xs cursor-pointer"
+                        >
+                          {em}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Active Ticker Items List */}
+                  <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-xs">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-serif font-bold text-sm sm:text-base text-gray-900">
+                        Active Ticker Items ({announcements.length})
+                      </h4>
+                      <span className="text-xs text-gray-500 font-light">Updates reflect instantly across all pages</span>
+                    </div>
+
+                    <div className="divide-y divide-gray-100">
+                      {announcements.map((item, idx) => (
+                        <div key={idx} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                          {editingAnnouncementIdx === idx ? (
+                            <div className="flex-1 flex items-center gap-2">
+                              <input
+                                type="text"
+                                value={editingAnnouncementText}
+                                onChange={(e) => setEditingAnnouncementText(e.target.value)}
+                                className="flex-1 bg-white border border-[#14452f] rounded-lg px-3 py-1.5 text-xs sm:text-sm focus:outline-none"
+                              />
+                              <button
+                                onClick={() => handleSaveEditedAnnouncement(idx)}
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={() => setEditingAnnouncementIdx(null)}
+                                className="text-gray-500 text-xs px-2 py-1.5 hover:text-gray-700"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <span className="w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs font-bold shrink-0 font-mono">
+                                  {idx + 1}
+                                </span>
+                                <span className="text-xs sm:text-sm text-gray-800 font-medium truncate">
+                                  {item}
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+                                <button
+                                  onClick={() => handleMoveAnnouncement(idx, "up")}
+                                  disabled={idx === 0}
+                                  className="p-1 rounded text-gray-500 hover:bg-gray-100 disabled:opacity-30 text-xs cursor-pointer"
+                                  title="Move Up"
+                                >
+                                  ▲
+                                </button>
+                                <button
+                                  onClick={() => handleMoveAnnouncement(idx, "down")}
+                                  disabled={idx === announcements.length - 1}
+                                  className="p-1 rounded text-gray-500 hover:bg-gray-100 disabled:opacity-30 text-xs cursor-pointer"
+                                  title="Move Down"
+                                >
+                                  ▼
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setEditingAnnouncementIdx(idx);
+                                    setEditingAnnouncementText(item);
+                                  }}
+                                  className="px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold cursor-pointer"
+                                >
+                                  ✏️ Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteAnnouncement(idx)}
+                                  className="px-2 py-1 rounded bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold cursor-pointer"
+                                >
+                                  🗑️ Delete
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: NOTICE BOARD MANAGER (3 CATEGORIES) */}
+              {adminTab === "notices" && (
+                <div className="space-y-5">
+                  
+                  {/* Category Selector Buttons */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gray-200">
+                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                      {noticeCategories.map((cat) => (
+                        <button
+                          key={cat.id}
+                          onClick={() => setEditingCategoryKey(cat.id)}
+                          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                            editingCategoryKey === cat.id
+                              ? "bg-[#14452f] text-white shadow-xs"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          }`}
+                        >
+                          <NoticeCategoryIcon id={cat.id} />
+                          <span>{cat.label}</span>
+                          <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/20">
+                            {cat.items.length}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() => openAddNoticeModal(editingCategoryKey)}
+                      style={{ backgroundColor: GOLD }}
+                      className="text-white text-xs font-bold px-4 py-2 rounded-xl hover:brightness-110 transition-all uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <span>➕ Add Notice Item</span>
+                    </button>
+                  </div>
+
+                  {/* Notices List for Active Category */}
+                  {(() => {
+                    const currentCategory = noticeCategories.find((c) => c.id === editingCategoryKey) || noticeCategories[0];
+                    return (
+                      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 shadow-xs">
+                        <div className="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
+                          <div>
+                            <h4 className="font-serif font-bold text-base text-[#14452f]">
+                              {currentCategory.label} Items
+                            </h4>
+                            <p className="text-gray-500 text-xs">{currentCategory.sublabel}</p>
+                          </div>
+                          <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg">
+                            {currentCategory.items.length} notices total
+                          </span>
+                        </div>
+
+                        {currentCategory.items.length === 0 ? (
+                          <div className="py-12 text-center text-gray-400 text-xs">
+                            <p className="text-2xl mb-2">📭</p>
+                            <p>No notices in this category yet. Click "Add Notice Item" above to publish one.</p>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {currentCategory.items.map((notice) => (
+                              <div
+                                key={notice.id}
+                                className="bg-gray-50/70 p-4 rounded-xl border border-gray-200 flex flex-col justify-between hover:border-[#14452f]/40 transition-all group"
+                              >
+                                <div>
+                                  <div className="flex items-center justify-between gap-2 mb-2">
+                                    <span className="text-[10px] font-mono font-bold bg-[#f0faf5] text-[#14452f] px-2 py-0.5 rounded border border-[#14452f]/15">
+                                      {notice.day} {notice.month}
+                                    </span>
+                                    <span className={`text-[9.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${notice.tagColor}`}>
+                                      {notice.tag}
+                                    </span>
+                                  </div>
+
+                                  <h5 className="font-serif font-bold text-sm text-gray-900 mb-1 leading-snug">
+                                    {notice.title}
+                                  </h5>
+                                  <p className="text-gray-600 text-xs leading-relaxed line-clamp-3">
+                                    {notice.desc}
+                                  </p>
+                                </div>
+
+                                <div className="flex items-center justify-between pt-3 mt-3 border-t border-gray-200/60 text-xs">
+                                  <span className="text-[10px] text-gray-400 font-mono">ID: {notice.id}</span>
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={() => openEditNoticeModal(currentCategory.id, notice)}
+                                      className="px-2.5 py-1 rounded-md bg-white border border-gray-300 text-gray-800 text-xs font-semibold hover:bg-gray-100 cursor-pointer"
+                                    >
+                                      ✏️ Edit
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteNotice(currentCategory.id, notice.id)}
+                                      className="px-2.5 py-1 rounded-md bg-red-50 border border-red-200 text-red-700 text-xs font-semibold hover:bg-red-100 cursor-pointer"
+                                    >
+                                      🗑️ Delete
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
+                </div>
+              )}
+
+              {adminTab === "images" && (
+                <div className="space-y-5">
+                  <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-xs">
+                    <h4 className="font-serif font-bold text-base text-[#14452f]">Website Image Library</h4>
+                  </div>
+
+                  {[
+                    { key: "heroSlides", label: "Hero Slides" },
+                    { key: "academicBanners", label: "Academic Banners" },
+                    { key: "facilities", label: "Facilities" },
+                    { key: "gallery", label: "Gallery" },
+                    { key: "misc", label: "About Section Photo" },
+                  ]
+                    .filter((group) => group.key !== "misc" || imageAssets.misc.length > 0)
+                    .map((group) => (
+                    <div key={group.key} className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                        <div>
+                          <h5 className="font-serif font-bold text-sm sm:text-base text-[#14452f]">{group.label}</h5>
+                          {group.key === "misc" && (
+                            <p className="text-[11px] text-gray-500 mt-1">Use this group for extra campus visuals such as the about-campus image and future supporting sections.</p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500 font-mono">
+                            {imageAssets[group.key as keyof ImageAssetsDocument].length} items
+                          </span>
+                          {group.key === "gallery" && (
+                            <label className="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-[#14452f] text-white text-xs font-bold cursor-pointer hover:bg-[#1f5f40] transition-colors">
+                              {imageUploadState.galleryNew ? "Uploading..." : "Add Gallery Photos"}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                className="hidden"
+                                disabled={Boolean(imageUploadState.galleryNew)}
+                                onChange={(e) => {
+                                  const files = Array.from(e.target.files || []);
+                                  files.forEach((file) => {
+                                    void handleAddGalleryImage(file);
+                                  });
+                                  e.currentTarget.value = "";
+                                }}
+                              />
+                            </label>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        {imageAssets[group.key as keyof ImageAssetsDocument].map((asset) => (
+                          <div key={asset.id} className="grid grid-cols-1 xl:grid-cols-[180px_minmax(0,1fr)] gap-4 rounded-xl border border-gray-200 p-3.5 bg-gray-50/60">
+                            <div className="rounded-lg overflow-hidden bg-gray-200 h-32 xl:h-full min-h-32">
+                              <img src={asset.url} alt={asset.alt} className="w-full h-full object-cover" />
+                            </div>
+
+                            <div className="space-y-3">
+                              <div>
+                                <div className="text-sm font-bold text-gray-900">{asset.label}</div>
+                                <div className="text-[11px] text-gray-500 font-mono">{asset.id}</div>
+                              </div>
+
+                              <div className="rounded-lg border border-gray-200 bg-white px-3 py-2">
+                                <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Stored Image URL</div>
+                                <div className="mt-1 break-all text-xs text-gray-600">{asset.url}</div>
+                              </div>
+
+                              <label className="block">
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Alt Text</span>
+                                <input
+                                  type="text"
+                                  value={asset.alt}
+                                  onChange={(e) => {
+                                    const nextAssets: ImageAssetsDocument = {
+                                      ...imageAssets,
+                                      [group.key]: imageAssets[group.key as keyof ImageAssetsDocument].map((item) =>
+                                        item.id === asset.id ? { ...item, alt: e.target.value } : item,
+                                      ),
+                                    } as ImageAssetsDocument;
+                                    setImageAssets(nextAssets);
+                                  }}
+                                  onBlur={(e) => {
+                                    if (e.target.value.trim() && e.target.value !== asset.alt) {
+                                      void handleUpdateImageAsset(group.key as keyof ImageAssetsDocument, asset.id, { alt: e.target.value.trim() });
+                                    }
+                                  }}
+                                  className="mt-1 w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f]"
+                                />
+                              </label>
+
+                              {group.key === "gallery" && (
+                                <label className="block">
+                                  <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Photo Title</span>
+                                  <input
+                                    type="text"
+                                    value={asset.label}
+                                    onChange={(e) => {
+                                      const nextAssets: ImageAssetsDocument = {
+                                        ...imageAssets,
+                                        [group.key]: imageAssets[group.key as keyof ImageAssetsDocument].map((item) =>
+                                          item.id === asset.id ? { ...item, label: e.target.value } : item,
+                                        ),
+                                      } as ImageAssetsDocument;
+                                      setImageAssets(nextAssets);
+                                    }}
+                                    onBlur={(e) => {
+                                      if (e.target.value.trim() && e.target.value !== asset.label) {
+                                        void handleUpdateImageAsset(group.key as keyof ImageAssetsDocument, asset.id, { label: e.target.value.trim() });
+                                      }
+                                    }}
+                                    className="mt-1 w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#14452f]"
+                                  />
+                                </label>
+                              )}
+
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+                                <label className="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-[#14452f] text-white text-xs font-bold cursor-pointer hover:bg-[#1f5f40] transition-colors">
+                                  {imageUploadState[asset.id] ? "Uploading..." : "Select Image"}
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    disabled={Boolean(imageUploadState[asset.id])}
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) {
+                                        void handleUploadImageAsset(group.key as keyof ImageAssetsDocument, asset.id, file);
+                                      }
+                                      e.currentTarget.value = "";
+                                    }}
+                                  />
+                                </label>
+                                <button
+                                  type="button"
+                                  onClick={() => void handleUpdateImageAsset(group.key as keyof ImageAssetsDocument, asset.id, { alt: asset.alt.trim(), label: asset.label.trim() })}
+                                  className="px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold hover:bg-amber-100 transition-colors cursor-pointer"
+                                >
+                                  Save Changes
+                                </button>
+                                {group.key === "gallery" && (
+                                  <button
+                                    type="button"
+                                    onClick={() => void handleDeleteGalleryImage(asset.id)}
+                                    className="px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-bold hover:bg-red-100 transition-colors cursor-pointer"
+                                  >
+                                    Delete Photo
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* TAB 4: FORMS & INQUIRIES SUBMISSIONS MANAGER */}
+              {adminTab === "submissions" && (
+                <div className="space-y-5">
+                  <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                      <h4 className="font-serif font-bold text-sm sm:text-base text-[#14452f] flex items-center gap-2">
+                        <span>📥 Online Form Submissions & Inquiries</span>
+                        <span className="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-mono">
+                          {formSubmissions.length} Total Records
+                        </span>
+                      </h4>
+                      <p className="text-gray-500 text-xs mt-0.5">
+                        Manage admission registrations, campus visit appointments, general inquiries, and brochure requests.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                      <input
+                        type="text"
+                        placeholder="Search by name, phone, or ID..."
+                        value={submissionsSearch}
+                        onChange={(e) => setSubmissionsSearch(e.target.value)}
+                        className="bg-gray-50 border border-gray-300 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-[#14452f] flex-1 md:w-56"
+                      />
+                      <button
+                        onClick={() => {
+                          const blob = new Blob([JSON.stringify(formSubmissions, null, 2)], { type: "application/json" });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = `gps-form-submissions-${new Date().toISOString().split("T")[0]}.json`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                          showToast("📥 Exported submissions to JSON!");
+                        }}
+                        className="bg-[#14452f] text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-[#1f5f40] transition-colors cursor-pointer shrink-0"
+                      >
+                        Export JSON ↗
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Filter Pills */}
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs font-medium">
+                    {[
+                      { id: "all", label: "All Submissions" },
+                      { id: "admission", label: "📝 Admissions" },
+                      { id: "enquiry", label: "💬 Enquiries" },
+                      { id: "visit", label: "🏫 Campus Visits" },
+                      { id: "prospectus", label: "📥 Prospectus" },
+                    ].map((f) => (
+                      <button
+                        key={f.id}
+                        onClick={() => setSubmissionsFilter(f.id as any)}
+                        className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
+                          submissionsFilter === f.id
+                            ? "bg-[#14452f] text-white font-bold shadow-xs"
+                            : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Submissions List */}
+                  <div className="space-y-3">
+                    {formSubmissions
+                      .filter((item) => submissionsFilter === "all" || item.type === submissionsFilter)
+                      .filter((item) => {
+                        if (!submissionsSearch.trim()) return true;
+                        const query = submissionsSearch.toLowerCase();
+                        return (
+                          item.name.toLowerCase().includes(query) ||
+                          item.phone.includes(query) ||
+                          item.id.toLowerCase().includes(query) ||
+                          item.title.toLowerCase().includes(query)
+                        );
+                      })
+                      .map((sub) => (
+                        <div key={sub.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 shadow-xs hover:border-[#14452f]/40 transition-all">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 pb-3 border-b border-gray-100">
+                            <div className="flex items-center gap-2.5 flex-wrap">
+                              <span className="font-mono text-xs font-bold text-[#14452f] bg-[#f0faf5] px-2.5 py-0.5 rounded border border-[#14452f]/20">
+                                {sub.id}
+                              </span>
+                              <span
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                                  sub.type === "admission"
+                                    ? "bg-amber-100 text-amber-800"
+                                    : sub.type === "visit"
+                                    ? "bg-blue-100 text-blue-800"
+                                    : sub.type === "enquiry"
+                                    ? "bg-purple-100 text-purple-800"
+                                    : "bg-gray-100 text-gray-800"
+                                }`}
+                              >
+                                {sub.type}
+                              </span>
+                              <span className="text-xs text-gray-400">🕒 {sub.submittedAt}</span>
+                            </div>
+
+                            <div className="flex items-center gap-2 self-end sm:self-auto">
+                              <span className="text-xs text-gray-500 font-semibold">Status:</span>
+                              <select
+                                value={sub.status}
+                                onChange={(e) => handleUpdateSubmissionStatus(sub.id, e.target.value as any)}
+                                className={`text-xs font-bold px-2.5 py-1 rounded-lg border focus:outline-none cursor-pointer ${
+                                  sub.status === "Approved"
+                                    ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                                    : sub.status === "Contacted"
+                                    ? "bg-blue-50 text-blue-800 border-blue-300"
+                                    : sub.status === "Reviewed"
+                                    ? "bg-amber-50 text-amber-800 border-amber-300"
+                                    : "bg-gray-50 text-gray-700 border-gray-300"
+                                }`}
+                              >
+                                <option value="Pending">Pending</option>
+                                <option value="Reviewed">Reviewed</option>
+                                <option value="Contacted">Contacted</option>
+                                <option value="Approved">Approved</option>
+                              </select>
+                              <button
+                                onClick={() => handleDeleteSubmission(sub.id)}
+                                className="p-1 text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
+                                title="Delete submission"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="mb-3">
+                            <h5 className="font-serif font-bold text-sm sm:text-base text-gray-900">
+                              {sub.title}
+                            </h5>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600 mt-1">
+                              <span><strong>Applicant:</strong> {sub.name}</span>
+                              <span><strong>Phone:</strong> <a href={`tel:${sub.phone}`} className="text-[#14452f] hover:underline font-mono">{sub.phone}</a></span>
+                              {sub.email && <span><strong>Email:</strong> {sub.email}</span>}
+                            </div>
+                          </div>
+
+                          {/* Submission Details Grid */}
+                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-200/70 text-xs">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                              {Object.entries(sub.details).map(([key, val]) => (
+                                <div key={key}>
+                                  <span className="text-gray-400 block text-[10px] uppercase font-bold">{key}</span>
+                                  <span className="font-medium text-gray-800">{val}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+
+                    {formSubmissions.length === 0 && (
+                      <div className="text-center py-10 bg-white rounded-xl border border-dashed border-gray-300">
+                        <span className="text-3xl">📭</span>
+                        <p className="text-gray-500 text-xs mt-2">No form submissions received yet.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 5: SETTINGS, RESET & BACKUP */}
+              {adminTab === "settings" && (
+                <div className="space-y-5">
+                  <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] gap-4">
+                    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                        <div>
+                          <h4 className="font-serif font-bold text-base text-[#14452f] mb-1">📘 Academic Session</h4>
+                          <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                            Update the live academic session used in admission banners, forms, and admin-managed content.
+                          </p>
+                        </div>
+                        <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-[#f0faf5] text-[#14452f] border border-[#14452f]/15">
+                          Live: {academicSession}
+                        </span>
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <input
+                          type="text"
+                          value={sessionDraft}
+                          onChange={(e) => setSessionDraft(e.target.value)}
+                          placeholder="e.g. 2026–27"
+                          className="flex-1 bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => void handleSaveAcademicSession()}
+                          className="bg-[#14452f] hover:bg-[#1f5f40] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors cursor-pointer shadow-xs"
+                        >
+                          Save Session
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                        <div>
+                          <h4 className="font-serif font-bold text-base text-[#14452f] mb-1">🔗 Parents Login Link</h4>
+                          <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                            Update the live Parents Login button URL used in the header, mobile menu, and quick access cards.
+                          </p>
+                        </div>
+                        <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-[#f0faf5] text-[#14452f] border border-[#14452f]/15 max-w-full truncate">
+                          Live URL
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-3">
+                        <input
+                          type="url"
+                          value={parentsLoginUrlDraft}
+                          onChange={(e) => setParentsLoginUrlDraft(e.target.value)}
+                          placeholder="https://example.com/parents-login"
+                          className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-[#14452f] focus:bg-white"
+                        />
+                        <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                          <a
+                            href={parentsLoginUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-xs text-[#14452f] underline underline-offset-2 break-all"
+                          >
+                            {parentsLoginUrl}
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => void handleSaveParentsLoginUrl()}
+                            className="bg-[#14452f] hover:bg-[#1f5f40] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors cursor-pointer shadow-xs"
+                          >
+                            Save Link
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
+                    <h4 className="font-serif font-bold text-base text-[#14452f] mb-2">
+                      🔄 Factory Data Reset
+                    </h4>
+                    <p className="text-gray-600 text-xs sm:text-sm mb-4 leading-relaxed">
+                      Reset all live news ticker announcements, 3 notice board categories, and career job vacancies back to the original school default values.
+                    </p>
+                    <button
+                      onClick={handleResetToDefaults}
+                      className="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors cursor-pointer shadow-xs"
+                    >
+                      Restore Factory Default Data
+                    </button>
+                  </div>
+
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
+                    <h4 className="font-serif font-bold text-base text-[#14452f] mb-2">
+                      💾 Export / Download JSON Backup
+                    </h4>
+                    <p className="text-gray-600 text-xs sm:text-sm mb-4 leading-relaxed">
+                      Download a complete snapshot of the school's current ticker, notices, and job vacancies as a JSON file.
+                    </p>
+                    <button
+                      onClick={() => {
+                        const backupData = {
+                          academicSession,
+                          announcements,
+                          noticeCategories,
+                          recruitmentPositions,
+                          imageAssets,
+                          exportedAt: new Date().toISOString(),
+                        };
+                        const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `gps-bagodar-backup-${new Date().toISOString().split("T")[0]}.json`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        showToast("💾 Backup JSON downloaded successfully!");
+                      }}
+                      className="bg-[#14452f] hover:bg-[#1f5f40] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors cursor-pointer shadow-xs"
+                    >
+                      Download Backup File (.json) 📥
+                    </button>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* 20. ADD / EDIT NOTICE FORM MODAL */}
+      {/* ======================================================== */}
+      {noticeFormModalOpen && (
+        <div
+          className="fixed inset-0 z-[140] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-scale-in"
+          onClick={() => setNoticeFormModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-7 relative border-2 border-[#14452f]/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setNoticeFormModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <h3 className="font-serif font-bold text-lg text-[#14452f] mb-1">
+              {editingNoticeId ? "✏️ Edit Notice Item" : "➕ Add New Notice Item"}
+            </h3>
+            <p className="text-gray-500 text-xs mb-4">
+              Category: <strong className="text-[#14452f] uppercase">{editingCategoryKey}</strong>
+            </p>
+
+            <form onSubmit={handleSaveNotice} className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Target Category *
+                </label>
+                <select
+                  value={editingCategoryKey}
+                  onChange={(e) => setEditingCategoryKey(e.target.value as any)}
+                  className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                >
+                  <option value="notices">Official Circulars (notices)</option>
+                  <option value="announcements">Important Announcements (announcements)</option>
+                  <option value="recruitment">Latest Recruitment (recruitment)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Notice Headline / Title *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={noticeFormData.title}
+                  onChange={(e) => setNoticeFormData({ ...noticeFormData, title: e.target.value })}
+                  placeholder="e.g. CBSE Practical Exam Instructions 2025"
+                  className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Day (Number) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={noticeFormData.day}
+                    onChange={(e) => setNoticeFormData({ ...noticeFormData, day: e.target.value })}
+                    placeholder="12"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Month (3 Letters) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={noticeFormData.month}
+                    onChange={(e) => setNoticeFormData({ ...noticeFormData, month: e.target.value })}
+                    placeholder="MAR"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Tag Text *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={noticeFormData.tag}
+                    onChange={(e) => setNoticeFormData({ ...noticeFormData, tag: e.target.value })}
+                    placeholder="URGENT"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Tag Style / Color Theme
+                </label>
+                <select
+                  value={noticeFormData.tagTheme}
+                  onChange={(e) => setNoticeFormData({ ...noticeFormData, tagTheme: e.target.value as NoticeTagThemeKey })}
+                  className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                >
+                  <option value="urgent">Red (Urgent / Exams)</option>
+                  <option value="success">Green (Admissions / Success)</option>
+                  <option value="warning">Amber (Datesheet / Warning)</option>
+                  <option value="info">Blue (Transport / Updates)</option>
+                  <option value="hiring">Sky Blue (Recruitment / Hiring)</option>
+                  <option value="event">Purple (Events / Campus)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Short Description *
+                </label>
+                <textarea
+                  required
+                  rows={3}
+                  value={noticeFormData.desc}
+                  onChange={(e) => setNoticeFormData({ ...noticeFormData, desc: e.target.value })}
+                  placeholder="Provide concise instructions or circular description..."
+                  className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{ backgroundColor: GREEN }}
+                className="w-full text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider hover:brightness-110 transition-all shadow-md mt-3 cursor-pointer"
+              >
+                {editingNoticeId ? "Save Changes" : "Publish Notice Item"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* 21. ADD / EDIT JOB POSITION MODAL */}
+      {/* ======================================================== */}
+      {jobEditorModalOpen && (
+        <div
+          className="fixed inset-0 z-[140] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-scale-in"
+          onClick={() => setJobEditorModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-7 relative border-2 border-[#14452f]/30 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setJobEditorModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <h3 className="font-serif font-bold text-lg text-[#14452f] mb-1">
+              {editingJobId ? "✏️ Edit Job Vacancy" : "💼 Post New Job Vacancy"}
+            </h3>
+            <p className="text-gray-500 text-xs mb-4">
+              Gyanodaya Public School Careers &amp; Recruitment
+            </p>
+
+            <form onSubmit={handleSaveJobPosition} className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Job Position Title *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={jobEditorFormData.title}
+                  onChange={(e) => setJobEditorFormData({ ...jobEditorFormData, title: e.target.value })}
+                  placeholder="e.g. PGT – Biology & Chemistry"
+                  className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Department / Wing *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={jobEditorFormData.dept}
+                    onChange={(e) => setJobEditorFormData({ ...jobEditorFormData, dept: e.target.value })}
+                    placeholder="Senior Secondary Wing"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Number of Vacancies *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={jobEditorFormData.vacancies}
+                    onChange={(e) => setJobEditorFormData({ ...jobEditorFormData, vacancies: e.target.value })}
+                    placeholder="2 Positions"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Salary / Pay Scale *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={jobEditorFormData.payScale}
+                    onChange={(e) => setJobEditorFormData({ ...jobEditorFormData, payScale: e.target.value })}
+                    placeholder="CBSE 7th Pay Scale (₹35k–₹50k)"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Application Deadline *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={jobEditorFormData.deadline}
+                    onChange={(e) => setJobEditorFormData({ ...jobEditorFormData, deadline: e.target.value })}
+                    placeholder="30 April 2025"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Required Qualification &amp; Experience *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={jobEditorFormData.qualification}
+                  onChange={(e) => setJobEditorFormData({ ...jobEditorFormData, qualification: e.target.value })}
+                  placeholder="M.Sc + B.Ed with 2+ Years Experience"
+                  className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Job Description / Scope
+                </label>
+                <textarea
+                  rows={2}
+                  value={jobEditorFormData.description}
+                  onChange={(e) => setJobEditorFormData({ ...jobEditorFormData, description: e.target.value })}
+                  placeholder="Mention responsibilities, classroom teaching scope..."
+                  className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#14452f]"
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{ backgroundColor: GREEN }}
+                className="w-full text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider hover:brightness-110 transition-all shadow-md mt-3 cursor-pointer"
+              >
+                {editingJobId ? "Save Job Opening" : "Publish Job Vacancy"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
+
+
 

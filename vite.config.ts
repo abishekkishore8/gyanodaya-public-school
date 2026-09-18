@@ -34,6 +34,12 @@ export default defineConfig(({ mode }) => {
       port: parseInt(process.env.PORT || '8443'),
       strictPort: true,
       watch: { ignored: ['**/.figma/**'] },
+      proxy: {
+        '/api': {
+          target: `http://127.0.0.1:${process.env.API_PORT || '4000'}`,
+          changeOrigin: true,
+        },
+      },
     },
     preview: {
       host: process.env.FIGMA_DEV_SERVER_HOST || '0.0.0.0',
@@ -79,6 +85,13 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
   }
   function replaceHtmlCommentSlot(html: string, slotName: string, content: string): string {
     return html.replace(`<!-- ${slotName} -->`, content)
+  }
+  function stripFigmaFallbackMeta(html: string): string {
+    return html
+      .replace(/\s*<meta name="description" content="This web application serves as an informative landing page for educational institutions, offering easy navigation to key sections like Careers, Alumni, and Smart Classroom\."\s*\/?>/g, '')
+      .replace(/\s*<meta name="robots" content="noindex, nofollow"\s*\/?>/g, '')
+      .replace(/\s*<meta property="og:title" content="Figma Make App"\s*\/?>/g, '')
+      .replace(/\s*<meta property="og:description" content="This web application serves as an informative landing page for educational institutions, offering easy navigation to key sections like Careers, Alumni, and Smart Classroom\."\s*\/?>/g, '')
   }
 
   const title = config.title ?? "Figma Make App"
@@ -204,7 +217,7 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
         }
 
         return {
-          html: result,
+          html: stripFigmaFallbackMeta(result),
           tags,
         }
       },
