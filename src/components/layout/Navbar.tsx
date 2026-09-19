@@ -6,6 +6,7 @@ import { useSiteContent } from "@/context/SiteContentContext";
 import { useToast } from "@/context/ToastContext";
 import { useUi } from "@/context/UiContext";
 import { MAIN_NAV, MAIN_NAV_SECTION_IDS, type NavItem } from "@/data/navigation";
+import { SCHOOL_WORDMARK, SCHOOL_WORDMARK_LETTERS } from "@/data/site";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { useNavDrawerDismiss } from "@/hooks/useNavDrawer";
@@ -66,13 +67,23 @@ export default function Navbar({ scrolled }: NavbarProps) {
           <div className="flex flex-col truncate">
             <span
               style={{ color: GREEN }}
-              className="font-wordmark font-bold text-base sm:text-lg md:text-xl 2xl:text-2xl leading-none tracking-[0.04em] group-hover:opacity-90 truncate"
+              aria-label={SCHOOL_WORDMARK}
+              className="flex w-full justify-between font-wordmark font-bold text-base sm:text-lg md:text-xl 2xl:text-2xl leading-none group-hover:opacity-90"
             >
-              GYANODAYA
+              {SCHOOL_WORDMARK_LETTERS.map((letter, index) => (
+                <span key={index} aria-hidden="true">
+                  {letter}
+                </span>
+              ))}
             </span>
+            {/*
+              This line sets the width of the lockup; the name above stretches to
+              match it. `-mr` cancels the trailing letter-space CSS adds after the
+              last character, which would otherwise push this line a hair wider.
+            */}
             <span
               style={{ color: GREEN }}
-              className="text-[8px] sm:text-[9px] md:text-[10px] 2xl:text-[11px] font-semibold tracking-[0.16em] sm:tracking-[0.18em] uppercase leading-tight mt-0.5 truncate"
+              className="text-[8px] sm:text-[9px] md:text-[10px] 2xl:text-[11px] font-semibold tracking-[0.06em] -mr-[0.06em] uppercase leading-tight mt-0.5 truncate"
             >
               PUBLIC SCHOOL • BAGODAR
             </span>

@@ -6,6 +6,7 @@ import { useSiteContent } from "@/context/SiteContentContext";
 import { useToast } from "@/context/ToastContext";
 import { useUi } from "@/context/UiContext";
 import { FOOTER_QUICK_LINKS } from "@/data/navigation";
+import { SCHOOL_WORDMARK, SCHOOL_WORDMARK_LETTERS } from "@/data/site";
 
 /** Site footer: contact details, quick links and the newsletter signup. */
 export default function Footer() {
@@ -49,10 +50,18 @@ export default function Footer() {
                 <SchoolLogo className="w-12 h-12 sm:w-14 sm:h-14" />
               </div>
               <div className="flex flex-col">
-                <span className="font-wordmark font-bold text-lg sm:text-xl leading-none tracking-[0.04em] text-white">
-                  GYANODAYA
+                <span
+                  aria-label={SCHOOL_WORDMARK}
+                  className="flex w-full justify-between font-wordmark font-bold text-lg sm:text-xl leading-none text-white"
+                >
+                  {SCHOOL_WORDMARK_LETTERS.map((letter, index) => (
+                    <span key={index} aria-hidden="true">
+                      {letter}
+                    </span>
+                  ))}
                 </span>
-                <span className="text-[9.5px] sm:text-[10px] text-gray-300 font-semibold tracking-[0.2em] uppercase leading-tight mt-0.5">
+                {/* Sets the lockup width; the name above stretches to it — see Navbar.tsx. */}
+                <span className="text-[9.5px] sm:text-[10px] text-gray-300 font-semibold tracking-[0.06em] -mr-[0.06em] uppercase leading-tight mt-0.5">
                   PUBLIC SCHOOL • BAGODAR
                 </span>
               </div>
