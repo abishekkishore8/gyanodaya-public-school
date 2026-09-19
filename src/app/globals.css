@@ -2,17 +2,18 @@
 
 /*
  * Typefaces are loaded and self-hosted by `next/font/google` in app/layout.tsx,
- * which sets --font-inter, --font-playfair and --font-cinzel on <html>. Mapping
- * them into the Tailwind theme is what makes `font-sans`, `font-serif` and
- * `font-wordmark` use them.
+ * which sets --font-inter and --font-playfair on <html>. Mapping them into the
+ * Tailwind theme is what makes `font-sans`, `font-serif` and `font-wordmark`
+ * use them.
  *
- * `font-wordmark` (Cinzel) is reserved for the school name in the header and
- * footer logo — headings stay on `font-serif`.
+ * `font-wordmark` is the school name in the header and footer logo. It is its
+ * own token so the brand can change typeface without touching the components;
+ * it currently points at the sans stack, matching the line beneath it.
  */
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria, serif;
-  --font-wordmark: var(--font-cinzel), ui-serif, Georgia, Cambria, serif;
+  --font-wordmark: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 /*

@@ -49,7 +49,7 @@ export default function Footer() {
                 <SchoolLogo className="w-12 h-12 sm:w-14 sm:h-14" />
               </div>
               <div className="flex flex-col">
-                <span className="font-wordmark font-bold text-[17px] sm:text-[19px] leading-none tracking-[0.02em] text-white">
+                <span className="font-wordmark font-bold text-lg sm:text-xl leading-none tracking-[0.04em] text-white">
                   GYANODAYA
                 </span>
                 <span className="text-[9.5px] sm:text-[10px] text-gray-300 font-semibold tracking-[0.2em] uppercase leading-tight mt-0.5">

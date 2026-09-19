@@ -66,7 +66,7 @@ export default function Navbar({ scrolled }: NavbarProps) {
           <div className="flex flex-col truncate">
             <span
               style={{ color: GREEN }}
-              className="font-wordmark font-bold text-[15px] sm:text-[17px] md:text-[19px] 2xl:text-[22px] leading-none tracking-[0.02em] group-hover:opacity-90 truncate"
+              className="font-wordmark font-bold text-base sm:text-lg md:text-xl 2xl:text-2xl leading-none tracking-[0.04em] group-hover:opacity-90 truncate"
             >
               GYANODAYA
             </span>
