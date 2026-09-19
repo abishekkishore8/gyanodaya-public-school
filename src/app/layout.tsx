@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Cinzel, Inter, Playfair_Display } from "next/font/google";
 
 import { SITE_URL } from "@/data/site";
 
@@ -19,6 +19,14 @@ const playfairDisplay = Playfair_Display({
   weight: ["400", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-playfair",
+  display: "swap",
+});
+
+/** Logo wordmark typeface. Inscriptional capitals; mapped to `font-wordmark`. */
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-cinzel",
   display: "swap",
 });
 
@@ -90,7 +98,7 @@ const schoolJsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfairDisplay.variable}`}>
+    <html lang="en" className={`${inter.variable} ${playfairDisplay.variable} ${cinzel.variable}`}>
       <head>
         <script
           type="application/ld+json"
