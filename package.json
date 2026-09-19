@@ -1,40 +1,41 @@
 {
-  "name": "figma-make-app",
+  "name": "gyanodaya-public-school",
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "description": "Website and content management portal for Gyanodaya Public School, Bagodar.",
+  "packageManager": "yarn@1.22.22",
+  "engines": {
+    "node": ">=20.9"
+  },
   "scripts": {
-    "dev": "concurrently --kill-others-on-fail \"npm run dev:web\" \"npm run dev:api:watch\"",
-    "dev:web": "vite",
-    "dev:api": "node server/index.js",
-    "dev:api:watch": "node --watch server/index.js",
-    "build": "vite build",
-    "preview": "vite preview",
-    "format": "oxfmt"
+    "dev": "next dev --port ${PORT:-8443}",
+    "build": "next build",
+    "start": "next start --port ${PORT:-8443}",
+    "typecheck": "tsc --noEmit",
+    "admin:create": "tsx --conditions=react-server scripts/create-admin.ts",
+    "admin:password": "tsx --conditions=react-server scripts/reset-password.ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1131.0",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.12",
     "mongodb": "^7.6.0",
-    "multer": "^2.4.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "next": "^16.3.5",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.0.0",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/multer": "^2.2.0",
+    "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^6.0.0",
-    "concurrently": "^10.0.5",
     "oxfmt": "^0.2.0",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5.7.0",
-    "vite": "^8.0.5"
+    "tsx": "^4.23.13",
+    "typescript": "^5.7.0"
   }
 }
