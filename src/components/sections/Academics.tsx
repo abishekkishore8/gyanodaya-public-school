@@ -3,7 +3,8 @@ import { useState } from "react";
 import AcademicStageIcon from "@/components/icons/AcademicStageIcon";
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useUi } from "@/context/UiContext";
-import { ACADEMIC_HIGHLIGHTS, ACADEMIC_TABS } from "@/data/academics";
+import { ACADEMIC_HIGHLIGHTS, ACADEMIC_TAB_IDS, ACADEMIC_TABS } from "@/data/academics";
+import { useHashTab } from "@/hooks/useHashTab";
 import { GOLD } from "@/lib/theme";
 
 /** Curriculum showcase with a tab per academic stage. */
@@ -11,6 +12,9 @@ export default function Academics() {
   const { academicCardsData } = useSiteContent();
   const { setAdmissionModalOpen } = useUi();
   const [activeTab, setActiveTab] = useState("all");
+
+  // `/academics#primary` and friends open straight onto that stage.
+  useHashTab(ACADEMIC_TAB_IDS, setActiveTab);
 
   return (
     <section id="academics" className="py-16 sm:py-24 bg-gradient-to-b from-[#f8faf8] via-white to-[#f4f7f4] border-t border-gray-200/70 relative overflow-hidden">

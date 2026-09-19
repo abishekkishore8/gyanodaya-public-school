@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
+
 import SchoolSite from "@/components/SchoolSite";
 
-/** The site is a single page; `SchoolSite` is the client root beneath it. */
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
+/**
+ * The home page keeps every section on one scrolling view; the navigation
+ * entries also exist as standalone routes (`/about`, `/academics`, …).
+ */
 export default function HomePage() {
-  return <SchoolSite />;
+  return <SchoolSite page="home" />;
 }

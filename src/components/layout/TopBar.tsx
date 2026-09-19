@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useUi } from "@/context/UiContext";
 import { TOP_NAV } from "@/data/navigation";
@@ -46,17 +48,26 @@ export default function TopBar() {
 
         {/* Right Links & Gold CTA */}
         <div className="flex items-center gap-x-2 sm:gap-x-3 shrink-0">
-          {TOP_NAV.map((item) => (
-            <a
-              key={item.label}
-              href={item.label === "Parents Login" ? parentsLoginUrl : item.href}
-              target={item.isExternal ? "_blank" : undefined}
-              rel={item.isExternal ? "noopener noreferrer" : undefined}
-              className="hover:text-[#dfb455] transition-colors font-medium text-gray-200 text-xs hidden 2xl:inline-block cursor-pointer"
-            >
-              {item.label}
-            </a>
-          ))}
+          {TOP_NAV.map((item) => {
+            const className =
+              "hover:text-[#dfb455] transition-colors font-medium text-gray-200 text-xs hidden 2xl:inline-block cursor-pointer";
+
+            return item.isExternal ? (
+              <a
+                key={item.label}
+                href={item.label === "Parents Login" ? parentsLoginUrl : item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={className}
+              >
+                {item.label}
+              </a>
+            ) : (
+              <Link key={item.label} href={item.href} className={className}>
+                {item.label}
+              </Link>
+            );
+          })}
 
           <button
             onClick={() => setAdmissionModalOpen(true)}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { useHashTab } from "@/hooks/useHashTab";
 import { GOLD } from "@/lib/theme";
 
 import AdmissionForm from "./AdmissionForm";
@@ -16,9 +17,15 @@ const FORM_TABS: { id: OnlineFormTab; label: string }[] = [
   { id: "prospectus", label: "Prospectus" },
 ];
 
+/** Tab ids, for deep-linking from the navigation (`/online-forms#enquiry`). */
+const FORM_TAB_IDS: readonly OnlineFormTab[] = FORM_TABS.map((tab) => tab.id);
+
 /** Tabbed portal hosting the four public online forms alongside contact details. */
 export default function OnlineForms() {
   const [activeFormTab, setActiveFormTab] = useState<OnlineFormTab>("admission");
+
+  // `/online-forms#enquiry` and friends open straight onto that form.
+  useHashTab(FORM_TAB_IDS, setActiveFormTab);
 
   return (
     <section id="online-forms" className="py-16 sm:py-24 bg-gradient-to-b from-[#f8faf8] via-[#f3f7f4] to-white border-t border-gray-200 relative overflow-hidden">

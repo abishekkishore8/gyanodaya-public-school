@@ -8,6 +8,9 @@ export const ACADEMIC_TABS = [
   { id: "senior", label: "Senior Secondary", subtitle: "Classes IX – XII" },
 ];
 
+/** Tab ids, for deep-linking from the navigation (`/academics#primary`). */
+export const ACADEMIC_TAB_IDS: readonly string[] = ACADEMIC_TABS.map((tab) => tab.id);
+
 export const ACADEMIC_HIGHLIGHTS = [
   { value: "100%", label: "CBSE Board Pass Rate", detail: "Consistent distinctions" },
   { value: "1:20", label: "Mentor to Student Ratio", detail: "Personalized care" },

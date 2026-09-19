@@ -50,11 +50,87 @@ function DatabaseUnavailable({ message }: { message: string }) {
   );
 }
 
+/** Which set of sections to render. One per public route. */
+export type SitePage =
+  | "home"
+  | "about"
+  | "academics"
+  | "notice-board"
+  | "facilities"
+  | "admissions"
+  | "online-forms"
+  | "gallery";
+
+/**
+ * The sections that make up each page.
+ *
+ * Home keeps the full one-page scroll it has always had; every other route
+ * renders the same section components on their own, so there is one source of
+ * truth for the markup and a section never drifts between the two views.
+ */
+function PageSections({ page }: { page: SitePage }) {
+  switch (page) {
+    case "about":
+      return (
+        <>
+          <About />
+          <Highlights />
+          <AdmissionsCta />
+        </>
+      );
+    case "academics":
+      return (
+        <>
+          <Academics />
+          <AdmissionsCta />
+        </>
+      );
+    case "notice-board":
+      return <NoticeBoard />;
+    case "facilities":
+      return (
+        <>
+          <Facilities />
+          <Gallery />
+          <AdmissionsCta />
+        </>
+      );
+    case "admissions":
+      return (
+        <>
+          <AdmissionsCta />
+          <Faqs />
+          <OnlineForms />
+        </>
+      );
+    case "online-forms":
+      return <OnlineForms />;
+    case "gallery":
+      return <Gallery />;
+    case "home":
+    default:
+      return (
+        <>
+          <Hero />
+          <Highlights />
+          <NoticeBoard />
+          <About />
+          <Academics />
+          <Facilities />
+          <Gallery />
+          <Faqs />
+          <AdmissionsCta />
+          <OnlineForms />
+        </>
+      );
+  }
+}
+
 /**
  * The public site plus every modal layer. Rendered inside the providers so it
  * can read site content, UI state and admin state through hooks.
  */
-function SiteBody() {
+function SiteBody({ page }: { page: SitePage }) {
   const { loadError } = useSiteContent();
   const { scrolled, scrollProgress } = useScrollProgress();
 
@@ -70,16 +146,7 @@ function SiteBody() {
       <Navbar scrolled={scrolled} />
 
       <main>
-        <Hero />
-        <Highlights />
-        <NoticeBoard />
-        <About />
-        <Academics />
-        <Facilities />
-        <Gallery />
-        <Faqs />
-        <AdmissionsCta />
-        <OnlineForms />
+        <PageSections page={page} />
       </main>
 
       <Footer />
@@ -105,12 +172,12 @@ function SiteBody() {
  * `/api/site-content` in the browser so the admin dashboard sees its own edits
  * immediately.
  */
-export default function SchoolSite() {
+export default function SchoolSite({ page = "home" }: { page?: SitePage }) {
   return (
     <ToastProvider>
       <SiteContentProvider>
         <UiProvider>
-          <SiteBody />
+          <SiteBody page={page} />
         </UiProvider>
       </SiteContentProvider>
     </ToastProvider>

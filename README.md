@@ -134,6 +134,24 @@ transparently — nobody has to reset a password. `/admin/*` is guarded server-s
 panel markup, and `PUT /api/site-content`, `POST /api/uploads/image` and every `/api/admin/users` route
 require a valid session. Rotating `SESSION_SECRET` signs everyone out.
 
+## Pages
+
+| Route | What it shows |
+| --- | --- |
+| `/` | Everything, on one scrolling view |
+| `/about` | About, highlights, admissions CTA |
+| `/academics` | CBSE curriculum by stage (`#pre-primary`, `#primary`, `#middle` open that tab) |
+| `/notice-board` | Notices, circulars, announcements, vacancies |
+| `/facilities` | Campus facilities (each card has its own anchor) and gallery |
+| `/admissions` | Admissions CTA, FAQs and the forms |
+| `/online-forms` | The four forms (`#admission`, `#enquiry`, `#visit`, `#prospectus`) |
+| `/gallery` | Photo gallery |
+
+Each route sets its own title, description and canonical URL; sections are defined once and reused, so a
+page and the home view can never drift apart. `/robots.txt` and `/sitemap.xml` are generated from
+`src/app/robots.ts` and `src/app/sitemap.ts`, both of which read `SITE_URL` from `src/data/site.ts` — set
+`NEXT_PUBLIC_SITE_URL` once you have a custom domain.
+
 ## Deployment
 
 Vercel, zero-config — it detects Next.js and builds with `yarn build`. Set `MONGODB_URI`, `SESSION_SECRET`

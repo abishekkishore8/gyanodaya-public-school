@@ -1,8 +1,11 @@
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import SchoolLogo from "@/components/common/SchoolLogo";
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useToast } from "@/context/ToastContext";
 import { useUi } from "@/context/UiContext";
-import { MAIN_NAV, MAIN_NAV_SECTION_IDS } from "@/data/navigation";
+import { MAIN_NAV, MAIN_NAV_SECTION_IDS, type NavItem } from "@/data/navigation";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { useNavDrawerDismiss } from "@/hooks/useNavDrawer";
@@ -31,6 +34,19 @@ export default function Navbar({ scrolled }: NavbarProps) {
     setAdmissionModalOpen,
   } = useUi();
   const activeSection = useActiveSection(MAIN_NAV_SECTION_IDS);
+  const pathname = usePathname();
+
+  /**
+   * Highlights the link for the page being viewed. On the home page every
+   * section is on screen at some point, so the scroll-spy decides instead.
+   */
+  const isCurrent = useCallback(
+    (item: NavItem) => {
+      if (pathname === "/") return activeSection === item.sectionId;
+      return pathname === item.href || pathname.startsWith(`${item.href}/`);
+    },
+    [pathname, activeSection],
+  );
 
   const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), [setMobileMenuOpen]);
 
@@ -43,7 +59,7 @@ export default function Navbar({ scrolled }: NavbarProps) {
       <div className="max-w-[1360px] nav-full:max-w-[1500px] mx-auto px-3 sm:px-5 nav-full:px-4 flex items-center justify-between gap-2 sm:gap-4 nav-full:gap-2 min-w-0">
 
         {/* Logo & School Name */}
-        <a href="#home" className="flex items-center gap-2.5 sm:gap-3 group shrink-0 min-w-0">
+        <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0 min-w-0">
           <div className="flex items-center justify-center shrink-0 rounded-full bg-white/90 ring-1 ring-[#14452f]/10 p-1">
             <SchoolLogo className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 2xl:w-14 2xl:h-14 group-hover:scale-105 transition-transform duration-300 shrink-0" />
           </div>
@@ -61,16 +77,16 @@ export default function Navbar({ scrolled }: NavbarProps) {
               PUBLIC SCHOOL • BAGODAR
             </span>
           </div>
-        </a>
+        </Link>
 
         {/* Inline navigation — only from `nav-full` up, where every link fits on one row */}
         <nav className="hidden nav-full:flex items-center gap-1 min-w-0 flex-1 justify-center">
           {MAIN_NAV.map((item) => {
-            const isActive = activeSection === item.href.replace("#", "");
+            const isActive = isCurrent(item);
 
             return (
               <div key={item.label} className="relative group/menu py-2">
-                <a
+                <Link
                   href={item.href}
                   aria-current={isActive ? "true" : undefined}
                   className={`flex items-center gap-0.5 text-[12px] font-semibold tracking-[0.02em] py-1 px-1 relative whitespace-nowrap transition-colors after:absolute after:inset-x-1 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-[#14452f] after:origin-left after:transition-transform after:duration-200 group-hover/menu:after:scale-x-100 ${
@@ -89,19 +105,19 @@ export default function Navbar({ scrolled }: NavbarProps) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                     </svg>
                   )}
-                </a>
+                </Link>
 
                 {/* Dropdown flyout — opens on hover and on keyboard focus */}
                 {item.subItems && (
                   <div className="absolute top-full left-0 w-56 bg-white border border-gray-100 rounded-lg shadow-xl py-2 z-50 origin-top opacity-0 invisible -translate-y-2 transition-[opacity,transform,visibility] duration-200 group-hover/menu:opacity-100 group-hover/menu:visible group-hover/menu:translate-y-0 group-focus-within/menu:opacity-100 group-focus-within/menu:visible group-focus-within/menu:translate-y-0">
                     {item.subItems.map((sub) => (
-                      <a
+                      <Link
                         key={sub.label}
                         href={sub.href}
                         className="block px-4 py-2 text-xs font-medium text-gray-700 hover:bg-[#f0faf5] hover:text-[#14452f] focus:bg-[#f0faf5] focus:text-[#14452f] focus:outline-none transition-colors"
                       >
                         {sub.label}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -258,13 +274,16 @@ export default function Navbar({ scrolled }: NavbarProps) {
               {MAIN_NAV.map((item) => (
                 <div key={item.label} className="rounded-xl border border-[#dbe7df] bg-white/92 px-2.5 min-[380px]:px-3 py-1 shadow-sm">
                   <div className="flex items-center justify-between gap-2">
-                    <a
+                    <Link
                       href={item.href}
                       onClick={closeMobileMenu}
-                      className="py-2.5 pr-2 hover:text-[#14452f] flex-1 text-[10.5px] min-[380px]:text-[11px] sm:text-[12px] tracking-[0.1em] min-[380px]:tracking-[0.12em] uppercase leading-tight"
+                      aria-current={isCurrent(item) ? "page" : undefined}
+                      className={`py-2.5 pr-2 flex-1 text-[10.5px] min-[380px]:text-[11px] sm:text-[12px] tracking-[0.1em] min-[380px]:tracking-[0.12em] uppercase leading-tight ${
+                        isCurrent(item) ? "text-[#14452f]" : "hover:text-[#14452f]"
+                      }`}
                     >
                       {item.label}
-                    </a>
+                    </Link>
                     {item.hasDropdown && (
                       <button
                         onClick={() => setMobileSubNavOpen(mobileSubNavOpen === item.label ? null : item.label)}
@@ -287,14 +306,14 @@ export default function Navbar({ scrolled }: NavbarProps) {
                   {item.subItems && mobileSubNavOpen === item.label && (
                     <div className="pl-3 pr-1 pb-2 flex flex-col gap-1 bg-[#f7faf7] rounded-xl animate-slide-down border border-[#edf3ee]">
                       {item.subItems.map((sub) => (
-                        <a
+                        <Link
                           key={sub.label}
                           href={sub.href}
                           onClick={closeMobileMenu}
                           className="py-1.5 text-[10.5px] min-[380px]:text-[11px] text-gray-600 hover:text-[#14452f] font-medium leading-snug"
                         >
                           {sub.label}
-                        </a>
+                        </Link>
                       ))}
                     </div>
                   )}

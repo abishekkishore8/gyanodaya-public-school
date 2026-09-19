@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
 import SchoolLogo from "@/components/common/SchoolLogo";
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useToast } from "@/context/ToastContext";
 import { useUi } from "@/context/UiContext";
+import { FOOTER_QUICK_LINKS } from "@/data/navigation";
 
 /** Site footer: contact details, quick links and the newsletter signup. */
 export default function Footer() {
@@ -94,22 +96,14 @@ export default function Footer() {
               QUICK LINKS
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm text-gray-300">
-              {[
-                "Home",
-                "About Us",
-                "Academics",
-                "Facilities",
-                "Admissions",
-                "Gallery",
-                "Contact Us",
-              ].map((link) => (
-                <li key={link}>
-                  <a
-                    href={`#${link.toLowerCase().replace(/\s+/g, "-")}`}
+              {FOOTER_QUICK_LINKS.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
                     className="hover:text-[#dfb455] transition-colors inline-block hover:translate-x-1 duration-200"
                   >
-                    {link}
-                  </a>
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -121,31 +115,43 @@ export default function Footer() {
               INFORMATION
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm text-gray-300">
+              {/* `opensEnquiry` entries have no page of their own yet, so they ask instead. */}
               {[
-                { label: "Fee Structure", href: "#fee-structure" },
-                { label: "Admission Process", href: "#admissions" },
-                { label: "School Calendar", href: "#calendar" },
-                { label: "News & Events", href: "#news" },
-                { label: "Career & Jobs", href: "#recruitment" },
+                { label: "Fee Structure", href: "/admissions#faqs" },
+                { label: "Admission Process", href: "/admissions" },
+                { label: "School Calendar", href: "#", opensEnquiry: true },
+                { label: "News & Events", href: "/notice-board#announcements" },
+                { label: "Career & Jobs", href: "/notice-board#recruitment" },
                 { label: "Parents Login", href: parentsLoginUrl, isExternal: true },
-              ].map((info) => (
-                <li key={info.label}>
-                  <a
-                    href={info.href}
-                    target={info.isExternal ? "_blank" : undefined}
-                    rel={info.isExternal ? "noopener noreferrer" : undefined}
-                    onClick={(e) => {
-                      if (!info.isExternal) {
-                        e.preventDefault();
-                        setAdmissionModalOpen(true);
-                      }
-                    }}
-                    className="hover:text-[#dfb455] transition-colors inline-block hover:translate-x-1 duration-200 cursor-pointer"
-                  >
-                    {info.label}
-                  </a>
-                </li>
-              ))}
+              ].map((info) => {
+                const className =
+                  "hover:text-[#dfb455] transition-colors inline-block hover:translate-x-1 duration-200 cursor-pointer";
+
+                return (
+                  <li key={info.label}>
+                    {info.isExternal || info.opensEnquiry ? (
+                      <a
+                        href={info.href}
+                        target={info.isExternal ? "_blank" : undefined}
+                        rel={info.isExternal ? "noopener noreferrer" : undefined}
+                        onClick={(e) => {
+                          if (info.opensEnquiry) {
+                            e.preventDefault();
+                            setAdmissionModalOpen(true);
+                          }
+                        }}
+                        className={className}
+                      >
+                        {info.label}
+                      </a>
+                    ) : (
+                      <Link href={info.href} className={className}>
+                        {info.label}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
 

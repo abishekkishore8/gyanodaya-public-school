@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 
+import { SITE_URL } from "@/data/site";
+
 import "./globals.css";
 
 /** Body typeface. Exposed as `--font-inter` and mapped to `font-sans`. */
@@ -20,7 +22,6 @@ const playfairDisplay = Playfair_Display({
   display: "swap",
 });
 
-const SITE_URL = "https://gyanodaya-public-school.vercel.app/";
 const LOGO_URL =
   "https://pub-74c5e2ce3a764141b0133fe743720d83.r2.dev/website-assets/1789412778814-gps_logo-removebg-preview.png";
 const SOCIAL_IMAGE_URL =

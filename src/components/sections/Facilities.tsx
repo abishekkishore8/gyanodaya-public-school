@@ -2,6 +2,14 @@ import { useSiteContent } from "@/context/SiteContentContext";
 import { useUi } from "@/context/UiContext";
 import { GOLD, GREEN } from "@/lib/theme";
 
+/** Card anchor id, so navigation sub-items can deep-link to one facility. */
+function facilityId(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 /** Grid of campus infrastructure cards. */
 export default function Facilities() {
   const { facilitiesList } = useSiteContent();
@@ -29,7 +37,9 @@ export default function Facilities() {
           {facilitiesList.map((fac) => (
             <div
               key={fac.title}
-              className="group bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col hover:-translate-y-1.5 cursor-pointer"
+              id={facilityId(fac.title)}
+              // Clears the sticky header when linked to directly.
+              className="group bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col hover:-translate-y-1.5 cursor-pointer scroll-mt-28"
             >
               {/* Photo with Tag */}
               <div className="relative h-44 sm:h-48 overflow-hidden bg-gray-200">

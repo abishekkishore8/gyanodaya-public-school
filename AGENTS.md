@@ -33,8 +33,11 @@ collection behind admin-only reads. When adding a feature that captures personal
 
 There are two surfaces:
 
-- **`/`** — the public site. `src/app/page.tsx` is a server component rendering
-  `src/components/SchoolSite.tsx`, which carries `"use client"`. It contains no admin affordances at all.
+- **`/`** — the public site, plus one route per navigation entry (`/about`, `/academics`,
+  `/notice-board`, `/facilities`, `/admissions`, `/online-forms`, `/gallery`). Each is a server component
+  that sets its own SEO metadata and renders `src/components/SchoolSite.tsx` (which carries `"use client"`)
+  with a `page` prop; `SchoolSite` picks the sections for that page. Home keeps every section on one
+  scrolling view, so a section's markup has exactly one definition. No admin affordances anywhere.
 - **`/admin/*`** — the management panel, one route per section. `src/app/admin/(panel)/layout.tsx` is a
   server component that verifies the session cookie and redirects to `/admin/login` when there is none, so
   panel markup never reaches an unauthenticated visitor. `/admin/login` sits outside the `(panel)` group so
@@ -102,7 +105,11 @@ Application code lives under `src/`. Only config, `public/` and docs sit at the 
 ### Routing and shell (`src/app/`)
 
 - `layout.tsx` - `<html>`/`<body>`, SEO metadata, JSON-LD, and the `next/font` typefaces
-- `page.tsx` - The public site; renders the client root
+- `page.tsx` - Home: every section on one scrolling view
+- `{about,academics,notice-board,facilities,admissions,online-forms,gallery}/page.tsx` - One route per
+  navigation entry, each with its own title, description and canonical URL
+- `robots.ts`, `sitemap.ts` - `/robots.txt` and `/sitemap.xml`; both read `SITE_URL` from `data/site.ts`
+  and exclude `/admin` and `/api`
 - `globals.css` - Tailwind v4 import, the `@theme` font mapping, CSS variables, keyframes and animations
 - `admin/login/page.tsx` - Sign-in page (unguarded)
 - `admin/(panel)/layout.tsx` - Session guard + `AdminShell`
@@ -115,7 +122,8 @@ Application code lives under `src/`. Only config, `public/` and docs sit at the 
 
 ### Client (`src/`)
 
-- `components/SchoolSite.tsx` - Client root: nests the providers, lays out sections and modal layers
+- `components/SchoolSite.tsx` - Client root: nests the providers, picks the sections for the current
+  `page` and lays out the modal layers
 - `types/site.ts` - Shared client/server data contracts. Keep in sync with `src/server/site-content.ts`
 - `lib/` - `api.ts` (typed `/api` wrappers), `theme.ts` (brand colors), `notices.ts` (tag theming),
   `submissions.ts` (reference ids and form helpers)
