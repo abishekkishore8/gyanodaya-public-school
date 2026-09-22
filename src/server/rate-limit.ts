@@ -1,56 +1,28 @@
 import "server-only";
 
-import type { Collection } from "mongodb";
-
 import { getDb } from "./db";
 
 /**
  * Fixed-window rate limiting for the publicly reachable endpoints.
  *
- * Counters live in MongoDB rather than process memory because serverless
- * instances do not share memory — an in-process limiter would reset on every
- * cold start and be trivially bypassed by concurrent instances. Documents
- * expire automatically through a TTL index.
+ * Counters live in D1 rather than isolate memory because Workers isolates do
+ * not share memory — an in-process limiter would reset constantly and be
+ * trivially bypassed. D1 has no TTL, so expired rows are swept opportunistically
+ * whenever a window rolls over.
  */
-
-const COLLECTION = "rate_limits";
-
-interface RateLimitRecord {
-  /** `${bucket}:${identifier}:${windowStart}` */
-  _id: string;
-  count: number;
-  /** TTL index target; Mongo removes the document shortly after this. */
-  expiresAt: Date;
-}
-
-let indexReady: Promise<void> | undefined;
-
-async function getCollection(): Promise<Collection<RateLimitRecord>> {
-  const db = await getDb();
-  const collection = db.collection<RateLimitRecord>(COLLECTION);
-
-  // Create the TTL index once per process, not on every request.
-  if (!indexReady) {
-    indexReady = collection
-      .createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 })
-      .then(() => undefined)
-      .catch(() => {
-        indexReady = undefined;
-      });
-  }
-  await indexReady;
-
-  return collection;
-}
 
 /**
  * Best-effort client identifier.
  *
- * `x-forwarded-for` is set by Vercel and most proxies. It is spoofable when the
+ * `x-forwarded-for` is set by Cloudflare and most proxies. It is spoofable when the
  * app is served without a trusted proxy, so this is a speed bump against
  * casual abuse rather than a security control.
  */
 export function clientIdentifier(request: Request): string {
+  // Cloudflare sets `cf-connecting-ip` and it cannot be spoofed by the client.
+  const cfIp = request.headers.get("cf-connecting-ip");
+  if (cfIp) return cfIp;
+
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) return forwarded.split(",")[0]!.trim();
 
@@ -77,18 +49,29 @@ export async function checkRateLimit(
 ): Promise<RateLimitResult> {
   const now = Date.now();
   const windowStart = Math.floor(now / windowMs) * windowMs;
-  const expiresAt = new Date(windowStart + windowMs);
-  const retryAfter = Math.max(1, Math.ceil((expiresAt.getTime() - now) / 1000));
+  const expiresAt = windowStart + windowMs;
+  const retryAfter = Math.max(1, Math.ceil((expiresAt - now) / 1000));
 
   try {
-    const collection = await getCollection();
-    const result = await collection.findOneAndUpdate(
-      { _id: `${bucket}:${identifier}:${windowStart}` },
-      { $inc: { count: 1 }, $setOnInsert: { expiresAt } },
-      { upsert: true, returnDocument: "after" },
-    );
+    const db = await getDb();
+    const key = `${bucket}:${identifier}:${windowStart}`;
 
-    return { allowed: (result?.count ?? 1) <= limit, retryAfter };
+    const row = await db
+      .prepare(
+        `INSERT INTO rate_limits (key, count, expires_at)
+         VALUES (?, 1, ?)
+         ON CONFLICT(key) DO UPDATE SET count = count + 1
+         RETURNING count`,
+      )
+      .bind(key, expiresAt)
+      .first<{ count: number }>();
+
+    // Sweep old windows now and then rather than on every request.
+    if (Math.random() < 0.02) {
+      await db.prepare("DELETE FROM rate_limits WHERE expires_at < ?").bind(now).run();
+    }
+
+    return { allowed: (row?.count ?? 1) <= limit, retryAfter };
   } catch {
     return { allowed: true, retryAfter };
   }

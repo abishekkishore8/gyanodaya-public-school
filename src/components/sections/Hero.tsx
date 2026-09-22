@@ -1,8 +1,8 @@
+import Link from "next/link";
 import { useState } from "react";
 
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useUi } from "@/context/UiContext";
-import { HERO_SLIDES } from "@/data/hero";
 import { SLIDE_INTERVAL_MS, useHeroSlider } from "@/hooks/useHeroSlider";
 import { GOLD, GOLD_TEXT } from "@/lib/theme";
 
@@ -18,14 +18,22 @@ function splitHeadline(headline: string) {
 
 /** Full-bleed auto-advancing hero carousel. Pauses while the pointer is over it. */
 export default function Hero() {
-  const { heroSlides } = useSiteContent();
+  const { home } = useSiteContent();
+  const heroSlides = home.hero;
   const { setAdmissionModalOpen } = useUi();
   const [isHoveringHero, setIsHoveringHero] = useState(false);
-  const { activeSlide: safeActiveSlide } = useHeroSlider(heroSlides.length, isHoveringHero);
+  const { activeSlide: safeActiveSlide, setActiveSlide } = useHeroSlider(heroSlides.length, isHoveringHero);
 
-  const currentHeroSlide = heroSlides[safeActiveSlide] || HERO_SLIDES[0];
-  const { lead, rest } = splitHeadline(currentHeroSlide.headline);
+  const currentHeroSlide = heroSlides[safeActiveSlide];
+  const { lead, rest } = splitHeadline(currentHeroSlide?.headline ?? "");
   const [restFirstWord, ...restTail] = rest.split(" ");
+
+  // Nothing to show until the administrator adds a slide.
+  if (!currentHeroSlide) return null;
+
+  /** Steps the carousel by `step` slides, wrapping at either end. */
+  const goToSlide = (step: number) =>
+    setActiveSlide((prev) => (prev + step + heroSlides.length) % heroSlides.length);
 
   return (
     <section
@@ -49,15 +57,15 @@ export default function Hero() {
       {/* Dynamic Hero Slide Images with Smooth Crossfade */}
       {heroSlides.map((slide, idx) => (
         <div
-          key={idx}
+          key={slide.id}
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
             safeActiveSlide === idx ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-105"
           }`}
           style={{ transition: "opacity 1s ease-in-out, transform 8s ease-out" }}
         >
           <img
-            src={slide.img}
-            alt={slide.alt}
+            src={slide.imageUrl}
+            alt={slide.headline}
             loading={idx === 0 ? "eager" : "lazy"}
             decoding="async"
             className="w-full h-full object-cover object-center"
@@ -119,9 +127,58 @@ export default function Hero() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </button>
+
+                <Link
+                  href="/facilities"
+                  className="text-white font-semibold text-xs sm:text-sm px-4 sm:px-6 py-2.5 sm:py-3.5 rounded flex items-center justify-center gap-1.5 sm:gap-2 border border-white/70 hover:bg-white hover:text-[#14452f] transition-all uppercase tracking-wider hover:scale-105 active:scale-95"
+                >
+                  <span>EXPLORE CAMPUS</span>
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
               </div>
             </div>
         </div>
+      </div>
+
+      {/* Previous / Next Slide Controls — hidden on phones, where the copy runs full width */}
+      <button
+        onClick={() => goToSlide(-1)}
+        aria-label="Previous slide"
+        className="hidden sm:flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 items-center justify-center rounded-full border border-white/40 bg-white/10 text-white backdrop-blur-md hover:bg-white/25 hover:scale-105 transition-all cursor-pointer"
+      >
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <button
+        onClick={() => goToSlide(1)}
+        aria-label="Next slide"
+        className="hidden sm:flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 items-center justify-center rounded-full border border-white/40 bg-white/10 text-white backdrop-blur-md hover:bg-white/25 hover:scale-105 transition-all cursor-pointer"
+      >
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {/*
+        Slide dots. They sit well clear of the bottom edge because the highlights
+        strip below overlaps the hero there (see `Highlights` with `overlap`).
+      */}
+      <div className="absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+        {heroSlides.map((slide, idx) => (
+          <button
+            key={slide.id}
+            onClick={() => setActiveSlide(idx)}
+            aria-label={`Go to slide ${idx + 1}`}
+            aria-current={safeActiveSlide === idx}
+            className={`h-2 rounded-full transition-all cursor-pointer ${
+              safeActiveSlide === idx ? "w-6 bg-[#dfb455]" : "w-2 bg-white/50 hover:bg-white/80"
+            }`}
+          />
+        ))}
       </div>
     </section>
   );

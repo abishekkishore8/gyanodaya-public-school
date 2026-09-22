@@ -1,28 +1,23 @@
 import "server-only";
 
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-
 import type { UploadedImageResponse } from "@/types/site";
 
-import { getR2Config, type R2Config } from "./config";
+import { getUploadsBaseUrl } from "./config";
+import { getUploadsBucket } from "./db";
 
-/** Image uploads to the Cloudflare R2 bucket that serves the site's photos. */
+/**
+ * Uploaded files — website photographs and candidate CVs — in Cloudflare R2.
+ *
+ * The bucket is reached through the Worker's `UPLOADS` binding, so no access
+ * keys are involved; `R2_PUBLIC_BASE_URL` is only needed to build the public
+ * URL of a stored object (an R2 custom domain, or the bucket's r2.dev address).
+ */
 
-/** Folder prefix for everything this app uploads. */
-const KEY_PREFIX = "website-assets";
+/** Folder prefix for everything the website itself uploads. */
+const IMAGE_PREFIX = "website-assets";
 
-const globalForR2 = globalThis as typeof globalThis & { __gpsR2Client?: S3Client };
-
-function getClient(config: R2Config): S3Client {
-  if (!globalForR2.__gpsR2Client) {
-    globalForR2.__gpsR2Client = new S3Client({
-      region: "auto",
-      endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
-      credentials: { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey },
-    });
-  }
-  return globalForR2.__gpsR2Client;
-}
+/** Folder prefix for documents the school publishes (circulars, certificates). */
+const DOCUMENT_PREFIX = "documents";
 
 /** Folder prefix for candidate CVs. */
 const CV_PREFIX = "applications";
@@ -34,52 +29,55 @@ function sanitizeFileName(name: string): string {
 
 /** Uploads any file under `prefix` and returns its public URL and object key. */
 async function putObject(file: File, prefix: string): Promise<UploadedImageResponse> {
-  const config = getR2Config();
-  if (!config) {
-    throw new Error("R2 is not fully configured on the server.");
+  const bucket = await getUploadsBucket();
+  if (!bucket) {
+    throw new Error("The R2 binding `UPLOADS` is not configured on the server.");
+  }
+
+  const baseUrl = await getUploadsBaseUrl();
+  if (!baseUrl) {
+    throw new Error("R2_PUBLIC_BASE_URL is not set, so uploaded files would have no public address.");
   }
 
   // A random segment keeps uploaded filenames from colliding or being guessable.
   const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   const key = `${prefix}/${unique}-${sanitizeFileName(file.name)}`;
-  const body = new Uint8Array(await file.arrayBuffer());
 
-  await getClient(config).send(
-    new PutObjectCommand({
-      Bucket: config.bucketName,
-      Key: key,
-      Body: body,
-      ContentType: file.type || "application/octet-stream",
-    }),
-  );
+  await bucket.put(key, await file.arrayBuffer(), {
+    httpMetadata: {
+      contentType: file.type || "application/octet-stream",
+      // Uploaded assets are immutable: the key changes whenever the file does.
+      cacheControl: "public, max-age=31536000, immutable",
+    },
+  });
 
-  return { url: `${config.publicBaseUrl.replace(/\/$/, "")}/${key}`, key };
+  return { url: `${baseUrl}/${key}`, key };
 }
 
 /** Stores a website image in R2. */
 export function uploadImage(file: File): Promise<UploadedImageResponse> {
-  return putObject(file, KEY_PREFIX);
+  return putObject(file, IMAGE_PREFIX);
 }
 
-/** Stores a candidate's CV in R2, under a separate prefix from site images. */
+/** Stores a published document (PDF, Word, Excel, image) in R2. */
+export function uploadDocument(file: File): Promise<UploadedImageResponse> {
+  return putObject(file, DOCUMENT_PREFIX);
+}
+
+/** Stores a candidate's CV in R2. */
 export function uploadCv(file: File): Promise<UploadedImageResponse> {
   return putObject(file, CV_PREFIX);
 }
 
-/**
- * Removes an object from R2.
- *
- * Returns false instead of throwing when R2 is not configured or the delete
- * fails, so tidying up storage can never block deleting a database record.
- */
-export async function deleteObject(key: string): Promise<boolean> {
-  const config = getR2Config();
-  if (!config || !key) return false;
+/** Removes an object, ignoring the case where it is already gone. */
+export async function deleteObject(key: string): Promise<void> {
+  const bucket = await getUploadsBucket();
+  if (!bucket || !key) return;
 
   try {
-    await getClient(config).send(new DeleteObjectCommand({ Bucket: config.bucketName, Key: key }));
-    return true;
+    await bucket.delete(key);
   } catch {
-    return false;
+    // A missing or already-deleted object must not fail the request that
+    // triggered the cleanup.
   }
 }

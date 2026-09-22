@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import type { SiteContentDocument } from "@/types/site";
+
 import { errorResponse } from "@/server/responses";
 import { requireAdmin } from "@/server/session";
 import { readSiteContent, writeSiteContent } from "@/server/site-content";
@@ -25,7 +27,7 @@ export async function PUT(request: Request) {
   if (auth instanceof NextResponse) return auth;
 
   try {
-    const payload = await request.json().catch(() => ({}));
+    const payload = (await request.json().catch(() => ({}))) as Partial<SiteContentDocument>;
     return NextResponse.json(await writeSiteContent(payload));
   } catch (error) {
     return errorResponse(error, "Failed to save site content.");

@@ -1,115 +1,65 @@
 /**
- * Resets an administrator's password in MongoDB.
+ * Resets an administrator's password in D1.
  *
- *   yarn admin:password                      # lists accounts, then prompts
- *   yarn admin:password <username>           # prompts for the new password
- *   yarn admin:password <username> <password>
+ *   yarn admin:password                                # local database, prompts
+ *   yarn admin:password --remote                       # deployed database, prompts
+ *   yarn admin:password <username> <new password> [--remote]
  *
- * Use this when nobody can sign in. With a working session, the Administrators
- * tab of the panel does the same thing without touching a terminal.
- *
- * Passing the password as an argument leaves it in your shell history — prefer
- * the prompt, which does not echo what you type.
+ * The new password is stored as a PBKDF2 hash, which is what the Worker can
+ * verify within its CPU budget — use this once after the move from MongoDB to
+ * replace an account's old bcrypt hash.
  */
 
 import { createInterface } from "node:readline/promises";
-import { stdin, stdout } from "node:process";
+import { argv, stdin, stdout } from "node:process";
 
-// Load .env before anything reads process.env (the Next.js runtime does this
-// for us, but a standalone script has to do it itself).
+const { hashPbkdf2, validatePasswordStrength } = await import("../src/lib/password");
+const { execute, query, sqlValue, targetLabel, wantsRemote } = await import("./lib/d1");
+
+const remote = wantsRemote(argv);
+const positional = argv.slice(2).filter((arg) => !arg.startsWith("--"));
+
+const rl = createInterface({ input: stdin, output: stdout });
+
+async function ask(question: string, existing?: string): Promise<string> {
+  if (existing) return existing;
+  return (await rl.question(question)).trim();
+}
+
 try {
-  process.loadEnvFile(".env");
-} catch {
-  // No .env file — rely on variables already present in the environment.
-}
+  console.log(`Resetting a password in ${targetLabel(remote)}.\n`);
 
-const { validatePasswordStrength } = await import("../src/server/auth");
-const { findUserByUsername, listUsers, setUserPassword } = await import("../src/server/users");
+  const accounts = query<{ id: string; username: string }>(
+    "SELECT id, username FROM admin_users ORDER BY username",
+    remote,
+  );
 
-/** Reads a line, hiding what is typed (for passwords). */
-async function askHidden(prompt: string): Promise<string> {
-  const rl = createInterface({ input: stdin, output: stdout, terminal: true });
-
-  // `readline` echoes input, so silence the output stream while typing.
-  const originalWrite = stdout.write.bind(stdout);
-  let muted = false;
-  (stdout as NodeJS.WriteStream).write = ((chunk: string | Uint8Array, ...rest: unknown[]) => {
-    if (muted) return true;
-    return (originalWrite as (c: string | Uint8Array, ...r: unknown[]) => boolean)(chunk, ...rest);
-  }) as typeof stdout.write;
-
-  originalWrite(prompt);
-  muted = true;
-  const answer = await rl.question("");
-  muted = false;
-  (stdout as NodeJS.WriteStream).write = originalWrite;
-  originalWrite("\n");
-  rl.close();
-
-  return answer;
-}
-
-async function ask(prompt: string): Promise<string> {
-  const rl = createInterface({ input: stdin, output: stdout });
-  const answer = await rl.question(prompt);
-  rl.close();
-  return answer;
-}
-
-async function main() {
-  const [argUsername, argPassword] = process.argv.slice(2);
-
-  const users = await listUsers();
-  if (users.length === 0) {
-    console.error("\n✖ No administrator accounts exist yet. Run `yarn admin:create` instead.\n");
-    process.exit(1);
+  if (accounts.length === 0) {
+    throw new Error("There are no administrator accounts yet. Run `yarn admin:create` first.");
   }
 
-  if (!argUsername) {
-    console.log(`\nAdministrators (${users.length}):`);
-    for (const user of users) {
-      const lastLogin = user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : "never signed in";
-      console.log(`  · ${user.username}${user.name !== user.username ? ` (${user.name})` : ""} — ${lastLogin}`);
-    }
-    console.log("");
-  }
+  console.log(`Accounts: ${accounts.map((row) => row.username).join(", ")}\n`);
 
-  const username = argUsername || (await ask("Username to reset: "));
-  const user = await findUserByUsername(username);
-  if (!user) {
-    console.error(`\n✖ No administrator named "${username.trim().toLowerCase()}".\n`);
-    process.exit(1);
-  }
+  const username = (await ask("Username: ", positional[0])).toLowerCase();
+  const account = accounts.find((row) => row.username === username);
+  if (!account) throw new Error(`No administrator named "${username}".`);
 
-  let password = argPassword;
-  if (!password) {
-    password = await askHidden(`New password for "${user.username}" (min 10 chars, letters + numbers): `);
-    const confirmation = await askHidden("Confirm password: ");
-    if (password !== confirmation) {
-      console.error("✖ Passwords do not match.");
-      process.exit(1);
-    }
-  }
-
+  const password = await ask("New password: ", positional[1]);
   const passwordError = validatePasswordStrength(password);
-  if (passwordError) {
-    console.error(`✖ ${passwordError}`);
-    process.exit(1);
-  }
+  if (passwordError) throw new Error(passwordError);
 
-  if (!(await setUserPassword(user.id, password))) {
-    console.error("\n✖ Could not update the password — the account may have just been deleted.\n");
-    process.exit(1);
-  }
+  execute(
+    `UPDATE admin_users
+     SET password_hash = ${sqlValue(await hashPbkdf2(password))},
+         updated_at = ${sqlValue(new Date().toISOString())}
+     WHERE id = ${sqlValue(account.id)}`,
+    remote,
+  );
 
-  console.log(`\n✓ Password reset for "${user.username}".`);
-  console.log("  Existing sessions stay valid until they expire; sign out elsewhere to end them now.");
-  console.log("  Sign in at /admin\n");
+  console.log(`\n✅ Password updated for "${username}".`);
+} catch (error) {
+  console.error(`\n❌ ${error instanceof Error ? error.message : String(error)}`);
+  process.exitCode = 1;
+} finally {
+  rl.close();
 }
-
-main()
-  .then(() => process.exit(0))
-  .catch((error: unknown) => {
-    console.error(`\n✖ ${error instanceof Error ? error.message : String(error)}\n`);
-    process.exit(1);
-  });

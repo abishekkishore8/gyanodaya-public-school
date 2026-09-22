@@ -6,17 +6,25 @@ import { INITIAL_RECRUITMENT_POSITIONS } from "@/data/recruitment";
 import { uploadImage } from "@/lib/api";
 import { normalizeNoticeCategories } from "@/lib/notices";
 import type {
+  AboutContent,
+  AcademicsContent,
+  ContactContent,
+  DisclosureContent,
+  FacilitiesContent,
+  FeesContent,
+  HomeContent,
   ImageAssetItem,
   ImageAssetsDocument,
   ImageCollectionKey,
   JobPosition,
   NoticeCategoryId,
   NoticeItemData,
+  ResultsContent,
+  UniformContent,
 } from "@/types/site";
 
 import { useSiteContent } from "./SiteContentContext";
 import { useToast } from "./ToastContext";
-
 
 /** Key used in `imageUploadState` for the "add a gallery photo" control. */
 export const NEW_GALLERY_UPLOAD_KEY = "galleryNew";
@@ -55,8 +63,32 @@ interface AdminValue {
   openJobEditor: (job?: JobPosition | null) => void;
   closeJobEditor: () => void;
 
+  /**
+   * Uploads a photograph and resolves its public URL, or `null` when the upload
+   * fails. `key` tracks the control's spinner in `imageUploadState`.
+   */
+  uploadPhoto: (key: string, file: File) => Promise<string | null>;
+  /** Replaces the home-page content. Resolves `true` when it saved. */
+  saveHome: (home: HomeContent) => Promise<boolean>;
+  /** Replaces the school contact details. Resolves `true` when it saved. */
+  saveContact: (contact: ContactContent) => Promise<boolean>;
+  /** Replaces the whole About Us page content. Resolves `true` when it saved. */
+  saveAbout: (about: AboutContent) => Promise<boolean>;
+  /** Replaces the whole school uniform section. Resolves `true` when it saved. */
+  saveUniform: (uniform: UniformContent) => Promise<boolean>;
+  /** Replaces the fee structure page. Resolves `true` when it saved. */
+  saveFees: (fees: FeesContent) => Promise<boolean>;
+  /** Replaces the board results strip. Resolves `true` when it saved. */
+  saveResults: (results: ResultsContent) => Promise<boolean>;
+  /** Replaces the academics page sections. Resolves `true` when it saved. */
+  saveAcademics: (academics: AcademicsContent) => Promise<boolean>;
+  /** Replaces the facilities page content. Resolves `true` when it saved. */
+  saveFacilities: (facilities: FacilitiesContent) => Promise<boolean>;
+
   saveParentsLoginUrl: (url: string) => Promise<void>;
   saveAcademicSession: (session: string) => Promise<void>;
+  /** Replaces the whole mandatory disclosure. Resolves `true` when it saved. */
+  saveDisclosure: (disclosure: DisclosureContent) => Promise<boolean>;
   resetToDefaults: () => Promise<void>;
 }
 
@@ -81,6 +113,10 @@ export interface NoticeDraft {
   month: string;
   tag: string;
   desc: string;
+  /** Attachment URL; empty when the notice has none. */
+  fileUrl: string;
+  /** Display size of an uploaded attachment, e.g. "1.2 MB". */
+  fileSize: string;
 }
 
 const AdminContext = createContext<AdminValue | null>(null);
@@ -268,6 +304,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         month: fields.month.trim().toUpperCase(),
         tag: fields.tag.trim().toUpperCase(),
         desc: fields.desc.trim(),
+        fileUrl: fields.fileUrl.trim(),
+        fileSize: fields.fileUrl.trim() ? fields.fileSize : "",
       };
 
       const updatedCategories = noticeCategories.map((category) => {
@@ -398,6 +436,130 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     [saveContent, showToast],
   );
 
+  const uploadPhoto = useCallback(
+    async (key: string, file: File) => {
+      setImageUploadState((prev) => ({ ...prev, [key]: true }));
+      try {
+        const uploaded = await uploadImage(file);
+        return uploaded.url;
+      } catch (error) {
+        showToast(error instanceof Error ? `⚠️ ${error.message}` : "⚠️ Photo upload failed.");
+        return null;
+      } finally {
+        setImageUploadState((prev) => ({ ...prev, [key]: false }));
+      }
+    },
+    [showToast],
+  );
+
+  const saveHome = useCallback(
+    async (home: HomeContent) =>
+      saveContent(
+        { home },
+        {
+          success: "🏠 Home page updated.",
+          failure: "⚠️ Home page could not be updated in gps_school_website.",
+        },
+      ),
+    [saveContent],
+  );
+
+  const saveContact = useCallback(
+    async (contact: ContactContent) =>
+      saveContent(
+        { contact },
+        {
+          success: "☎️ Contact details updated.",
+          failure: "⚠️ Contact details could not be updated in gps_school_website.",
+        },
+      ),
+    [saveContent],
+  );
+
+  const saveAbout = useCallback(
+    async (about: AboutContent) =>
+      saveContent(
+        { about },
+        {
+          success: "🏫 About Us page updated.",
+          failure: "⚠️ About Us page could not be updated in gps_school_website.",
+        },
+      ),
+    [saveContent],
+  );
+
+  const saveAcademics = useCallback(
+    async (academics: AcademicsContent) =>
+      saveContent(
+        { academics },
+        {
+          success: "📚 Academics page updated.",
+          failure: "⚠️ Academics page could not be updated in gps_school_website.",
+        },
+      ),
+    [saveContent],
+  );
+
+  const saveFacilities = useCallback(
+    async (facilities: FacilitiesContent) =>
+      saveContent(
+        { facilities },
+        {
+          success: "🏫 Facilities page updated.",
+          failure: "⚠️ Facilities page could not be updated in gps_school_website.",
+        },
+      ),
+    [saveContent],
+  );
+
+  const saveFees = useCallback(
+    async (fees: FeesContent) =>
+      saveContent(
+        { fees },
+        {
+          success: "💳 Fee structure updated.",
+          failure: "⚠️ Fee structure could not be updated in gps_school_website.",
+        },
+      ),
+    [saveContent],
+  );
+
+  const saveResults = useCallback(
+    async (results: ResultsContent) =>
+      saveContent(
+        { results },
+        {
+          success: "🏆 Board results updated.",
+          failure: "⚠️ Board results could not be updated in gps_school_website.",
+        },
+      ),
+    [saveContent],
+  );
+
+  const saveUniform = useCallback(
+    async (uniform: UniformContent) =>
+      saveContent(
+        { uniform },
+        {
+          success: "👔 School uniform updated.",
+          failure: "⚠️ School uniform could not be updated in gps_school_website.",
+        },
+      ),
+    [saveContent],
+  );
+
+  const saveDisclosure = useCallback(
+    async (disclosure: DisclosureContent) =>
+      saveContent(
+        { disclosure },
+        {
+          success: "📋 Mandatory disclosure updated.",
+          failure: "⚠️ Mandatory disclosure could not be updated in gps_school_website.",
+        },
+      ),
+    [saveContent],
+  );
+
   const resetToDefaults = useCallback(async () => {
     const confirmed = window.confirm(
       "Are you sure you want to reset all News Ticker, Notice Board, and Recruitment data back to factory defaults?",
@@ -440,8 +602,18 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       jobEditor,
       openJobEditor,
       closeJobEditor,
+      uploadPhoto,
+      saveHome,
+      saveContact,
+      saveAbout,
+      saveAcademics,
+      saveFacilities,
+      saveFees,
+      saveResults,
+      saveUniform,
       saveParentsLoginUrl,
       saveAcademicSession,
+      saveDisclosure,
       resetToDefaults,
     }),
     [
@@ -465,8 +637,18 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       jobEditor,
       openJobEditor,
       closeJobEditor,
+      uploadPhoto,
+      saveHome,
+      saveContact,
+      saveAbout,
+      saveAcademics,
+      saveFacilities,
+      saveFees,
+      saveResults,
+      saveUniform,
       saveParentsLoginUrl,
       saveAcademicSession,
+      saveDisclosure,
       resetToDefaults,
     ],
   );

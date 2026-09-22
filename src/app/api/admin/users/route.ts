@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   if (auth instanceof NextResponse) return auth;
 
   try {
-    const body = await request.json().catch(() => ({}));
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     const username = String(body?.username || "");
     const password = String(body?.password || "");
     const name = String(body?.name || "");

@@ -1,37 +1,38 @@
 import "server-only";
 
-import { MongoClient, type Db } from "mongodb";
-
-import { mongo } from "./config";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 /**
- * Next.js reloads modules on every edit in development, so the client is
- * cached on `globalThis` to avoid opening a new connection pool per reload.
- */
-const globalForMongo = globalThis as typeof globalThis & {
-  __gpsMongoClient?: Promise<MongoClient>;
-};
-
-/**
- * Connects lazily and reuses the connection.
+ * The D1 database behind the whole site.
  *
- * Connecting on demand (rather than at import time) means a missing or bad
- * `MONGODB_URI` surfaces as a handled 500 from the route that needed the
- * database, instead of breaking every route.
+ * The binding is resolved per request rather than cached, because a Worker
+ * isolate can serve more than one environment. `next dev` gets the same
+ * bindings through `initOpenNextCloudflareForDev()` in `next.config.ts`, so
+ * this works identically in development and on Cloudflare.
  */
-export async function getDb(): Promise<Db> {
-  if (!mongo.uri) {
-    throw new Error("MONGODB_URI is not configured.");
+export async function getDb(): Promise<D1Database> {
+  const { env } = await getCloudflareContext({ async: true });
+  const db = env.DB;
+
+  if (!db) {
+    throw new Error("The D1 binding `DB` is not configured. Check wrangler.jsonc.");
   }
 
-  if (!globalForMongo.__gpsMongoClient) {
-    globalForMongo.__gpsMongoClient = new MongoClient(mongo.uri).connect().catch((error) => {
-      // Let the next call retry rather than caching a failed connection.
-      globalForMongo.__gpsMongoClient = undefined;
-      throw error;
-    });
-  }
+  return db;
+}
 
-  const client = await globalForMongo.__gpsMongoClient;
-  return client.db(mongo.dbName);
+/** The R2 bucket holding uploaded photographs and candidate CVs. */
+export async function getUploadsBucket(): Promise<R2Bucket | undefined> {
+  const { env } = await getCloudflareContext({ async: true });
+  return env.UPLOADS;
+}
+
+/** Timestamps are stored as ISO strings so D1 rows stay readable. */
+export function nowIso(): string {
+  return new Date().toISOString();
+}
+
+/** Identifier for a new row; D1 has no ObjectId. */
+export function newRowId(): string {
+  return crypto.randomUUID();
 }

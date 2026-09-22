@@ -21,3 +21,9 @@ logs/
 /.plugins/
 /.opencode-skills/
 .vercel
+
+# Cloudflare
+.open-next/
+.wrangler/
+cloudflare-env.d.ts
+.dev.vars

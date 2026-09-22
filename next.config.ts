@@ -1,13 +1,11 @@
 import type { NextConfig } from "next";
 
+// Gives `next dev` the same Cloudflare bindings (D1, R2) the deployed Worker
+// has, reading them from wrangler.jsonc.
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-
-  /**
-   * The MongoDB and AWS SDK packages are CommonJS and must stay external to the
-   * server bundle rather than being traced and inlined.
-   */
-  serverExternalPackages: ["mongodb", "@aws-sdk/client-s3"],
 
   /**
    * Photographs are served from Unsplash and the school's Cloudflare R2 bucket.
@@ -20,5 +18,7 @@ const nextConfig: NextConfig = {
     ],
   },
 };
+
+void initOpenNextCloudflareForDev();
 
 export default nextConfig;

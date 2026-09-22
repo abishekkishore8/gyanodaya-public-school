@@ -3,6 +3,15 @@
  * and used to backfill any field missing from a stored document.
  */
 
+import { INITIAL_ABOUT } from "@/data/about";
+import { INITIAL_CONTACT } from "@/data/contact";
+import { INITIAL_HOME } from "@/data/home";
+import { INITIAL_ACADEMICS } from "@/data/academics-content";
+import { INITIAL_FACILITIES } from "@/data/facilities-content";
+import { INITIAL_FEES } from "@/data/fees";
+import { INITIAL_RESULTS } from "@/data/results";
+import { INITIAL_DISCLOSURE } from "@/data/disclosure";
+import { INITIAL_UNIFORM } from "@/data/uniform";
 import type {
   FormSubmissionItem,
   ImageAssetsDocument,
@@ -126,103 +135,9 @@ export const INITIAL_RECRUITMENT_POSITIONS: JobPosition[] = [
 export const INITIAL_SUBMISSIONS: FormSubmissionItem[] = [];
 
 export const INITIAL_IMAGE_ASSETS: ImageAssetsDocument = {
-  heroSlides: [
-    {
-      id: "hero-1",
-      section: "hero",
-      label: "Hero Slide 1",
-      url: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=1920&h=1080&fit=crop&auto=format",
-      alt: "Students walking on campus",
-    },
-    {
-      id: "hero-2",
-      section: "hero",
-      label: "Hero Slide 2",
-      url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1920&h=1080&fit=crop&auto=format",
-      alt: "Students in graduation caps",
-    },
-    {
-      id: "hero-3",
-      section: "hero",
-      label: "Hero Slide 3",
-      url: "https://images.unsplash.com/photo-1562774053-701939374585?w=1920&h=1080&fit=crop&auto=format",
-      alt: "School building exterior",
-    },
-    {
-      id: "hero-4",
-      section: "hero",
-      label: "Hero Slide 4",
-      url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1920&h=1080&fit=crop&auto=format",
-      alt: "Students in classroom",
-    },
-  ],
-  academicBanners: [
-    {
-      id: "academics-all",
-      section: "academics",
-      label: "Academics Banner - All",
-      url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1000&h=700&fit=crop&auto=format&q=80",
-      alt: "Holistic learning classroom",
-    },
-    {
-      id: "academics-pre-primary",
-      section: "academics",
-      label: "Academics Banner - Pre Primary",
-      url: "https://images.unsplash.com/photo-1587691592099-24045742c181?w=1000&h=700&fit=crop&auto=format&q=80",
-      alt: "Pre primary classroom",
-    },
-    {
-      id: "academics-primary",
-      section: "academics",
-      label: "Academics Banner - Primary",
-      url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1000&h=700&fit=crop&auto=format&q=80",
-      alt: "Primary students learning",
-    },
-    {
-      id: "academics-middle",
-      section: "academics",
-      label: "Academics Banner - Middle",
-      url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1000&h=700&fit=crop&auto=format&q=80",
-      alt: "Middle school students in class",
-    },
-    {
-      id: "academics-senior",
-      section: "academics",
-      label: "Academics Banner - Senior",
-      url: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1000&h=700&fit=crop&auto=format&q=80",
-      alt: "Senior secondary students",
-    },
-  ],
-  facilities: [
-    {
-      id: "facility-1",
-      section: "facilities",
-      label: "Facility - Smart Classrooms",
-      url: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=420&fit=crop&auto=format",
-      alt: "Smart classroom",
-    },
-    {
-      id: "facility-2",
-      section: "facilities",
-      label: "Facility - STEM Labs",
-      url: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=420&fit=crop&auto=format",
-      alt: "Science lab",
-    },
-    {
-      id: "facility-3",
-      section: "facilities",
-      label: "Facility - Library",
-      url: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&h=420&fit=crop&auto=format",
-      alt: "Library interior",
-    },
-    {
-      id: "facility-4",
-      section: "facilities",
-      label: "Facility - Transport",
-      url: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=600&h=420&fit=crop&auto=format",
-      alt: "School transport",
-    },
-  ],
+  heroSlides: [],
+  academicBanners: [],
+  facilities: [],
   gallery: [
     {
       id: "gallery-1",
@@ -267,16 +182,35 @@ export const INITIAL_IMAGE_ASSETS: ImageAssetsDocument = {
       alt: "Green campus",
     },
   ],
-  misc: [],
+  misc: [
+    {
+      id: "about-campus",
+      section: "misc",
+      label: "About Section Campus Image",
+      url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&h=700&fit=crop&auto=format&q=80",
+      alt: "Gyanodaya Public School Students and Campus",
+    },
+  ],
 };
 
 export function createDefaultSiteContent(): SiteContentDocument {
   return {
     academicSession: "2025–26",
+    home: INITIAL_HOME,
+    contact: INITIAL_CONTACT,
     parentsLoginUrl: "https://play.google.com/store/search?q=gyanodaya+public+school+bagodar&c=apps",
     announcements: INITIAL_ANNOUNCEMENTS,
     noticeCategories: INITIAL_NOTICE_CATEGORIES,
     recruitmentPositions: INITIAL_RECRUITMENT_POSITIONS,
     imageAssets: INITIAL_IMAGE_ASSETS,
+    // Seeded from the shared modules so the panel, the page and the seed can
+    // never drift apart.
+    about: INITIAL_ABOUT,
+    academics: INITIAL_ACADEMICS,
+    facilities: INITIAL_FACILITIES,
+    results: INITIAL_RESULTS,
+    fees: INITIAL_FEES,
+    uniform: INITIAL_UNIFORM,
+    disclosure: INITIAL_DISCLOSURE,
   };
 }

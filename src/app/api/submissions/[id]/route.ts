@@ -15,7 +15,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 
   try {
     const { id } = await params;
-    const body = await request.json().catch(() => ({}));
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
 
     if (!(await setSubmissionStatus(id, String(body?.status || "")))) {
       return NextResponse.json({ message: "Unknown submission or status." }, { status: 400 });

@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 /** Readiness probe: confirms the database is reachable. */
 export async function GET() {
   try {
-    await getDb();
+    const db = await getDb();
+    await db.prepare("SELECT 1").first();
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json(

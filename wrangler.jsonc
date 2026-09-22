@@ -1,0 +1,61 @@
+/**
+ * Cloudflare Workers configuration.
+ *
+ * The site is built with `@opennextjs/cloudflare`, which compiles the Next.js
+ * server into `.open-next/worker.js` and the static output into
+ * `.open-next/assets`.
+ *
+ * Storage is bound, not configured: D1 as `DB` and R2 as `UPLOADS`. Local
+ * development uses its own SQLite file and bucket under `.wrangler/`.
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gyanodaya-public-school",
+  // Gpsbgr2005@gmail.com's account — the school's own Cloudflare account.
+  "account_id": "f8dec39e94ec475fb1066732d586cdda",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-09-23",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  "observability": {
+    "enabled": true
+  },
+
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "gyanodaya-public-school"
+    }
+  ],
+
+  // Site content, administrator accounts, enquiries and job applications.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "gps",
+      "database_id": "1315de19-289a-47ca-8255-76900b2a20dd"
+    }
+  ],
+
+  // Uploaded photographs and candidate CVs.
+  "r2_buckets": [
+    {
+      "binding": "UPLOADS",
+      "bucket_name": "gyanodyapublicscool"
+    }
+  ],
+
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://gyanodaya-public-school.workers.dev",
+    // Public base URL that serves the R2 bucket (custom domain or r2.dev).
+    "R2_PUBLIC_BASE_URL": "https://pub-74c5e2ce3a764141b0133fe743720d83.r2.dev"
+  }
+
+  // Secrets — set with `npx wrangler secret put <NAME>`:
+  //   SESSION_SECRET   32+ characters, signs the admin session cookie
+}

@@ -1,12 +1,10 @@
 import SchoolLogo from "@/components/common/SchoolLogo";
-import { useToast } from "@/context/ToastContext";
 import { useUi } from "@/context/UiContext";
 import { noticeBodyParagraphs, noticeReferenceNumber } from "@/lib/notices";
 import { GREEN } from "@/lib/theme";
 
 /** Official circular rendered on a school letterhead. */
 export default function NoticeCircularModal() {
-  const { showToast } = useToast();
   const { selectedNotice, setSelectedNotice } = useUi();
 
   if (!selectedNotice) return null;
@@ -88,19 +86,22 @@ export default function NoticeCircularModal() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <button
-            onClick={() => {
-              showToast(`📄 Downloading official circular PDF: ${referenceNumber}.pdf (${selectedNotice.fileSize || "1.2 MB"})...`);
-              setSelectedNotice(null);
-            }}
-            style={{ backgroundColor: GREEN }}
-            className="w-full sm:w-auto text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
-          >
-            <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            <span>Download Official Circular PDF</span>
-          </button>
+          {selectedNotice.fileUrl ? (
+            <a
+              href={selectedNotice.fileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ backgroundColor: GREEN }}
+              className="w-full sm:w-auto text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+            >
+              <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span>Download Official Circular{selectedNotice.fileSize ? ` (${selectedNotice.fileSize})` : ""}</span>
+            </a>
+          ) : (
+            <span className="text-xs text-gray-500">A printed copy is available at the school office.</span>
+          )}
 
           <button
             onClick={() => setSelectedNotice(null)}

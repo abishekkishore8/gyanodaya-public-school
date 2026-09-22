@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 
 import SchoolLogo from "@/components/common/SchoolLogo";
 import { useSiteContent } from "@/context/SiteContentContext";
+import { telHref } from "@/data/contact";
 import { useToast } from "@/context/ToastContext";
 import { useUi } from "@/context/UiContext";
 import { FOOTER_QUICK_LINKS } from "@/data/navigation";
@@ -10,7 +11,7 @@ import { SCHOOL_WORDMARK, SCHOOL_WORDMARK_LETTERS } from "@/data/site";
 
 /** Site footer: contact details, quick links and the newsletter signup. */
 export default function Footer() {
-  const { parentsLoginUrl } = useSiteContent();
+  const { parentsLoginUrl, contact } = useSiteContent();
   const { showToast } = useToast();
   const { setAdmissionModalOpen } = useUi();
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -126,7 +127,7 @@ export default function Footer() {
             <ul className="space-y-2 text-xs sm:text-sm text-gray-300">
               {/* `opensEnquiry` entries have no page of their own yet, so they ask instead. */}
               {[
-                { label: "Fee Structure", href: "/admissions#faqs" },
+                { label: "Fee Structure", href: "/fees" },
                 { label: "Admission Process", href: "/admissions" },
                 { label: "School Calendar", href: "#", opensEnquiry: true },
                 { label: "News & Events", href: "/notice-board#announcements" },
@@ -175,15 +176,15 @@ export default function Footer() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span>Bagodar, Giridih District – 825322, Jharkhand, India</span>
+                <span>{contact.address}</span>
               </p>
 
               <p className="flex items-center gap-2">
                 <svg className="w-4 h-4 text-[#dfb455] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                <a href="tel:+919431377488" className="hover:text-[#dfb455] transition-colors">
-                  +91 94313 77488
+                <a href={telHref(contact.phone)} className="hover:text-[#dfb455] transition-colors">
+                  {contact.phone}
                 </a>
               </p>
 
@@ -191,8 +192,8 @@ export default function Footer() {
                 <svg className="w-4 h-4 text-[#dfb455] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <a href="mailto:info@gpsbagodar.edu.in" className="hover:text-[#dfb455] transition-colors">
-                  info@gpsbagodar.edu.in
+                <a href={`mailto:${contact.email}`} className="hover:text-[#dfb455] transition-colors">
+                  {contact.email}
                 </a>
               </p>
             </div>
@@ -228,7 +229,7 @@ export default function Footer() {
 
         {/* Bottom Copyright and Legal links */}
         <div className="pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] sm:text-xs text-gray-400 text-center sm:text-left">
-          <p>© 2025 Gyanodaya Public School (GPS), Bagodar. Affiliated to CBSE, New Delhi.</p>
+          <p>© 2026 Gyanodaya Public School (GPS), Bagodar. Affiliated to CBSE, New Delhi.</p>
           <div className="flex items-center gap-4">
             <a href="#privacy" className="hover:text-gray-200 transition-colors">
               Privacy Policy
@@ -240,7 +241,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-4 text-center text-[11px] sm:text-xs text-white/70">
+        <div className="pt-4 text-center sm:text-right text-[11px] sm:text-xs text-white/70">
           <p>
             Designed and Developed with ❤️{" "}
             <a

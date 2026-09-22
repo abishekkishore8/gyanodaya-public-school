@@ -50,6 +50,12 @@ const NAV_GROUPS: NavGroup[] = [
     label: "Content",
     items: [
       {
+        href: "/admin/home",
+        label: "Home page",
+        icon: <Icon path="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />,
+        count: (c) => c.home.hero.length,
+      },
+      {
         href: "/admin/ticker",
         label: "News ticker",
         icon: <Icon path="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />,
@@ -71,6 +77,47 @@ const NAV_GROUPS: NavGroup[] = [
           c.imageAssets.facilities.length +
           c.imageAssets.gallery.length +
           c.imageAssets.misc.length,
+      },
+      {
+        href: "/admin/about",
+        label: "About us",
+        icon: <Icon path="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
+        count: (c) => c.about.messages.length + c.about.faculty.length,
+      },
+      {
+        href: "/admin/results",
+        label: "Board results",
+        icon: <Icon path="M8 21h8m-4-4v4m7-17H5v5a7 7 0 0014 0V4zM5 6H3v2a3 3 0 003 3m13-5h2v2a3 3 0 01-3 3" />,
+        count: (c) => c.results.groups.reduce((total, group) => total + group.toppers.length, 0),
+      },
+      {
+        href: "/admin/academics",
+        label: "Academics",
+        icon: <Icon path="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.42a12 12 0 01.84 4.42 12 12 0 01-7 3 12 12 0 01-7-3 12 12 0 01.84-4.42L12 14z" />,
+        count: (c) => c.academics.coCurricular.length + c.academics.sports.length + c.academics.council.length,
+      },
+      {
+        href: "/admin/facilities",
+        label: "Facilities",
+        icon: <Icon path="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-16 0H3m6-4h6M9 13h6M9 9h6" />,
+        count: (c) => c.facilities.items.length,
+      },
+      {
+        href: "/admin/fees",
+        label: "Fee structure",
+        icon: <Icon path="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
+        count: (c) => c.fees.groups.length,
+      },
+      {
+        href: "/admin/uniform",
+        label: "School uniform",
+        icon: <Icon path="M16 4l4 2.5-2 4-2-1v10.5H8V9.5l-2 1-2-4L8 4h8zM9 4a3 3 0 006 0" />,
+        count: (c) => c.uniform.sets.length,
+      },
+      {
+        href: "/admin/disclosure",
+        label: "Mandatory disclosure",
+        icon: <Icon path="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h10a2 2 0 012 2v14a2 2 0 01-2 2zM9 7h6" />,
       },
     ],
   },

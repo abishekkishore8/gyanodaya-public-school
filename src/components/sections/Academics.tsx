@@ -1,20 +1,25 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import AcademicStageIcon from "@/components/icons/AcademicStageIcon";
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useUi } from "@/context/UiContext";
-import { ACADEMIC_HIGHLIGHTS, ACADEMIC_TAB_IDS, ACADEMIC_TABS } from "@/data/academics";
 import { useHashTab } from "@/hooks/useHashTab";
 import { GOLD } from "@/lib/theme";
 
 /** Curriculum showcase with a tab per academic stage. */
-export default function Academics() {
-  const { academicCardsData } = useSiteContent();
+export default function Academics({ initialStage }: { initialStage?: string } = {}) {
+  const { academics } = useSiteContent();
   const { setAdmissionModalOpen } = useUi();
-  const [activeTab, setActiveTab] = useState("all");
+  const { highlights, stages } = academics.curriculum;
+
+  const stageIds = useMemo(() => stages.map((stage) => stage.id), [stages]);
+  const [activeTab, setActiveTab] = useState(initialStage || stages[0]?.id || "");
 
   // `/academics#primary` and friends open straight onto that stage.
-  useHashTab(ACADEMIC_TAB_IDS, setActiveTab);
+  useHashTab(stageIds, setActiveTab);
+
+  const currentData = stages.find((stage) => stage.id === activeTab) || stages[0];
+  if (!currentData) return null;
 
   return (
     <section id="academics" className="py-16 sm:py-24 bg-gradient-to-b from-[#f8faf8] via-white to-[#f4f7f4] border-t border-gray-200/70 relative overflow-hidden">
@@ -38,15 +43,15 @@ export default function Academics() {
           </div>
 
           <p className="text-gray-600 text-[11px] sm:text-sm lg:max-w-md leading-relaxed max-w-[34rem] mx-auto lg:mx-0">
-            {(academicCardsData[activeTab] || academicCardsData.all).tagline}
+            {currentData.tagline}
           </p>
         </div>
 
         {/* Key Academic Metrics Ticker */}
         <div className="flex md:grid md:grid-cols-4 gap-3 overflow-x-auto overscroll-x-contain no-scrollbar [-webkit-overflow-scrolling:touch] pb-2 md:pb-0 mb-8 sm:mb-10 snap-x snap-mandatory">
-          {ACADEMIC_HIGHLIGHTS.map((stat, i) => (
+          {highlights.map((stat) => (
             <div
-              key={i}
+              key={stat.id}
               className="min-w-[9.5rem] md:min-w-0 bg-white/95 backdrop-blur-xs p-3 sm:p-5 rounded-2xl border border-gray-200/70 shadow-xs hover:shadow-md hover:border-[#14452f]/30 transition-all group shrink-0 snap-start"
             >
               <div className="text-xl sm:text-3xl font-serif font-bold text-[#14452f] group-hover:text-[#c59a3f] transition-colors">
@@ -60,7 +65,7 @@ export default function Academics() {
 
         {/* Segmented Stage Switcher Pills */}
         <div className="flex items-stretch gap-2.5 overflow-x-auto overscroll-x-contain no-scrollbar [-webkit-overflow-scrolling:touch] pb-3 mb-7 sm:mb-8 px-0.5 sm:px-0 snap-x snap-mandatory">
-          {ACADEMIC_TABS.map((tab) => {
+          {stages.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
@@ -85,7 +90,6 @@ export default function Academics() {
 
         {/* Academic Content Stage Canvas */}
         {(() => {
-          const currentData = academicCardsData[activeTab] || academicCardsData.all;
           return (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 items-stretch">
 
@@ -93,8 +97,8 @@ export default function Academics() {
               <div className="lg:col-span-5 bg-[#0d2e20] text-white rounded-[1.75rem] overflow-hidden border border-[#1e5038] shadow-xl flex flex-col justify-between relative group">
                 <div className="relative h-52 sm:h-64 overflow-hidden">
                   <img
-                    src={currentData.stageBanner.image}
-                    alt={currentData.stageBanner.title}
+                    src={currentData.bannerImageUrl}
+                    alt={currentData.bannerTitle}
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-90"
                   />
@@ -108,10 +112,10 @@ export default function Academics() {
                 <div className="p-4 sm:p-7 flex-1 flex flex-col justify-between relative z-10 -mt-5 sm:-mt-6">
                   <div>
                     <h3 className="font-serif text-lg sm:text-2xl font-bold text-white tracking-tight mb-1 leading-tight">
-                      {currentData.stageBanner.title}
+                      {currentData.bannerTitle}
                     </h3>
                     <p className="text-[#dfb455] text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-3 sm:mb-4">
-                      {currentData.stageBanner.subtitle}
+                      {currentData.bannerSubtitle}
                     </p>
 
                     <p className="text-gray-300 text-[11px] sm:text-sm leading-relaxed mb-5 sm:mb-6 font-light">
@@ -119,7 +123,7 @@ export default function Academics() {
                     </p>
 
                     <div className="space-y-2 pt-4 border-t border-white/10">
-                      {currentData.stageBanner.features.map((feat, idx) => (
+                      {currentData.bannerFeatures.map((feat, idx) => (
                         <div key={idx} className="flex items-start gap-2.5 text-[11px] sm:text-xs text-gray-200 leading-snug bg-white/0 rounded-xl">
                           <span className="w-4 h-4 rounded-full bg-[#dfb455]/20 text-[#dfb455] flex items-center justify-center text-[10px] shrink-0 mt-0.5 font-bold">✓</span>
                           <span>{feat}</span>
@@ -151,9 +155,9 @@ export default function Academics() {
 
               {/* Structured Subject & Learning Cards (7 columns) */}
               <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 content-start">
-                {currentData.cards.map((item, idx) => (
+                {currentData.cards.map((item) => (
                   <div
-                    key={idx}
+                    key={item.id}
                     className="bg-white rounded-[1.4rem] p-4 sm:p-7 border border-gray-200/80 shadow-xs hover:shadow-xl hover:border-[#14452f]/30 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
                   >
                     <div>

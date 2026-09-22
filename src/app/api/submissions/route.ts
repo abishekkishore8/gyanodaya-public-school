@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const body = await request.json().catch(() => ({}));
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     return NextResponse.json({ submission: await createSubmission(body) }, { status: 201 });
   } catch (error) {
     return errorResponse(error, "Could not record your enquiry.", 400);

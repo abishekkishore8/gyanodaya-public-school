@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import Button from "@/components/admin/ui/Button";
 import { Card, CardBody, CardFooter, CardHeader } from "@/components/admin/ui/Card";
-import { Field, Input } from "@/components/admin/ui/Field";
+import { Field, Input, Textarea } from "@/components/admin/ui/Field";
 import PageHeader from "@/components/admin/ui/PageHeader";
 import { useAdmin } from "@/context/AdminContext";
 import { useSiteContent } from "@/context/SiteContentContext";
@@ -19,19 +19,24 @@ export default function SettingsTab() {
     noticeCategories,
     recruitmentPositions,
     imageAssets,
+    disclosure,
+    contact,
   } = useSiteContent();
   const { showToast } = useToast();
-  const { saveAcademicSession, saveParentsLoginUrl, resetToDefaults } = useAdmin();
+  const { saveAcademicSession, saveParentsLoginUrl, saveContact, resetToDefaults } = useAdmin();
 
   const [sessionDraft, setSessionDraft] = useState(academicSession);
   const [loginUrlDraft, setLoginUrlDraft] = useState(parentsLoginUrl);
+  const [contactDraft, setContactDraft] = useState(contact);
 
   // Keep drafts in step with values saved elsewhere (or reloaded from the API).
   useEffect(() => setSessionDraft(academicSession), [academicSession]);
   useEffect(() => setLoginUrlDraft(parentsLoginUrl), [parentsLoginUrl]);
+  useEffect(() => setContactDraft(contact), [contact]);
 
   const sessionChanged = sessionDraft.trim() !== academicSession;
   const loginUrlChanged = loginUrlDraft.trim() !== parentsLoginUrl;
+  const contactChanged = JSON.stringify(contactDraft) !== JSON.stringify(contact);
 
   const downloadBackup = () => {
     const backup = {
@@ -41,6 +46,8 @@ export default function SettingsTab() {
       noticeCategories,
       recruitmentPositions,
       imageAssets,
+      disclosure,
+      contact,
       exportedAt: new Date().toISOString(),
     };
 
@@ -122,8 +129,72 @@ export default function SettingsTab() {
 
       <Card>
         <CardHeader
+          title="Contact details"
+          description="Used by the top bar, the footer and the contact page."
+        />
+        <CardBody className="space-y-4">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Field label="Phone" className="sm:flex-1" required>
+              <Input
+                value={contactDraft.phone}
+                onChange={(e) => setContactDraft({ ...contactDraft, phone: e.target.value })}
+              />
+            </Field>
+            <Field label="Alternate phone" className="sm:flex-1">
+              <Input
+                value={contactDraft.altPhone}
+                onChange={(e) => setContactDraft({ ...contactDraft, altPhone: e.target.value })}
+              />
+            </Field>
+            <Field label="Email" className="sm:flex-1" required>
+              <Input
+                type="email"
+                value={contactDraft.email}
+                onChange={(e) => setContactDraft({ ...contactDraft, email: e.target.value })}
+              />
+            </Field>
+          </div>
+
+          <Field label="Address">
+            <Textarea
+              rows={2}
+              value={contactDraft.address}
+              onChange={(e) => setContactDraft({ ...contactDraft, address: e.target.value })}
+            />
+          </Field>
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Field label="Office hours" className="sm:flex-1">
+              <Input
+                value={contactDraft.officeHours}
+                onChange={(e) => setContactDraft({ ...contactDraft, officeHours: e.target.value })}
+              />
+            </Field>
+            <Field label="Map embed URL" className="sm:flex-1" hint="Google Maps → Share → Embed a map.">
+              <Input
+                value={contactDraft.mapEmbedUrl}
+                onChange={(e) => setContactDraft({ ...contactDraft, mapEmbedUrl: e.target.value })}
+              />
+            </Field>
+          </div>
+        </CardBody>
+        <CardFooter>
+          <span className="text-[12.5px] text-slate-500">Shown wherever the school is contacted.</span>
+          <Button
+            variant="primary"
+            size="sm"
+            disabled={!contactChanged}
+            onClick={() => void saveContact(contactDraft)}
+          >
+            Save contact details
+          </Button>
+        </CardFooter>
+      </Card>
+
+      <Card>
+        <CardHeader
           title="Backup"
-          description="Download a snapshot of the ticker, notices, vacancies and image references."
+          description="Download a snapshot of the ticker, notices, vacancies, image references and mandatory disclosure."
         />
         <CardBody>
           <Button variant="secondary" onClick={downloadBackup}>

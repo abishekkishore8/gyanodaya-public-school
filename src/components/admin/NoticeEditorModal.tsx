@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 
 import Modal from "@/components/admin/ui/Modal";
 import Button from "@/components/admin/ui/Button";
+import FilePicker from "@/components/admin/ui/FilePicker";
 import { Field, Input, Select, Textarea } from "@/components/admin/ui/Field";
 import { useAdmin, type NoticeEditorTarget } from "@/context/AdminContext";
 import type { NoticeCategoryId } from "@/types/site";
@@ -47,6 +48,8 @@ function NoticeEditorForm({ target }: { target: NoticeEditorTarget }) {
     month: editingNotice?.month ?? "MAR",
     tag: editingNotice?.tag ?? DEFAULT_TAG_BY_CATEGORY[target.categoryKey],
     desc: editingNotice?.desc ?? "",
+    fileUrl: editingNotice?.fileUrl ?? "",
+    fileSize: editingNotice?.fileSize ?? "",
   }));
 
   const update = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) =>
@@ -144,6 +147,13 @@ function NoticeEditorForm({ target }: { target: NoticeEditorTarget }) {
             placeholder="URGENT"
           />
         </Field>
+
+        <FilePicker
+          label="Attachment"
+          url={form.fileUrl}
+          onChange={(fileUrl, file) => setForm((prev) => ({ ...prev, fileUrl, fileSize: file?.size ?? "" }))}
+          hint="Optional. Upload the circular (PDF, Word, image) or paste a link to it. Visitors get a download button."
+        />
       </form>
     </Modal>
   );

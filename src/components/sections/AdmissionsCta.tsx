@@ -5,7 +5,8 @@ import { GOLD, GOLD_TEXT, GREEN } from "@/lib/theme";
 
 /** Full-width green banner inviting visitors to start an admission enquiry. */
 export default function AdmissionsCta() {
-  const { academicSession } = useSiteContent();
+  const { academicSession, home } = useSiteContent();
+  const cta = home.cta;
   const { setAdmissionModalOpen } = useUi();
 
   return (
@@ -27,16 +28,15 @@ export default function AdmissionsCta() {
               style={{ color: GOLD_TEXT }}
               className="font-serif text-lg sm:text-2xl font-bold tracking-tight"
             >
-              Admissions Open for
-              <br className="sm:hidden" /> Academic Year {academicSession}
+              {cta.title}
+              <br className="sm:hidden" /> {academicSession}
             </h3>
 
             {/* Vertical divider on medium screens */}
             <div className="hidden md:block w-px h-10 bg-white/20" />
 
             <p className="text-white/80 text-xs sm:text-sm font-light">
-              Give your child the best start
-              <br className="hidden sm:inline" /> for a bright tomorrow.
+              {cta.subtitle}
             </p>
           </div>
         </div>
@@ -47,7 +47,7 @@ export default function AdmissionsCta() {
           style={{ backgroundColor: GOLD }}
           className="w-full sm:w-auto text-white font-semibold text-xs sm:text-sm px-6 sm:px-7 py-3 rounded-sm flex items-center justify-center gap-2 hover:brightness-110 transition-all uppercase tracking-wider shadow-xl shrink-0 cursor-pointer hover:scale-105 active:scale-95 animate-pulse-glow"
         >
-          <span>ENQUIRE NOW</span>
+          <span>{cta.buttonLabel}</span>
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>

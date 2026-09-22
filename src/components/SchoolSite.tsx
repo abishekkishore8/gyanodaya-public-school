@@ -14,14 +14,30 @@ import NoticeArchiveModal from "@/components/modals/NoticeArchiveModal";
 import NoticeCircularModal from "@/components/modals/NoticeCircularModal";
 import SubmissionReceiptModal from "@/components/modals/SubmissionReceiptModal";
 import About from "@/components/sections/About";
+import Faculty from "@/components/sections/about/Faculty";
+import LeadershipMessages from "@/components/sections/about/LeadershipMessages";
+import MissionVision from "@/components/sections/about/MissionVision";
+import ParentTeacher from "@/components/sections/about/ParentTeacher";
+import RulesRegulations from "@/components/sections/about/RulesRegulations";
 import Academics from "@/components/sections/Academics";
+import Careers from "@/components/sections/Careers";
+import Contact from "@/components/sections/Contact";
+import FacilityDetail from "@/components/sections/facilities/FacilityDetail";
+import FeeStructure from "@/components/sections/FeeStructure";
+import CoCurricular from "@/components/sections/academics/CoCurricular";
+import Sports from "@/components/sections/academics/Sports";
+import StudentCouncil from "@/components/sections/academics/StudentCouncil";
 import AdmissionsCta from "@/components/sections/AdmissionsCta";
 import Facilities from "@/components/sections/Facilities";
 import Faqs from "@/components/sections/Faqs";
 import Gallery from "@/components/sections/Gallery";
 import Hero from "@/components/sections/Hero";
 import Highlights from "@/components/sections/Highlights";
+import MandatoryDisclosure from "@/components/sections/MandatoryDisclosure";
+import Messages from "@/components/sections/Messages";
 import NoticeBoard from "@/components/sections/NoticeBoard";
+import Results from "@/components/sections/Results";
+import SchoolUniform from "@/components/sections/SchoolUniform";
 import OnlineForms from "@/components/sections/online-forms/OnlineForms";
 import { SiteContentProvider, useSiteContent } from "@/context/SiteContentContext";
 import { ToastProvider } from "@/context/ToastContext";
@@ -55,11 +71,21 @@ export type SitePage =
   | "home"
   | "about"
   | "academics"
+  | "co-curricular"
+  | "sports"
+  | "student-council"
   | "notice-board"
   | "facilities"
+  | "facility"
   | "admissions"
+  | "uniform"
+  | "fees"
   | "online-forms"
-  | "gallery";
+  | "gallery"
+  | "results"
+  | "careers"
+  | "contact"
+  | "mandatory-disclosure";
 
 /**
  * The sections that make up each page.
@@ -68,12 +94,17 @@ export type SitePage =
  * renders the same section components on their own, so there is one source of
  * truth for the markup and a section never drifts between the two views.
  */
-function PageSections({ page }: { page: SitePage }) {
+function PageSections({ page, slug = "", stage }: { page: SitePage; slug?: string; stage?: string }) {
   switch (page) {
     case "about":
       return (
         <>
           <About />
+          <MissionVision />
+          <LeadershipMessages />
+          <Faculty />
+          <RulesRegulations />
+          <ParentTeacher />
           <Highlights />
           <AdmissionsCta />
         </>
@@ -81,7 +112,31 @@ function PageSections({ page }: { page: SitePage }) {
     case "academics":
       return (
         <>
-          <Academics />
+          <Academics initialStage={stage} />
+          <CoCurricular />
+          <Sports />
+          <StudentCouncil />
+          <AdmissionsCta />
+        </>
+      );
+    case "co-curricular":
+      return (
+        <>
+          <CoCurricular />
+          <AdmissionsCta />
+        </>
+      );
+    case "sports":
+      return (
+        <>
+          <Sports />
+          <AdmissionsCta />
+        </>
+      );
+    case "student-council":
+      return (
+        <>
+          <StudentCouncil />
           <AdmissionsCta />
         </>
       );
@@ -95,32 +150,71 @@ function PageSections({ page }: { page: SitePage }) {
           <AdmissionsCta />
         </>
       );
+    case "facility":
+      return (
+        <>
+          <FacilityDetail slug={slug} />
+          <AdmissionsCta />
+        </>
+      );
     case "admissions":
       return (
         <>
           <AdmissionsCta />
-          <Faqs />
+          <SchoolUniform />
           <OnlineForms />
+        </>
+      );
+    case "uniform":
+      return (
+        <>
+          <SchoolUniform />
+          <AdmissionsCta />
+        </>
+      );
+    case "fees":
+      return (
+        <>
+          <FeeStructure />
+          <Faqs />
         </>
       );
     case "online-forms":
       return <OnlineForms />;
     case "gallery":
       return <Gallery />;
+    case "results":
+      return (
+        <>
+          <Results />
+          <AdmissionsCta />
+        </>
+      );
+    case "careers":
+      return (
+        <>
+          <Careers />
+          <AdmissionsCta />
+        </>
+      );
+    case "contact":
+      return <Contact />;
+    case "mandatory-disclosure":
+      return <MandatoryDisclosure />;
     case "home":
     default:
       return (
         <>
           <Hero />
-          <Highlights />
+          {/* Overlaps the bottom of the hero, so it stays directly under it. */}
+          <Highlights overlap />
+          <Messages />
           <NoticeBoard />
-          <About />
-          <Academics />
+          <Results />
           <Facilities />
           <Gallery />
           <Faqs />
           <AdmissionsCta />
-          <OnlineForms />
         </>
       );
   }
@@ -130,7 +224,7 @@ function PageSections({ page }: { page: SitePage }) {
  * The public site plus every modal layer. Rendered inside the providers so it
  * can read site content, UI state and admin state through hooks.
  */
-function SiteBody({ page }: { page: SitePage }) {
+function SiteBody({ page, slug, stage }: { page: SitePage; slug?: string; stage?: string }) {
   const { loadError } = useSiteContent();
   const { scrolled, scrollProgress } = useScrollProgress();
 
@@ -146,7 +240,7 @@ function SiteBody({ page }: { page: SitePage }) {
       <Navbar scrolled={scrolled} />
 
       <main>
-        <PageSections page={page} />
+        <PageSections page={page} slug={slug} stage={stage} />
       </main>
 
       <Footer />
@@ -172,12 +266,22 @@ function SiteBody({ page }: { page: SitePage }) {
  * `/api/site-content` in the browser so the admin dashboard sees its own edits
  * immediately.
  */
-export default function SchoolSite({ page = "home" }: { page?: SitePage }) {
+export default function SchoolSite({
+  page = "home",
+  slug,
+  stage,
+}: {
+  page?: SitePage;
+  /** Which record a detail page shows, e.g. the facility slug. */
+  slug?: string;
+  /** Curriculum stage to open on the academics page. */
+  stage?: string;
+}) {
   return (
     <ToastProvider>
       <SiteContentProvider>
         <UiProvider>
-          <SiteBody page={page} />
+          <SiteBody page={page} slug={slug} stage={stage} />
         </UiProvider>
       </SiteContentProvider>
     </ToastProvider>

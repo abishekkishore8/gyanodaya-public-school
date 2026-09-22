@@ -1,32 +1,24 @@
 import "server-only";
 
-import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
-import { promisify } from "node:util";
-
-import { compare as bcryptCompare, hash as bcryptHash } from "bcryptjs";
+import { compare as bcryptCompare } from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
+
+import { hashPbkdf2, verifyPbkdf2 } from "@/lib/password";
+
+import { getVar } from "./config";
 
 /**
  * Password hashing and session tokens.
  *
- * Passwords are bcrypt hashes (`bcryptjs` — pure JavaScript, so there is no
- * native build step on serverless). Accounts created before the migration hold
- * a `scrypt$…` hash; those still verify and are re-hashed with bcrypt the next
- * time their owner signs in, so no one has to reset a password.
+ * Passwords are PBKDF2-SHA256 hashes computed with WebCrypto, which runs as
+ * native code in the Workers runtime — `bcryptjs` is pure JavaScript and burns
+ * far more CPU than a Worker invocation is allowed. Accounts created before the
+ * move to Cloudflare hold a bcrypt hash; those still verify (on a plan with the
+ * CPU budget for it) and are re-hashed with PBKDF2 the next time their owner
+ * signs in.
  *
- * Sessions are HS256 JWTs signed with `SESSION_SECRET`. They are verified in the
- * Node runtime (server components and route handlers), never at the edge.
+ * Sessions are HS256 JWTs signed with `SESSION_SECRET`.
  */
-
-/** bcrypt cost factor. 12 ≈ 250ms per hash on Vercel's runtime. */
-const BCRYPT_ROUNDS = 12;
-
-/** Legacy scrypt parameters, kept only to verify pre-migration hashes. */
-const scryptAsync = promisify(scrypt) as (
-  password: string,
-  salt: Buffer,
-  keylen: number,
-) => Promise<Buffer>;
 
 /** How long a signed-in session stays valid. */
 export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 8; // 8 hours
@@ -40,31 +32,31 @@ const JWT_AUDIENCE = "gps-admin";
 
 // --------------------------------------------------------------- passwords --
 
-/** Hashes a password for storage. Format: bcrypt (`$2b$…`). */
-export async function hashPassword(password: string): Promise<string> {
-  return bcryptHash(password, BCRYPT_ROUNDS);
+/** Hashes a password for storage. Format: `pbkdf2$<iterations>$<salt>$<hash>`. */
+export function hashPassword(password: string): Promise<string> {
+  return hashPbkdf2(password);
 }
 
-/** True when `storedHash` predates the bcrypt migration and should be upgraded. */
+/** True when `storedHash` is not PBKDF2 and should be upgraded on next sign-in. */
 export function isLegacyHash(storedHash: string): boolean {
-  return (storedHash || "").startsWith("scrypt$");
+  return Boolean(storedHash) && !storedHash.startsWith("pbkdf2$");
 }
 
 /**
- * Checks a password against a stored hash, accepting both bcrypt and the legacy
- * `scrypt$<saltHex>$<hashHex>` format.
+ * Checks a password against a stored hash, accepting PBKDF2 and legacy bcrypt.
  *
  * Returns false rather than throwing on a malformed hash, so a corrupted record
  * fails closed instead of breaking the login route.
- *
- * Note bcrypt only considers the first 72 bytes of a password; that is standard
- * bcrypt behaviour and is not a problem at the lengths this panel accepts.
  */
 export async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
   if (!storedHash) return false;
 
-  if (isLegacyHash(storedHash)) return verifyLegacyPassword(password, storedHash);
+  if (storedHash.startsWith("pbkdf2$")) {
+    return verifyPbkdf2(password, storedHash);
+  }
 
+  // Pre-Cloudflare bcrypt hash. Verifying costs far more CPU than PBKDF2, so
+  // the account is upgraded to PBKDF2 immediately after a successful sign-in.
   try {
     return await bcryptCompare(password, storedHash);
   } catch {
@@ -72,26 +64,7 @@ export async function verifyPassword(password: string, storedHash: string): Prom
   }
 }
 
-async function verifyLegacyPassword(password: string, storedHash: string): Promise<boolean> {
-  const [scheme, saltHex, hashHex] = storedHash.split("$");
-  if (scheme !== "scrypt" || !saltHex || !hashHex) return false;
-
-  try {
-    const expected = Buffer.from(hashHex, "hex");
-    const derived = await scryptAsync(password, Buffer.from(saltHex, "hex"), expected.length);
-    return timingSafeEqual(derived, expected);
-  } catch {
-    return false;
-  }
-}
-
-/** Rejects passwords that are too weak to be worth storing. */
-export function validatePasswordStrength(password: string): string | null {
-  if (password.length < 10) return "Password must be at least 10 characters long.";
-  if (!/[a-zA-Z]/.test(password)) return "Password must contain at least one letter.";
-  if (!/[0-9]/.test(password)) return "Password must contain at least one number.";
-  return null;
-}
+export { validatePasswordStrength } from "@/lib/password";
 
 // ---------------------------------------------------------------- sessions --
 
@@ -103,8 +76,6 @@ export interface SessionPayload {
   exp: number;
 }
 
-let cachedSecret: Uint8Array | undefined;
-
 /**
  * Key used to sign session tokens.
  *
@@ -112,13 +83,10 @@ let cachedSecret: Uint8Array | undefined;
  * generated per process so sessions simply do not survive a restart, which is
  * far safer than shipping a hardcoded fallback.
  */
-function getSessionKey(): Uint8Array {
-  if (cachedSecret) return cachedSecret;
-
-  const configured = process.env.SESSION_SECRET;
+async function getSessionKey(): Promise<Uint8Array> {
+  const configured = await getVar("SESSION_SECRET");
   if (configured && configured.length >= 32) {
-    cachedSecret = new TextEncoder().encode(configured);
-    return cachedSecret;
+    return new TextEncoder().encode(configured);
   }
 
   if (process.env.NODE_ENV === "production") {
@@ -128,8 +96,7 @@ function getSessionKey(): Uint8Array {
   console.warn(
     "⚠️  SESSION_SECRET is not set (or is shorter than 32 characters). Using a random development secret — admin sessions will not survive a restart.",
   );
-  cachedSecret = new TextEncoder().encode(randomBytes(32).toString("hex"));
-  return cachedSecret;
+  return crypto.getRandomValues(new Uint8Array(32));
 }
 
 /** Creates a signed session JWT for `user`. */
@@ -141,7 +108,7 @@ export async function createSessionToken(user: { id: string; username: string })
     .setAudience(JWT_AUDIENCE)
     .setIssuedAt()
     .setExpirationTime(`${SESSION_MAX_AGE_SECONDS}s`)
-    .sign(getSessionKey());
+    .sign(await getSessionKey());
 }
 
 /**
@@ -154,7 +121,7 @@ export async function verifySessionToken(token: string | undefined): Promise<Ses
   if (!token) return null;
 
   try {
-    const { payload } = await jwtVerify(token, getSessionKey(), {
+    const { payload } = await jwtVerify(token, await getSessionKey(), {
       algorithms: [JWT_ALGORITHM],
       issuer: JWT_ISSUER,
       audience: JWT_AUDIENCE,
@@ -168,7 +135,6 @@ export async function verifySessionToken(token: string | undefined): Promise<Ses
       exp: payload.exp,
     };
   } catch {
-    // Malformed, tampered with, expired, or signed with a different secret.
     return null;
   }
 }

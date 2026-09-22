@@ -24,24 +24,6 @@ interface ImageGroup {
 
 const IMAGE_GROUPS: ImageGroup[] = [
   {
-    key: "heroSlides",
-    label: "Hero slides",
-    description: "Full-width carousel at the top of the homepage. Landscape photographs work best.",
-    ratio: "aspect-16/9",
-  },
-  {
-    key: "academicBanners",
-    label: "Academic banners",
-    description: "One banner per curriculum stage, shown beside the stage description.",
-    ratio: "aspect-4/3",
-  },
-  {
-    key: "facilities",
-    label: "Facilities",
-    description: "Photographs in the campus infrastructure section.",
-    ratio: "aspect-4/3",
-  },
-  {
     key: "gallery",
     label: "Gallery",
     description: "Student life grid. Photos can be added and removed here.",

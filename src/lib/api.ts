@@ -61,6 +61,14 @@ export function uploadImage(file: File): Promise<UploadedImageResponse> {
   return request<UploadedImageResponse>("/api/uploads/image", { method: "POST", body: formData }, "Upload failed.");
 }
 
+/** Uploads a document (PDF, office file or image) for the admin panel to link to. */
+export function uploadDocument(file: File): Promise<UploadedImageResponse> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return request<UploadedImageResponse>("/api/uploads/document", { method: "POST", body: formData }, "Upload failed.");
+}
+
 /**
  * Records an enquiry from one of the public online forms.
  *

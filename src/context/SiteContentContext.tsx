@@ -9,39 +9,45 @@ import {
   type ReactNode,
 } from "react";
 
-import { ACADEMICS_CARDS_DATA } from "@/data/academics";
+import { INITIAL_ABOUT } from "@/data/about";
+import { INITIAL_CONTACT } from "@/data/contact";
+import { INITIAL_ACADEMICS } from "@/data/academics-content";
 import { INITIAL_ANNOUNCEMENTS } from "@/data/announcements";
-import { FACILITIES_LIST } from "@/data/facilities";
+import { INITIAL_DISCLOSURE } from "@/data/disclosure";
+import { INITIAL_FACILITIES } from "@/data/facilities-content";
 import { GALLERY_ITEMS } from "@/data/gallery";
-import { HERO_SLIDES } from "@/data/hero";
+import { INITIAL_FEES } from "@/data/fees";
+import { INITIAL_HOME } from "@/data/home";
 import { INITIAL_IMAGE_ASSETS } from "@/data/images";
 import { INITIAL_NOTICE_CATEGORIES } from "@/data/notices";
 import { INITIAL_RECRUITMENT_POSITIONS } from "@/data/recruitment";
+import { INITIAL_RESULTS } from "@/data/results";
 import { DEFAULT_PARENTS_LOGIN_URL } from "@/data/site";
+import { INITIAL_UNIFORM } from "@/data/uniform";
 import { ApiError, fetchSiteContent, saveSiteContentDocument } from "@/lib/api";
 import { normalizeNoticeCategories } from "@/lib/notices";
 import type {
+  AboutContent,
+  AcademicsContent,
+  ContactContent,
+  DisclosureContent,
+  FacilitiesContent,
+  FeesContent,
+  HomeContent,
   ImageAssetItem,
   ImageAssetsDocument,
   ImageCollectionKey,
   JobPosition,
   NoticeCategoryData,
   NoticeCategoryId,
+  ResultsContent,
   SiteContentDocument,
+  UniformContent,
 } from "@/types/site";
 
 import { useToast } from "./ToastContext";
 
 const DEFAULT_ACADEMIC_SESSION = "2025–26";
-
-/** A hero slide with its image resolved from the admin-managed assets. */
-export interface ResolvedHeroSlide {
-  img: string;
-  tag: string;
-  headline: string;
-  subtitle: string;
-  alt: string;
-}
 
 /** A gallery tile built from an admin-managed image asset. */
 export interface ResolvedGalleryItem {
@@ -63,18 +69,30 @@ interface SiteContentValue {
   loadError: string | null;
 
   academicSession: string;
+  /** Hero, highlights, welcome block, FAQs and the admissions banner. */
+  home: HomeContent;
+  /** School contact details used across the site. */
+  contact: ContactContent;
   parentsLoginUrl: string;
   announcements: string[];
   noticeCategories: NoticeCategoryData[];
   recruitmentPositions: JobPosition[];
   imageAssets: ImageAssetsDocument;
+  /** About Us page content, as the administrator maintains it. */
+  about: AboutContent;
+  /** Co-curricular, sports and student council content. */
+  academics: AcademicsContent;
+  /** Campus facilities page content. */
+  facilities: FacilitiesContent;
+  /** Board results strip shown on the home page. */
+  results: ResultsContent;
+  /** Fee structure page content. */
+  fees: FeesContent;
+  /** School uniform shown on the admissions page. */
+  uniform: UniformContent;
+  /** CBSE mandatory public disclosure, as the administrator maintains it. */
+  disclosure: DisclosureContent;
 
-  /** Hero slides with admin-managed images applied. */
-  heroSlides: ResolvedHeroSlide[];
-  /** Curriculum content with admin-managed stage banners applied. */
-  academicCardsData: typeof ACADEMICS_CARDS_DATA;
-  /** Facility cards with admin-managed photos applied. */
-  facilitiesList: typeof FACILITIES_LIST;
   /** Gallery tiles derived from the admin-managed gallery collection. */
   galleryItems: ResolvedGalleryItem[];
   aboutCampusImage: ImageAssetItem | undefined;
@@ -117,6 +135,8 @@ export function SiteContentProvider({ children, initialContent }: SiteContentPro
   const [academicSession, setAcademicSession] = useState(
     initialContent?.academicSession || DEFAULT_ACADEMIC_SESSION,
   );
+  const [home, setHome] = useState<HomeContent>(initialContent?.home ?? INITIAL_HOME);
+  const [contact, setContact] = useState<ContactContent>(initialContent?.contact ?? INITIAL_CONTACT);
   const [parentsLoginUrl, setParentsLoginUrl] = useState(
     initialContent?.parentsLoginUrl || DEFAULT_PARENTS_LOGIN_URL,
   );
@@ -132,6 +152,19 @@ export function SiteContentProvider({ children, initialContent }: SiteContentPro
   const [imageAssets, setImageAssets] = useState<ImageAssetsDocument>(
     initialContent?.imageAssets ?? INITIAL_IMAGE_ASSETS,
   );
+  const [about, setAbout] = useState<AboutContent>(initialContent?.about ?? INITIAL_ABOUT);
+  const [academics, setAcademics] = useState<AcademicsContent>(
+    initialContent?.academics ?? INITIAL_ACADEMICS,
+  );
+  const [facilities, setFacilities] = useState<FacilitiesContent>(
+    initialContent?.facilities ?? INITIAL_FACILITIES,
+  );
+  const [results, setResults] = useState<ResultsContent>(initialContent?.results ?? INITIAL_RESULTS);
+  const [fees, setFees] = useState<FeesContent>(initialContent?.fees ?? INITIAL_FEES);
+  const [uniform, setUniform] = useState<UniformContent>(initialContent?.uniform ?? INITIAL_UNIFORM);
+  const [disclosure, setDisclosure] = useState<DisclosureContent>(
+    initialContent?.disclosure ?? INITIAL_DISCLOSURE,
+  );
 
   /**
    * Mirrors the current document so `saveContent` always builds its payload
@@ -140,38 +173,74 @@ export function SiteContentProvider({ children, initialContent }: SiteContentPro
    */
   const contentRef = useRef<SiteContentDocument>({
     academicSession,
+    home,
+    contact,
     parentsLoginUrl,
     announcements,
     noticeCategories,
     recruitmentPositions,
     imageAssets,
+    about,
+    academics,
+    facilities,
+    results,
+    fees,
+    uniform,
+    disclosure,
   });
 
   useEffect(() => {
     contentRef.current = {
       academicSession,
+      home,
+      contact,
       parentsLoginUrl,
       announcements,
       noticeCategories,
       recruitmentPositions,
-        imageAssets,
+      imageAssets,
+      about,
+      academics,
+      facilities,
+      results,
+      fees,
+      uniform,
+      disclosure,
     };
   }, [
     academicSession,
+    home,
+    contact,
     parentsLoginUrl,
     announcements,
     noticeCategories,
     recruitmentPositions,
     imageAssets,
+    about,
+    academics,
+    facilities,
+    results,
+    fees,
+    uniform,
+    disclosure,
   ]);
 
   const applySiteContent = useCallback((content: SiteContentDocument) => {
     setAcademicSession(content.academicSession || DEFAULT_ACADEMIC_SESSION);
+    setHome(content.home);
+    setContact(content.contact);
     setParentsLoginUrl(content.parentsLoginUrl || DEFAULT_PARENTS_LOGIN_URL);
     setAnnouncements(content.announcements);
     setNoticeCategories(normalizeNoticeCategories(content.noticeCategories));
     setRecruitmentPositions(content.recruitmentPositions);
     setImageAssets(content.imageAssets);
+    setAbout(content.about);
+    setAcademics(content.academics);
+    setFacilities(content.facilities);
+    setResults(content.results);
+    setFees(content.fees);
+    setUniform(content.uniform);
+    setDisclosure(content.disclosure);
   }, []);
 
   const saveContent = useCallback(
@@ -237,35 +306,6 @@ export function SiteContentProvider({ children, initialContent }: SiteContentPro
     [noticeCategories],
   );
 
-  const heroSlides = useMemo<ResolvedHeroSlide[]>(
-    () =>
-      HERO_SLIDES.map((slide, index) => {
-        const asset = getImageAsset("heroSlides", `hero-${index + 1}`);
-        return { ...slide, img: asset?.url || slide.img, alt: asset?.alt || slide.headline };
-      }),
-    [getImageAsset],
-  );
-
-  const academicCardsData = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.entries(ACADEMICS_CARDS_DATA).map(([key, value]) => {
-          const asset = getImageAsset("academicBanners", key === "all" ? "academics-all" : `academics-${key}`);
-          return [key, { ...value, stageBanner: { ...value.stageBanner, image: asset?.url || value.stageBanner.image } }];
-        }),
-      ) as typeof ACADEMICS_CARDS_DATA,
-    [getImageAsset],
-  );
-
-  const facilitiesList = useMemo(
-    () =>
-      FACILITIES_LIST.map((facility, index) => {
-        const asset = getImageAsset("facilities", `facility-${index + 1}`);
-        return { ...facility, img: asset?.url || facility.img };
-      }),
-    [getImageAsset],
-  );
-
   const galleryItems = useMemo<ResolvedGalleryItem[]>(
     () =>
       imageAssets.gallery.map((asset, index) => {
@@ -287,14 +327,20 @@ export function SiteContentProvider({ children, initialContent }: SiteContentPro
       isLoading,
       loadError,
       academicSession,
+      home,
+      contact,
       parentsLoginUrl,
       announcements,
       noticeCategories,
       recruitmentPositions,
-        imageAssets,
-      heroSlides,
-      academicCardsData,
-      facilitiesList,
+      imageAssets,
+      about,
+      academics,
+      facilities,
+      results,
+      fees,
+      uniform,
+      disclosure,
       galleryItems,
       aboutCampusImage: getImageAsset("misc", "about-campus"),
       campusSupportImages: imageAssets.misc,
@@ -306,14 +352,20 @@ export function SiteContentProvider({ children, initialContent }: SiteContentPro
       isLoading,
       loadError,
       academicSession,
+      home,
+      contact,
       parentsLoginUrl,
       announcements,
       noticeCategories,
       recruitmentPositions,
-        imageAssets,
-      heroSlides,
-      academicCardsData,
-      facilitiesList,
+      imageAssets,
+      about,
+      academics,
+      facilities,
+      results,
+      fees,
+      uniform,
+      disclosure,
       galleryItems,
       getImageAsset,
       findNoticeCategory,

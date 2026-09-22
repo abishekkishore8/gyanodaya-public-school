@@ -16,7 +16,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 
   try {
     const { id } = await params;
-    const body = await request.json().catch(() => ({}));
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     const password = String(body?.password || "");
 
     const passwordError = validatePasswordStrength(password);

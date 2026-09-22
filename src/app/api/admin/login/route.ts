@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const body = await request.json().catch(() => ({}));
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     const username = String(body?.username || "").trim();
     const password = String(body?.password || "");
 

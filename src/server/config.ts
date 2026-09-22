@@ -1,57 +1,57 @@
 /**
- * Server-side environment configuration, read once per process.
+ * Server-side environment configuration.
  *
- * Nothing here throws: a missing variable is surfaced through `missingEnv()` so
+ * Nothing here throws: a missing value is surfaced through `missingEnv()` so
  * the affected route can return a clear error instead of the whole app failing
  * to start. This module must never be imported from a client component.
+ *
+ * Storage itself is bound, not configured — D1 as `DB` and R2 as `UPLOADS` in
+ * `wrangler.jsonc`. Only the bucket's public URL and the session secret come
+ * from variables.
  */
 
 import "server-only";
 
-export const mongo = {
-  uri: process.env.MONGODB_URI,
-  dbName: process.env.MONGODB_DB_NAME || "gps_school_website",
-};
-
-export interface R2Config {
-  accountId: string;
-  bucketName: string;
-  publicBaseUrl: string;
-  accessKeyId: string;
-  secretAccessKey: string;
-}
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 /** Largest image accepted by the upload route. */
 export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
-/**
- * The R2 credentials, or `null` when any of them is missing — in which case
- * image uploads are unavailable but the rest of the site works normally.
- */
-export function getR2Config(): R2Config | null {
-  const { R2_ACCOUNT_ID, R2_BUCKET_NAME, R2_PUBLIC_BASE_URL, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY } =
-    process.env;
-
-  if (!R2_ACCOUNT_ID || !R2_BUCKET_NAME || !R2_PUBLIC_BASE_URL || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) {
-    return null;
+/** Reads a Worker variable, falling back to `process.env` for `next dev`. */
+export async function getVar(name: string): Promise<string | undefined> {
+  try {
+    const { env } = await getCloudflareContext({ async: true });
+    const value = (env as unknown as Record<string, unknown>)[name];
+    if (typeof value === "string" && value) return value;
+  } catch {
+    // No Cloudflare context (a plain Node script) — fall through.
   }
 
-  return {
-    accountId: R2_ACCOUNT_ID,
-    bucketName: R2_BUCKET_NAME,
-    publicBaseUrl: R2_PUBLIC_BASE_URL,
-    accessKeyId: R2_ACCESS_KEY_ID,
-    secretAccessKey: R2_SECRET_ACCESS_KEY,
-  };
+  return process.env[name] || undefined;
 }
 
-/** Names of required variables that are not set, for startup diagnostics. */
-export function missingEnv(): string[] {
+/** Public base URL that serves the R2 bucket, without a trailing slash. */
+export async function getUploadsBaseUrl(): Promise<string | null> {
+  const base = await getVar("R2_PUBLIC_BASE_URL");
+  return base ? base.replace(/\/$/, "") : null;
+}
+
+/** Names of required values that are not set, for the health probe. */
+export async function missingEnv(): Promise<string[]> {
   const missing: string[] = [];
-  if (!mongo.uri) missing.push("MONGODB_URI");
-  if (!getR2Config()) missing.push("R2_* (image uploads disabled)");
-  if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
+
+  try {
+    const { env } = await getCloudflareContext({ async: true });
+    if (!env.DB) missing.push("D1 binding DB");
+    if (!env.UPLOADS) missing.push("R2 binding UPLOADS (uploads disabled)");
+  } catch {
+    missing.push("Cloudflare bindings (DB, UPLOADS)");
+  }
+
+  if (!(await getUploadsBaseUrl())) missing.push("R2_PUBLIC_BASE_URL (uploads disabled)");
+  if (process.env.NODE_ENV === "production" && !(await getVar("SESSION_SECRET"))) {
     missing.push("SESSION_SECRET");
   }
+
   return missing;
 }
