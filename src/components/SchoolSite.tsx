@@ -213,8 +213,8 @@ function PageSections({ page, slug = "", stage }: { page: SitePage; slug?: strin
           <Messages />
           <Facilities />
           <CoCurricular />
-          <Faqs />
           <Gallery />
+          <Faqs />
         </>
       );
   }
