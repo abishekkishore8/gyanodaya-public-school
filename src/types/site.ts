@@ -267,17 +267,32 @@ export interface ResultTopperItem {
   name: string;
   /** Marks as they should read, e.g. "96.2%". */
   score: string;
-  /** Optional line under the name, e.g. "Class X-A" or "Science". */
+  /** Optional label above the name, e.g. "State Topper". */
   detail: string;
   /** Photograph; the card falls back to the initial without one. */
   imageUrl: string;
+}
+
+/** One summary tile beside the toppers, e.g. "98% Above" over "6 Students". */
+export interface ResultStatItem {
+  id: string;
+  /** Large figure, e.g. "98%". */
+  value: string;
+  /** Word under the figure, e.g. "Above". */
+  label: string;
+  /** Footer strip, e.g. "6 Students" or "Average". */
+  caption: string;
 }
 
 /** One results announcement, such as Class X for a given year. */
 export interface ResultGroupItem {
   id: string;
   title: string;
+  /** Summary tiles shown left of the toppers; may be empty. */
+  stats: ResultStatItem[];
   toppers: ResultTopperItem[];
+  /** Small note under the toppers, e.g. "* Results of CBSE 2026". */
+  footnote: string;
 }
 
 /** The board results shown on the home page. */
@@ -308,6 +323,8 @@ export interface CouncilMemberItem {
   /** Class and section, e.g. "Class XII-A". */
   studentClass: string;
   responsibility: string;
+  /** A line in the student's own words; optional, absent on older documents. */
+  quote?: string;
   /** Photograph; the card falls back to a monogram without one. */
   imageUrl: string;
 }

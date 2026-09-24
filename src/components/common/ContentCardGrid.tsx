@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { Fragment } from "react";
+
 import { GREEN } from "@/lib/theme";
 import type { ContentCardItem } from "@/types/site";
 
@@ -16,10 +19,13 @@ export function cardAnchorId(title: string): string {
 export default function ContentCardGrid({
   items,
   columns = 3,
+  hrefBase,
 }: {
   items: ContentCardItem[];
   /** Cards per row on large screens. */
   columns?: 3 | 4;
+  /** When set, each card links to `${hrefBase}/<card slug>`. */
+  hrefBase?: string;
 }) {
   if (items.length === 0) return null;
 
@@ -29,9 +35,9 @@ export default function ContentCardGrid({
         columns === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"
       }`}
     >
-      {items.map((item) => (
+      {items.map((item) => {
+        const card = (
         <article
-          key={item.id}
           id={cardAnchorId(item.title)}
           // `scroll-mt` clears the sticky header when linked to directly.
           className="group bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col hover:-translate-y-1.5 scroll-mt-28"
@@ -65,7 +71,20 @@ export default function ContentCardGrid({
             <p className="text-gray-500 text-xs sm:text-[13px] leading-relaxed">{item.description}</p>
           </div>
         </article>
-      ))}
+        );
+        return hrefBase ? (
+          <Link
+            key={item.id}
+            href={`${hrefBase}/${cardAnchorId(item.title)}`}
+            aria-label={item.title}
+            className="flex rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#14452f] [&>article]:w-full"
+          >
+            {card}
+          </Link>
+        ) : (
+          <Fragment key={item.id}>{card}</Fragment>
+        );
+      })}
     </div>
   );
 }

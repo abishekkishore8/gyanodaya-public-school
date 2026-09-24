@@ -70,7 +70,7 @@ export default function AdmissionForm() {
     };
 
     if (!submitted.studentName || !submitted.phone || !submitted.fatherName) {
-      showToast("⚠️ Please fill in student name, primary phone, and father/guardian name.");
+      showToast("Please fill in student name, primary phone, and father/guardian name.");
       return;
     }
 
@@ -129,8 +129,8 @@ export default function AdmissionForm() {
       });
 
       void submitFormSubmission(newSubmission)
-        .then(() => showToast(`🎉 Admission application ${refId} submitted successfully!`))
-        .catch(() => showToast("⚠️ Admission submission failed. Please call the school office."));
+        .then(() => showToast(`Admission application ${refId} submitted successfully!`))
+        .catch(() => showToast("Admission submission failed. Please call the school office."));
     }, SUBMIT_DELAY_MS);
   };
 

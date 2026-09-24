@@ -17,6 +17,10 @@ export const PLAYSTORE_PARENT_APP_URL = "https://play.google.com/store/search?q=
 /** Parents login destination used until the admin overrides it in settings. */
 export const DEFAULT_PARENTS_LOGIN_URL = PLAYSTORE_PARENT_APP_URL;
 
+/** CBSE affiliation number and school code, as issued by the board. */
+export const CBSE_AFFILIATION_NO = "3430386";
+export const CBSE_SCHOOL_CODE = "66590";
+
 /** Logo served from `public/`. */
 export const SCHOOL_LOGO_SRC = "/gps_logo-removebg-preview.png";
 
@@ -26,12 +30,19 @@ export const SCHOOL_WORDMARK = "GYANODAYA";
 /**
  * The wordmark split into letters.
  *
- * Measured with the shipped Inter metrics, "PUBLIC SCHOOL • BAGODAR" is wider
- * than "GYANODAYA" at every breakpoint, so the lower line sets the width of the
- * lockup and the name is spread across it with `justify-between`. That keeps
- * both lines flush left and right without hand-tuned letter-spacing per size.
+ * The name is spread across the lockup with `justify-between`, so it stays flush
+ * with whichever line is wider without hand-tuned letter-spacing per size.
  *
  * The letters are `aria-hidden`; the container carries the name as its label so
  * a screen reader says "Gyanodaya", not nine separate letters.
  */
 export const SCHOOL_WORDMARK_LETTERS: readonly string[] = SCHOOL_WORDMARK.split("");
+
+/** Second line of the lockup. */
+export const SCHOOL_TAGLINE = "Public School";
+
+/**
+ * The second line split the same way, so it is spread across the full width of
+ * the name above. The space is a non-breaking one so flex layout keeps it.
+ */
+export const SCHOOL_TAGLINE_LETTERS: readonly string[] = SCHOOL_TAGLINE.split("").map((c) => (c === " " ? "\u00a0" : c));

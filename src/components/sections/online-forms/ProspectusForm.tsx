@@ -36,7 +36,7 @@ export default function ProspectusForm() {
     };
 
     if (!submitted.parentName || !submitted.phone) {
-      showToast("⚠️ Please provide parent name and contact number.");
+      showToast("Please provide parent name and contact number.");
       return;
     }
 
@@ -66,8 +66,8 @@ export default function ProspectusForm() {
       setProspectusSubmitting(false);
 
       void submitFormSubmission(newSubmission)
-        .then(() => showToast("📄 Prospectus details recorded! Opening admission details..."))
-        .catch(() => showToast("⚠️ Prospectus request failed. Please call the school office."));
+        .then(() => showToast("Prospectus details recorded! Opening admission details..."))
+        .catch(() => showToast("Prospectus request failed. Please call the school office."));
       setAdmissionModalOpen(true);
     }, SUBMIT_DELAY_MS);
   };
@@ -149,22 +149,10 @@ export default function ProspectusForm() {
 
       {/* Features summary */}
       <div className="bg-[#f0faf5] p-4 rounded-xl border border-[#14452f]/20 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-[#14452f]">
-        <div className="flex items-center gap-1.5">
-          <span>📑</span>
-          <span className="font-semibold">Fee Breakdown</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span>🚌</span>
-          <span className="font-semibold">Bus Route Map</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span>🏆</span>
-          <span className="font-semibold">Scholarship Slabs</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span>🔬</span>
-          <span className="font-semibold">STEM Labs Info</span>
-        </div>
+        <span className="font-semibold">Fee Breakdown</span>
+        <span className="font-semibold">Bus Route Map</span>
+        <span className="font-semibold">Scholarship Slabs</span>
+        <span className="font-semibold">STEM Labs Info</span>
       </div>
 
       <button
@@ -180,7 +168,7 @@ export default function ProspectusForm() {
           </>
         ) : (
           <>
-            <span>Download GPS Prospectus & Fee Brochure (PDF) 📥</span>
+            <span>Download GPS Prospectus & Fee Brochure (PDF)</span>
           </>
         )}
       </button>

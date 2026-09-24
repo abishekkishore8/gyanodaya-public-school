@@ -1,15 +1,21 @@
+import Link from "next/link";
+
 import { useSiteContent } from "@/context/SiteContentContext";
-import { useUi } from "@/context/UiContext";
+import { PENDING } from "@/data/disclosure";
 import { GOLD, GREEN } from "@/lib/theme";
 
 /** "Welcome to Gyanodaya" introduction with the campus photo and headline stats. */
 export default function About() {
-  const { home } = useSiteContent();
-  const { setAdmissionModalOpen } = useUi();
+  const { home, disclosure } = useSiteContent();
   const welcome = home.welcome;
 
+  // The board tile shows the affiliation number from the mandatory disclosure
+  // (Admin → Mandatory disclosure) once it is filled in, and links to that page.
+  const affiliation = disclosure.general.find((field) => field.id === "general-affiliation")?.value.trim();
+  const affiliationNumber = affiliation && affiliation !== PENDING ? affiliation : "";
+
   return (
-    <section id="about" className="py-14 sm:py-20 bg-white">
+    <section id="about" className="py-14 sm:py-20 bg-white scroll-mt-28">
       <div className="max-w-[1240px] mx-auto px-4 sm:px-8 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
         {/* Left Campus Photo */}
@@ -52,28 +58,44 @@ export default function About() {
 
           {/* 4 Stats Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 py-3 sm:py-4 mb-6 sm:mb-8 bg-gray-50/70 p-3 rounded-xl border border-gray-100">
-            {welcome.stats.map((stat) => (
-              <div
-                key={stat.id}
-                className="text-left p-2 rounded hover:bg-white transition-colors"
-              >
-                <div
-                  style={{ color: GREEN }}
-                  className="font-serif text-xl sm:text-2xl md:text-3xl font-bold tracking-tight"
+            {welcome.stats.map((stat) => {
+              const isBoard = stat.id === "stat-board";
+              const body = (
+                <>
+                  <div
+                    style={{ color: GREEN }}
+                    className={`font-serif font-bold tracking-tight ${
+                      isBoard && affiliationNumber ? "text-lg sm:text-xl md:text-2xl" : "text-xl sm:text-2xl md:text-3xl"
+                    }`}
+                  >
+                    {isBoard && affiliationNumber ? affiliationNumber : stat.value}
+                  </div>
+                  <div className="text-gray-500 text-[10px] sm:text-xs mt-0.5 sm:mt-1 leading-snug">
+                    {isBoard && affiliationNumber ? "CBSE Affiliation No." : stat.label}
+                  </div>
+                </>
+              );
+              return isBoard ? (
+                <Link
+                  key={stat.id}
+                  href="/mandatory-disclosure"
+                  title="View mandatory disclosure"
+                  className="text-left p-2 rounded hover:bg-white transition-colors underline-offset-4 hover:underline decoration-[#c59a3f]"
                 >
-                  {stat.value}
+                  {body}
+                </Link>
+              ) : (
+                <div key={stat.id} className="text-left p-2 rounded hover:bg-white transition-colors">
+                  {body}
                 </div>
-                <div className="text-gray-500 text-[10px] sm:text-xs mt-0.5 sm:mt-1 leading-snug">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Read More CTA Button */}
           <div className="flex flex-wrap items-center gap-4">
-            <button
-              onClick={() => setAdmissionModalOpen(true)}
+            <Link
+              href="/about"
               style={{ backgroundColor: GREEN }}
               className="inline-flex items-center gap-2 text-white text-xs sm:text-sm font-semibold px-5 sm:px-6 py-3 rounded-sm hover:brightness-110 transition-all uppercase tracking-wider cursor-pointer shadow hover:scale-102"
             >
@@ -81,7 +103,7 @@ export default function About() {
               <svg className="w-4 h-4 text-[#dfb455]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
-            </button>
+            </Link>
           </div>
         </div>
       </div>

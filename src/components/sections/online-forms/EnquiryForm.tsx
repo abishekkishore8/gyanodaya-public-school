@@ -42,7 +42,7 @@ export default function EnquiryForm() {
     };
 
     if (!submitted.fullName || !submitted.phone || !submitted.message) {
-      showToast("⚠️ Please provide full name, contact number, and your message.");
+      showToast("Please provide full name, contact number, and your message.");
       return;
     }
 
@@ -92,8 +92,8 @@ export default function EnquiryForm() {
       });
 
       void submitFormSubmission(newSubmission)
-        .then(() => showToast(`✅ Enquiry ${refId} received! Helpdesk will connect with you.`))
-        .catch(() => showToast("⚠️ Enquiry submission failed. Please call the school office."));
+        .then(() => showToast(`Enquiry ${refId} received! Helpdesk will connect with you.`))
+        .catch(() => showToast("Enquiry submission failed. Please call the school office."));
     }, SUBMIT_DELAY_MS);
   };
 

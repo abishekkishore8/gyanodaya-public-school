@@ -16,6 +16,9 @@ export const INITIAL_RESULTS: ResultsContent = {
     {
       id: "result-class-x-2026",
       title: "Class (X) Results 2026",
+      // Summary tiles and footnote are filled in under Admin → Board results.
+      stats: [],
+      footnote: "",
       toppers: [
         { id: "topper-x-1", name: "Arpit Kumar", score: "96.2%", detail: "", imageUrl: "" },
         { id: "topper-x-2", name: "Shristy Raj", score: "96.2%", detail: "", imageUrl: "" },

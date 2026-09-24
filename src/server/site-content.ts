@@ -2,6 +2,8 @@ import "server-only";
 
 import type { ImageAssetsDocument, ImageCollectionKey, SiteContentDocument } from "@/types/site";
 
+import { PENDING } from "@/data/disclosure";
+
 import { getDb, nowIso } from "./db";
 import { createDefaultSiteContent } from "./defaults";
 
@@ -99,6 +101,42 @@ function mergeImageAssets(
   return merged;
 }
 
+/** Results written before summary tiles and footnotes existed get empty ones. */
+function normalizeResults(
+  defaults: SiteContentDocument["results"],
+  stored: Partial<SiteContentDocument["results"]> | undefined,
+): SiteContentDocument["results"] {
+  const merged = { ...defaults, ...(stored || {}) };
+  return {
+    ...merged,
+    groups: (merged.groups || []).map((group) => ({
+      ...group,
+      stats: Array.isArray(group.stats) ? group.stats : [],
+      footnote: typeof group.footnote === "string" ? group.footnote : "",
+    })),
+  };
+}
+
+/**
+ * A general-information row still showing the placeholder takes the default's
+ * value, so figures supplied after the document was written (affiliation
+ * number, school code) reach it without an admin retyping them.
+ */
+function fillPendingDisclosure(
+  defaults: SiteContentDocument["disclosure"],
+  disclosure: SiteContentDocument["disclosure"],
+): SiteContentDocument["disclosure"] {
+  const fallback = new Map(defaults.general.map((row) => [row.id, row.value]));
+  return {
+    ...disclosure,
+    general: disclosure.general.map((row) =>
+      row.value.trim() === PENDING && fallback.get(row.id) && fallback.get(row.id) !== PENDING
+        ? { ...row, value: fallback.get(row.id) as string }
+        : row,
+    ),
+  };
+}
+
 /** Fills in any field missing from a stored (or submitted) document. */
 export function normalizeSiteContent(doc: Partial<SiteContentDocument> | null): SiteContentDocument {
   const defaults = createDefaultSiteContent();
@@ -116,12 +154,12 @@ export function normalizeSiteContent(doc: Partial<SiteContentDocument> | null): 
     about: { ...defaults.about, ...(source.about || {}) },
     academics: { ...defaults.academics, ...(source.academics || {}) },
     facilities: { ...defaults.facilities, ...(source.facilities || {}) },
-    results: { ...defaults.results, ...(source.results || {}) },
+    results: normalizeResults(defaults.results, source.results),
     fees: { ...defaults.fees, ...(source.fees || {}) },
     uniform: { ...defaults.uniform, ...(source.uniform || {}) },
     // Shallow merge: a disclosure section added after the document was written
     // falls back to its default instead of rendering as an empty table.
-    disclosure: { ...defaults.disclosure, ...(source.disclosure || {}) },
+    disclosure: fillPendingDisclosure(defaults.disclosure, { ...defaults.disclosure, ...(source.disclosure || {}) }),
   };
 }
 

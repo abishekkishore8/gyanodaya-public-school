@@ -201,7 +201,7 @@ function CouncilEditor({
         url={member.imageUrl}
         uploadKey={`council-${member.id}`}
         clearable
-        hint="Optional — without a photo the card shows the post's initial."
+        hint="Optional — without a photo the card shows the post's initial. A portrait photo looks best."
         onChange={(imageUrl) => onChange({ ...member, imageUrl })}
       />
 
@@ -231,6 +231,10 @@ function CouncilEditor({
           value={member.responsibility}
           onChange={(e) => onChange({ ...member, responsibility: e.target.value })}
         />
+      </Field>
+
+      <Field label="Quote" hint="Optional — a line from the student, shown in quotation marks on the card.">
+        <Textarea rows={2} value={member.quote ?? ""} onChange={(e) => onChange({ ...member, quote: e.target.value })} />
       </Field>
     </div>
   );
@@ -480,7 +484,7 @@ export default function AcademicsTab() {
               patch({
                 council: [
                   ...draft.council,
-                  { id: newId("council"), role: "", name: "", studentClass: "", responsibility: "", imageUrl: "" },
+                  { id: newId("council"), role: "", name: "", studentClass: "", responsibility: "", quote: "", imageUrl: "" },
                 ],
               })
             }

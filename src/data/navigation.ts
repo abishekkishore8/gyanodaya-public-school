@@ -20,13 +20,26 @@ export interface NavItem {
 export const TOP_NAV: NavItem[] = [
   { label: "Notice Board", href: "/notice-board" },
   { label: "Careers & Hiring", href: "/careers" },
-  { label: "News & Circulars", href: "/notice-board#announcements" },
 ];
 
 // Main navigation bar links with dropdown submenu structure
 export const MAIN_NAV: NavItem[] = [
   { label: "HOME", href: "/", sectionId: "home" },
-  { label: "ABOUT US", href: "/about", sectionId: "about" },
+  {
+    label: "ABOUT US",
+    href: "/about",
+    sectionId: "about",
+    hasDropdown: true,
+    // Sections of the about page, reached by their anchor ids.
+    subItems: [
+      { label: "About the School", href: "/about#about" },
+      { label: "Mission & Vision", href: "/about#mission-vision" },
+      { label: "Leadership Messages", href: "/about#leadership-messages" },
+      { label: "Our Faculty", href: "/about#faculty" },
+      { label: "Rules & Regulations", href: "/about#rules" },
+      { label: "Parent–Teacher Association", href: "/about#parent-teacher" },
+    ],
+  },
   {
     label: "ACADEMICS",
     href: "/academics",
@@ -91,18 +104,26 @@ export const MAIN_NAV_SECTION_IDS: readonly string[] = MAIN_NAV.map((item) => it
   (id): id is string => Boolean(id),
 );
 
-/** Footer quick links — same destinations, friendlier labels. */
+/** Footer "Explore" column — the school's own pages. */
 export const FOOTER_QUICK_LINKS: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Academics", href: "/academics" },
   { label: "Facilities", href: "/facilities" },
-  { label: "Admissions", href: "/admissions" },
-  { label: "Fee Structure", href: "/fees" },
-  { label: "Board Results", href: "/results" },
+  { label: "Notice Board", href: "/notice-board" },
   { label: "Gallery", href: "/gallery" },
   { label: "Careers", href: "/careers" },
   { label: "Contact Us", href: "/contact" },
+];
+
+/** Footer "Admissions" column — everything a prospective parent looks for. */
+export const FOOTER_ADMISSION_LINKS: { label: string; href: string }[] = [
+  { label: "Admission Process", href: "/admissions" },
+  { label: "Fee Structure", href: "/fees" },
+  { label: "School Uniform", href: "/admissions/uniform" },
+  { label: "Online Admission Form", href: "/online-forms#admission" },
+  { label: "Board Results", href: "/results" },
+  { label: "Mandatory Disclosure", href: "/mandatory-disclosure" },
 ];
 
 /** Every public route, for the sitemap. */

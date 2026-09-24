@@ -26,45 +26,57 @@ export default function StudentCouncil() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        {/* Council cards — same layout as the faculty cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {academics.council.map((member) => (
             <article
               key={member.id}
-              className="flex gap-4 rounded-xl border border-gray-200/80 bg-[#f9faf9] p-4 sm:p-5 hover:border-[#14452f]/30 hover:shadow-lg transition-all duration-300"
+              className="group bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col"
             >
-              {/* Photograph, or the post's initial when there is none */}
-              <div className="shrink-0">
+              <div className="relative h-56 sm:h-60 overflow-hidden bg-[#f1f4f1]">
                 {member.imageUrl ? (
                   <img
                     src={member.imageUrl}
                     alt={member.name ? `${member.name}, ${member.role}` : member.role}
                     loading="lazy"
                     decoding="async"
-                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover object-top border-2 border-[#dfb455]/60"
+                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
                   />
                 ) : (
+                  // The post's initial when there is no photograph yet
                   <span
-                    style={{ backgroundColor: GREEN }}
-                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center font-serif text-xl font-bold text-[#dfb455]"
+                    style={{ color: GREEN }}
+                    className="grid h-full w-full place-items-center pb-10 font-serif text-6xl font-bold opacity-25"
                     aria-hidden="true"
                   >
                     {member.role.charAt(0)}
                   </span>
                 )}
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0b1f15]/85 to-transparent px-4 pt-8 pb-3">
+                  {member.name && (
+                    <p className="font-serif font-bold text-white text-sm sm:text-base leading-tight">{member.name}</p>
+                  )}
+                  <p className="text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] text-[#dfb455]">
+                    {member.role}
+                  </p>
+                </div>
               </div>
 
-              <div className="min-w-0">
-                <h3 style={{ color: GREEN }} className="font-serif font-bold text-sm sm:text-base leading-tight">
-                  {member.role}
-                </h3>
-                {(member.name || member.studentClass) && (
-                  <p className="text-[11px] sm:text-xs font-semibold text-gray-500 mt-0.5">
-                    {[member.name, member.studentClass].filter(Boolean).join(" · ")}
+              <div className="p-4 flex flex-col grow">
+                {member.studentClass && (
+                  <p style={{ color: GREEN }} className="text-[11px] sm:text-xs font-semibold mb-1.5">
+                    {member.studentClass}
                   </p>
                 )}
-                <p className="text-xs sm:text-[13px] text-gray-600 leading-relaxed mt-1.5">
-                  {member.responsibility}
-                </p>
+                <p className="text-xs sm:text-[13px] text-gray-600 leading-relaxed">{member.responsibility}</p>
+                {member.quote && (
+                  <blockquote
+                    style={{ borderColor: GOLD }}
+                    className="mt-3 border-l-2 pl-3 font-serif text-xs sm:text-[13px] italic text-gray-700 leading-relaxed"
+                  >
+                    “{member.quote}”
+                  </blockquote>
+                )}
               </div>
             </article>
           ))}

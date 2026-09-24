@@ -59,10 +59,7 @@ export default function OnlineForms() {
             {/* Helpline & Hours Card */}
             <div className="bg-[#14452f] text-white p-6 rounded-2xl shadow-xl border-2 border-[#dfb455]/30 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#dfb455]/10 rounded-full blur-2xl pointer-events-none" />
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-xl shrink-0 border border-white/20">
-                  📞
-                </div>
+              <div className="mb-4">
                 <div>
                   <h3 className="font-serif font-bold text-base text-[#dfb455]">
                     Admission Helpline
@@ -97,8 +94,7 @@ export default function OnlineForms() {
 
             {/* Documents Checklist Card */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-md">
-              <div className="flex items-center gap-2.5 mb-4 text-[#14452f]">
-                <span className="text-lg">📋</span>
+              <div className="mb-4 text-[#14452f]">
                 <h4 className="font-serif font-bold text-sm uppercase tracking-wider">
                   Required Documents Checklist
                 </h4>
@@ -123,8 +119,7 @@ export default function OnlineForms() {
 
             {/* Campus Location Card */}
             <div className="bg-[#f0faf5] p-5 rounded-2xl border border-[#14452f]/20">
-              <div className="flex items-start gap-3">
-                <span className="text-xl">📍</span>
+              <div>
                 <div className="text-xs">
                   <h5 className="font-bold text-[#14452f] mb-1">GPS Bagodar Campus</h5>
                   <p className="text-gray-600 leading-relaxed">

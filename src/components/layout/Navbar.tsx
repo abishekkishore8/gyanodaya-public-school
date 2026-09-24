@@ -6,7 +6,7 @@ import { useSiteContent } from "@/context/SiteContentContext";
 import { useToast } from "@/context/ToastContext";
 import { useUi } from "@/context/UiContext";
 import { MAIN_NAV, MAIN_NAV_SECTION_IDS, type NavItem } from "@/data/navigation";
-import { SCHOOL_WORDMARK, SCHOOL_WORDMARK_LETTERS } from "@/data/site";
+import { SCHOOL_TAGLINE, SCHOOL_TAGLINE_LETTERS, SCHOOL_WORDMARK, SCHOOL_WORDMARK_LETTERS } from "@/data/site";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { useNavDrawerDismiss } from "@/hooks/useNavDrawer";
@@ -76,16 +76,17 @@ export default function Navbar({ scrolled }: NavbarProps) {
                 </span>
               ))}
             </span>
-            {/*
-              This line sets the width of the lockup; the name above stretches to
-              match it. `-mr` cancels the trailing letter-space CSS adds after the
-              last character, which would otherwise push this line a hair wider.
-            */}
+            {/* Spread across the width of the name above, so both lines end flush. */}
             <span
               style={{ color: GREEN }}
-              className="text-[8px] sm:text-[9px] md:text-[10px] 2xl:text-[11px] font-semibold tracking-[0.06em] -mr-[0.06em] uppercase leading-tight mt-0.5 truncate"
+              aria-label={SCHOOL_TAGLINE}
+              className="flex w-full justify-between text-[10px] sm:text-[11px] md:text-xs 2xl:text-sm font-semibold leading-tight mt-1"
             >
-              PUBLIC SCHOOL • BAGODAR
+              {SCHOOL_TAGLINE_LETTERS.map((letter, index) => (
+                <span key={index} aria-hidden="true">
+                  {letter}
+                </span>
+              ))}
             </span>
           </div>
         </Link>

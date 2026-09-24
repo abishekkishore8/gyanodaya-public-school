@@ -105,7 +105,6 @@ function PageSections({ page, slug = "", stage }: { page: SitePage; slug?: strin
           <Faculty />
           <RulesRegulations />
           <ParentTeacher />
-          <Highlights />
           <AdmissionsCta />
         </>
       );
@@ -208,13 +207,14 @@ function PageSections({ page, slug = "", stage }: { page: SitePage; slug?: strin
           <Hero />
           {/* Overlaps the bottom of the hero, so it stays directly under it. */}
           <Highlights overlap />
-          <Messages />
+          <About />
           <NoticeBoard />
           <Results />
+          <Messages />
           <Facilities />
-          <Gallery />
+          <CoCurricular />
           <Faqs />
-          <AdmissionsCta />
+          <Gallery />
         </>
       );
   }

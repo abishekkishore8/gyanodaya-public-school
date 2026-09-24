@@ -8,6 +8,7 @@
  * the live page reads. This module is only the seed and the fallback.
  */
 
+import { CBSE_AFFILIATION_NO, CBSE_SCHOOL_CODE } from "@/data/site";
 import type { DisclosureContent } from "@/types/site";
 
 /** Placeholder for a field the school still has to supply. */
@@ -21,8 +22,8 @@ export const INITIAL_DISCLOSURE: DisclosureContent = {
   // A — GENERAL INFORMATION
   general: [
     { id: "general-name", label: "Name of the school", value: "Gyanodaya Public School, Bagodar" },
-    { id: "general-affiliation", label: "Affiliation number", value: PENDING },
-    { id: "general-code", label: "School code", value: PENDING },
+    { id: "general-affiliation", label: "Affiliation number", value: CBSE_AFFILIATION_NO },
+    { id: "general-code", label: "School code", value: CBSE_SCHOOL_CODE },
     {
       id: "general-address",
       label: "Complete address with pin code",

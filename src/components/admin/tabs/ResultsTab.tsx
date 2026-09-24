@@ -32,6 +32,12 @@ function ResultGroupEditor({
       toppers: group.toppers.map((topper) => (topper.id === id ? { ...topper, ...patch } : topper)),
     });
 
+  const updateStat = (id: string, patch: Partial<ResultGroupItem["stats"][number]>) =>
+    onChange({
+      ...group,
+      stats: group.stats.map((stat) => (stat.id === id ? { ...stat, ...patch } : stat)),
+    });
+
   const move = (index: number, direction: -1 | 1) => {
     const target = index + direction;
     if (target < 0 || target >= group.toppers.length) return;
@@ -51,7 +57,51 @@ function ResultGroupEditor({
         </Button>
       </div>
 
+      <div className="space-y-3">
+        <p className="text-[13px] font-semibold text-slate-700">Summary tiles</p>
+        <p className="text-[12px] text-slate-500">
+          Shown left of the photos, two per row — e.g. 98% / Above / 6 Students. Leave empty to hide.
+        </p>
+        {group.stats.map((stat) => (
+          <div key={stat.id} className="flex flex-col gap-3 rounded-lg bg-slate-50/70 p-3 sm:flex-row sm:items-end">
+            <Field label="Figure" className="sm:w-28" required>
+              <Input value={stat.value} placeholder="98%" onChange={(e) => updateStat(stat.id, { value: e.target.value })} />
+            </Field>
+            <Field label="Label" className="sm:w-32">
+              <Input value={stat.label} placeholder="Above" onChange={(e) => updateStat(stat.id, { label: e.target.value })} />
+            </Field>
+            <Field label="Caption" className="sm:flex-1">
+              <Input
+                value={stat.caption}
+                placeholder="6 Students"
+                onChange={(e) => updateStat(stat.id, { caption: e.target.value })}
+              />
+            </Field>
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={() => onChange({ ...group, stats: group.stats.filter((item) => item.id !== stat.id) })}
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() =>
+            onChange({
+              ...group,
+              stats: [...group.stats, { id: newId("stat"), value: "", label: "Above", caption: "" }],
+            })
+          }
+        >
+          + Add tile
+        </Button>
+      </div>
+
       <div className="space-y-4">
+        <p className="text-[13px] font-semibold text-slate-700">Students</p>
         {group.toppers.map((topper, index) => (
           <div key={topper.id} className="rounded-lg bg-slate-50/70 p-3 space-y-3">
             <div className="flex items-center justify-between gap-2">
@@ -100,7 +150,7 @@ function ResultGroupEditor({
                   placeholder="96.2%"
                 />
               </Field>
-              <Field label="Detail" className="sm:w-48" hint="Optional, e.g. Class X-A.">
+              <Field label="Label" className="sm:w-48" hint="Optional line above the name, e.g. State Topper.">
                 <Input value={topper.detail} onChange={(e) => updateTopper(topper.id, { detail: e.target.value })} />
               </Field>
             </div>
@@ -123,6 +173,10 @@ function ResultGroupEditor({
           + Add student
         </Button>
       </div>
+
+      <Field label="Footnote" hint="Optional small note under the photos, e.g. * Results of CBSE 2026.">
+        <Input value={group.footnote} onChange={(e) => onChange({ ...group, footnote: e.target.value })} />
+      </Field>
     </div>
   );
 }
@@ -206,7 +260,7 @@ export default function ResultsTab() {
             onClick={() =>
               setDraft((prev) => ({
                 ...prev,
-                groups: [...prev.groups, { id: newId("result"), title: "", toppers: [] }],
+                groups: [...prev.groups, { id: newId("result"), title: "", stats: [], toppers: [], footnote: "" }],
               }))
             }
           >

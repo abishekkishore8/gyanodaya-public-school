@@ -28,7 +28,7 @@ export default function Facilities() {
         </div>
 
         <div className="mb-10 sm:mb-12">
-          <ContentCardGrid items={facilities.items} />
+          <ContentCardGrid items={facilities.items} hrefBase="/facilities" />
         </div>
 
         {/* Campus Visit CTA */}

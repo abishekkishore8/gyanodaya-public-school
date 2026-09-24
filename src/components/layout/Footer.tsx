@@ -1,52 +1,51 @@
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import type { ReactNode } from "react";
 
 import SchoolLogo from "@/components/common/SchoolLogo";
 import { useSiteContent } from "@/context/SiteContentContext";
 import { telHref } from "@/data/contact";
-import { useToast } from "@/context/ToastContext";
-import { useUi } from "@/context/UiContext";
-import { FOOTER_QUICK_LINKS } from "@/data/navigation";
-import { SCHOOL_WORDMARK, SCHOOL_WORDMARK_LETTERS } from "@/data/site";
+import { FOOTER_ADMISSION_LINKS, FOOTER_QUICK_LINKS } from "@/data/navigation";
+import { SCHOOL_TAGLINE, SCHOOL_TAGLINE_LETTERS, SCHOOL_WORDMARK, SCHOOL_WORDMARK_LETTERS } from "@/data/site";
 
-/** Site footer: contact details, quick links and the newsletter signup. */
+const FACEBOOK_URL = "https://www.facebook.com/GPSBagodar/";
+const WHATSAPP_URL = "https://wa.me/919431377488";
+
+/** Column heading with a short gold rule under it. */
+function ColumnHeading({ children }: { children: ReactNode }) {
+  return (
+    <h4 className="font-serif text-sm sm:text-base font-bold text-white mb-4">
+      {children}
+      <span className="mt-2 block h-0.5 w-8 rounded-full bg-[#c59a3f]" aria-hidden="true" />
+    </h4>
+  );
+}
+
+/** One contact line: a gold outline icon beside its text. */
+function ContactLine({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+  return (
+    <li className="flex items-start gap-3">
+      <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-white/5 text-[#dfb455] ring-1 ring-white/10">
+        {icon}
+      </span>
+      <span className="min-w-0 pt-1 leading-relaxed">{children}</span>
+    </li>
+  );
+}
+
+const linkClass = "text-gray-300 hover:text-[#dfb455] transition-colors";
+
+/** Site footer: admissions call to action, links, contact details and the legal line. */
 export default function Footer() {
   const { parentsLoginUrl, contact } = useSiteContent();
-  const { showToast } = useToast();
-  const { setAdmissionModalOpen } = useUi();
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-
-  const handleNewsletterSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    if (!newsletterEmail) return;
-    showToast("✨ Subscribed successfully to the Gyanodaya Public School newsletter!");
-    setNewsletterEmail("");
-  };
 
   return (
-    <footer style={{ backgroundColor: "#0e3322" }} className="text-white pt-12 sm:pt-16 pb-8 border-t border-black/20">
+    <footer style={{ backgroundColor: "#0e3322" }} className="text-white border-t border-black/20">
       <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
-        <div className="mb-8 rounded-2xl border border-white/10 bg-white/5 px-4 py-4 sm:px-6 sm:py-5">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-            <div>
-              <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.22em] text-[#dfb455]">
-                Mandatory Disclosure
-              </p>
-              <h4 className="mt-1 font-serif text-lg sm:text-xl font-bold text-white">
-                School Information & Public Disclosure
-              </h4>
-            </div>
-            <p className="max-w-3xl text-xs sm:text-sm leading-relaxed text-gray-300">
-              Gyanodaya Public School, Bagodar publishes its mandatory disclosure, admission information, fee details, academic policies, and statutory school information for parents and guardians. For the latest verified records, please contact the school office or request the current disclosure set from the administrative desk.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-8 mb-10 sm:mb-12">
-
-          {/* Column 1: School Brand & Description (2 cols on lg) */}
-          <div className="col-span-2 lg:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
+        {/* Main columns */}
+        <div className="grid grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10 pt-12 pb-12 sm:pt-16 sm:pb-14">
+          {/* Brand */}
+          <div className="col-span-2 lg:col-span-4">
+            <Link href="/" className="inline-flex items-center gap-3 mb-5" aria-label="Gyanodaya Public School, home">
               <div className="rounded-full bg-white/95 p-1 ring-1 ring-white/10 shadow-sm shrink-0">
                 <SchoolLogo className="w-12 h-12 sm:w-14 sm:h-14" />
               </div>
@@ -61,193 +60,162 @@ export default function Footer() {
                     </span>
                   ))}
                 </span>
-                {/* Sets the lockup width; the name above stretches to it — see Navbar.tsx. */}
-                <span className="text-[9.5px] sm:text-[10px] text-gray-300 font-semibold tracking-[0.06em] -mr-[0.06em] uppercase leading-tight mt-0.5">
-                  PUBLIC SCHOOL • BAGODAR
+                {/* Spread across the width of the name above, so both lines end flush. */}
+                <span
+                  aria-label={SCHOOL_TAGLINE}
+                  className="flex w-full justify-between text-[11px] sm:text-xs text-gray-300 font-semibold leading-tight mt-1"
+                >
+                  {SCHOOL_TAGLINE_LETTERS.map((letter, index) => (
+                    <span key={index} aria-hidden="true">
+                      {letter}
+                    </span>
+                  ))}
                 </span>
               </div>
-            </div>
+            </Link>
 
-            <p className="text-gray-300 text-xs sm:text-sm leading-relaxed mb-6 max-w-sm">
-              Nurturing young minds with strong values, academic distinction, digital intelligence, and holistic character building in Bagodar, Giridih, Jharkhand.
+            <p className="text-gray-300 text-xs sm:text-sm leading-relaxed max-w-sm">
+              Nurturing young minds with strong values, academic distinction, digital intelligence, and holistic
+              character building in Bagodar, Giridih, Jharkhand.
             </p>
 
-            {/* Social Media Circular Outline Icons */}
-            <div className="flex items-center gap-3">
-              {[
-                { name: "Facebook", icon: "f", url: "https://www.facebook.com/GPSBagodar/" },
-                { name: "Instagram", icon: "📷", url: "#" },
-                { name: "YouTube", icon: "▶", url: "#" },
-                { name: "LinkedIn", icon: "in", url: "#" },
-              ].map((social) => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  target={social.url.startsWith("http") ? "_blank" : undefined}
-                  rel="noopener noreferrer"
-                  aria-label={social.name}
-                  onClick={(e) => {
-                    if (!social.url.startsWith("http")) {
-                      e.preventDefault();
-                      showToast(`Opening GPS Bagodar ${social.name} page...`);
-                    }
-                  }}
-                  className="w-8 h-8 rounded-full border border-gray-400/50 hover:border-[#dfb455] text-gray-300 hover:text-[#dfb455] flex items-center justify-center text-xs font-semibold transition-all hover:scale-110 hover:bg-white/10"
-                >
-                  {social.icon}
-                </a>
-              ))}
+            <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#dfb455]/30 bg-white/5 px-3 py-1 text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider text-[#dfb455]">
+              Affiliated to CBSE, New Delhi
+            </p>
+
+            <div className="mt-5 flex items-center gap-2.5">
+              <a
+                href={FACEBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Gyanodaya Public School on Facebook"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/20 text-gray-300 hover:border-[#dfb455] hover:text-[#dfb455] hover:bg-white/5 transition-colors"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.9.25-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21h3z" />
+                </svg>
+              </a>
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Message the school on WhatsApp"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/20 text-gray-300 hover:border-[#dfb455] hover:text-[#dfb455] hover:bg-white/5 transition-colors"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.2-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z" />
+                </svg>
+              </a>
             </div>
           </div>
 
-          {/* Column 2: Quick Links */}
-          <div>
-            <h4 className="text-white font-serif font-semibold text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
-              QUICK LINKS
-            </h4>
-            <ul className="space-y-2 text-xs sm:text-sm text-gray-300">
+          {/* Explore */}
+          <nav aria-label="Explore" className="lg:col-span-2">
+            <ColumnHeading>Explore</ColumnHeading>
+            <ul className="space-y-2.5 text-xs sm:text-sm">
               {FOOTER_QUICK_LINKS.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="hover:text-[#dfb455] transition-colors inline-block hover:translate-x-1 duration-200"
-                  >
+                <li key={link.href}>
+                  <Link href={link.href} className={linkClass}>
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
-          {/* Column 3: Information */}
-          <div>
-            <h4 className="text-white font-serif font-semibold text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
-              INFORMATION
-            </h4>
-            <ul className="space-y-2 text-xs sm:text-sm text-gray-300">
-              {/* `opensEnquiry` entries have no page of their own yet, so they ask instead. */}
-              {[
-                { label: "Fee Structure", href: "/fees" },
-                { label: "Admission Process", href: "/admissions" },
-                { label: "School Calendar", href: "#", opensEnquiry: true },
-                { label: "News & Events", href: "/notice-board#announcements" },
-                { label: "Career & Jobs", href: "/notice-board#recruitment" },
-                { label: "Parents Login", href: parentsLoginUrl, isExternal: true },
-              ].map((info) => {
-                const className =
-                  "hover:text-[#dfb455] transition-colors inline-block hover:translate-x-1 duration-200 cursor-pointer";
-
-                return (
-                  <li key={info.label}>
-                    {info.isExternal || info.opensEnquiry ? (
-                      <a
-                        href={info.href}
-                        target={info.isExternal ? "_blank" : undefined}
-                        rel={info.isExternal ? "noopener noreferrer" : undefined}
-                        onClick={(e) => {
-                          if (info.opensEnquiry) {
-                            e.preventDefault();
-                            setAdmissionModalOpen(true);
-                          }
-                        }}
-                        className={className}
-                      >
-                        {info.label}
-                      </a>
-                    ) : (
-                      <Link href={info.href} className={className}>
-                        {info.label}
-                      </Link>
-                    )}
-                  </li>
-                );
-              })}
+          {/* Admissions */}
+          <nav aria-label="Admissions" className="lg:col-span-3">
+            <ColumnHeading>Admissions</ColumnHeading>
+            <ul className="space-y-2.5 text-xs sm:text-sm">
+              {FOOTER_ADMISSION_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className={linkClass}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <a href={parentsLoginUrl} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                  Parents Login ↗
+                </a>
+              </li>
             </ul>
-          </div>
+          </nav>
 
-          {/* Column 4: Contact Us & Newsletter */}
-          <div id="contact" className="col-span-2 lg:col-span-1">
-            <h4 className="text-white font-serif font-semibold text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
-              CONTACT US
-            </h4>
-            <div className="space-y-2.5 text-xs text-gray-300 mb-6">
-              <p className="flex items-start gap-2">
-                <svg className="w-4 h-4 text-[#dfb455] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span>{contact.address}</span>
-              </p>
-
-              <p className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-[#dfb455] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
+          {/* Contact */}
+          <div id="contact" className="col-span-2 lg:col-span-3">
+            <ColumnHeading>Get in Touch</ColumnHeading>
+            <ul className="space-y-3 text-xs sm:text-[13px] text-gray-300">
+              <ContactLine
+                icon={
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                }
+              >
+                {contact.address}
+              </ContactLine>
+              <ContactLine
+                icon={
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                }
+              >
                 <a href={telHref(contact.phone)} className="hover:text-[#dfb455] transition-colors">
                   {contact.phone}
                 </a>
-              </p>
-
-              <p className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-[#dfb455] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <a href={`mailto:${contact.email}`} className="hover:text-[#dfb455] transition-colors">
+                {contact.altPhone && (
+                  <>
+                    {" · "}
+                    <a href={telHref(contact.altPhone)} className="hover:text-[#dfb455] transition-colors">
+                      {contact.altPhone}
+                    </a>
+                  </>
+                )}
+              </ContactLine>
+              <ContactLine
+                icon={
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                }
+              >
+                <a href={`mailto:${contact.email}`} className="break-all hover:text-[#dfb455] transition-colors">
                   {contact.email}
                 </a>
-              </p>
-            </div>
-
-            {/* Newsletter subscription */}
-            <h4 className="text-white font-serif font-semibold text-xs sm:text-sm uppercase tracking-wider mb-2">
-              NEWSLETTER
-            </h4>
-            <p className="text-gray-300 text-xs mb-2.5">
-              Subscribe for school circulars &amp; notices.
-            </p>
-            <form onSubmit={handleNewsletterSubmit} className="flex items-center gap-1.5">
-              <input
-                type="email"
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                className="w-full bg-white/10 border border-gray-600 rounded px-3 py-2 text-xs text-white placeholder-gray-400 focus:outline-none focus:border-[#dfb455]"
-              />
-              <button
-                type="submit"
-                aria-label="Subscribe to newsletter"
-                className="bg-[#c59a3f] hover:bg-[#dfb455] text-white p-2 rounded transition-colors shrink-0 cursor-pointer"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </button>
-            </form>
+              </ContactLine>
+              {contact.officeHours && (
+                <ContactLine
+                  icon={
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  }
+                >
+                  {contact.officeHours}
+                </ContactLine>
+              )}
+            </ul>
           </div>
         </div>
 
-        {/* Bottom Copyright and Legal links */}
-        <div className="pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] sm:text-xs text-gray-400 text-center sm:text-left">
-          <p>© 2026 Gyanodaya Public School (GPS), Bagodar. Affiliated to CBSE, New Delhi.</p>
-          <div className="flex items-center gap-4">
-            <a href="#privacy" className="hover:text-gray-200 transition-colors">
-              Privacy Policy
-            </a>
-            <span>|</span>
-            <a href="#terms" className="hover:text-gray-200 transition-colors">
-              Terms &amp; Conditions
-            </a>
-          </div>
-        </div>
-
-        <div className="pt-4 text-center sm:text-right text-[11px] sm:text-xs text-white/70">
-          <p>
-            Designed and Developed with ❤️{" "}
+        {/* Legal line */}
+        <div className="flex flex-col items-center gap-2 border-t border-white/10 py-6 text-[11px] sm:text-xs text-gray-400 sm:flex-row sm:justify-between">
+          <p className="text-center sm:text-left">
+            © {new Date().getFullYear()} Gyanodaya Public School (GPS), Bagodar. All rights reserved.
+          </p>
+          <p className="inline-flex items-center gap-1.5">
+            Designed and developed with
+            <svg className="h-3.5 w-3.5 text-[#dfb455]" viewBox="0 0 24 24" fill="currentColor" aria-label="love">
+              <path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 4.5 6 4.5c2 0 3.3 1 4 2.2.7-1.2 2-2.2 4-2.2 3.7 0 5.6 3.9 4 7.2C19.5 16.4 12 21 12 21z" />
+            </svg>
+            by
             <a
               href="https://www.vyntrox.com/"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="font-bold text-[#dfb455] hover:text-white transition-colors"
             >
               Vyntrox

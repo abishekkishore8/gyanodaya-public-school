@@ -44,7 +44,7 @@ export default function CampusVisitForm() {
     };
 
     if (!submitted.visitorName || !submitted.phone || !submitted.visitDate) {
-      showToast("⚠️ Please provide visitor name, phone number, and preferred date.");
+      showToast("Please provide visitor name, phone number, and preferred date.");
       return;
     }
 
@@ -98,8 +98,8 @@ export default function CampusVisitForm() {
       });
 
       void submitFormSubmission(newSubmission)
-        .then(() => showToast(`🏫 Campus visit pass ${refId} created! See you on campus.`))
-        .catch(() => showToast("⚠️ Campus visit request failed. Please call the school office."));
+        .then(() => showToast(`Campus visit pass ${refId} created! See you on campus.`))
+        .catch(() => showToast("Campus visit request failed. Please call the school office."));
     }, SUBMIT_DELAY_MS);
   };
 
