@@ -181,7 +181,7 @@ function PageSections({ page, slug = "", stage }: { page: SitePage; slug?: strin
     case "online-forms":
       return <OnlineForms />;
     case "gallery":
-      return <Gallery />;
+      return <Gallery full />;
     case "results":
       return (
         <>

@@ -1,9 +1,15 @@
+import Link from "next/link";
+
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useUi } from "@/context/UiContext";
 import { GOLD } from "@/lib/theme";
 
-/** Student life photo grid; each tile opens the lightbox. */
-export default function Gallery() {
+/**
+ * Student life photo grid; each tile opens the lightbox. The home page shows a
+ * compact strip with a link to `/gallery`; `full` is that page — larger tiles,
+ * captions always visible, and no link back to itself.
+ */
+export default function Gallery({ full = false }: { full?: boolean }) {
   const { galleryItems } = useSiteContent();
   const { openLightbox } = useUi();
 
@@ -25,8 +31,9 @@ export default function Gallery() {
             </h2>
           </div>
 
-          <button
-            onClick={() => openLightbox(0)}
+          {!full && (
+          <Link
+            href="/gallery"
             style={{ borderColor: "#14452f", color: "#14452f" }}
             className="border-2 text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 rounded-sm hover:bg-[#14452f] hover:text-white transition-all inline-flex items-center gap-2 uppercase tracking-wider cursor-pointer hover:scale-105"
           >
@@ -34,16 +41,25 @@ export default function Gallery() {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
-          </button>
+          </Link>
+          )}
         </div>
 
         {/* 6 Gallery Photos Grid with Clean Responsive Breakpoints */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5">
+        <div
+          className={
+            full
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+              : "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5"
+          }
+        >
           {galleryItems.map((item, index) => (
             <div
               key={index}
               onClick={() => openLightbox(index)}
-              className="relative h-40 sm:h-44 md:h-48 rounded-lg overflow-hidden shadow-sm group cursor-pointer bg-gray-200"
+              className={`relative overflow-hidden shadow-sm group cursor-pointer bg-gray-200 ${
+                full ? "aspect-4/3 rounded-xl hover:shadow-xl transition-shadow" : "h-40 sm:h-44 md:h-48 rounded-lg"
+              }`}
             >
               <img
                 src={item.img}
@@ -54,16 +70,19 @@ export default function Gallery() {
               />
 
               {/* Overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent transition-opacity duration-300 opacity-0 group-hover:opacity-100 flex flex-col justify-end p-2.5 sm:p-3 text-white pointer-events-none">
-                <span className="text-[9px] sm:text-[10px] text-[#dfb455] font-bold uppercase tracking-wider">
+              <div
+                className={`absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent transition-opacity duration-300 flex flex-col justify-end text-white pointer-events-none ${
+                  full ? "opacity-100 p-4 sm:p-5" : "opacity-0 group-hover:opacity-100 p-2.5 sm:p-3"
+                }`}
+              >
+                <span className={`text-[#dfb455] font-bold uppercase tracking-wider ${full ? "text-[11px] sm:text-xs" : "text-[9px] sm:text-[10px]"}`}>
                   {item.category}
                 </span>
-                <span className="text-[11px] sm:text-xs font-semibold leading-tight line-clamp-1">
+                <span className={`font-semibold leading-tight line-clamp-1 ${full ? "font-serif text-base sm:text-lg mt-0.5" : "text-[11px] sm:text-xs"}`}>
                   {item.title}
                 </span>
                 <div className="mt-1 flex items-center gap-1 text-[9.5px] sm:text-[10px] text-white/80">
                   <span>Click to zoom</span>
-                  <span>🔍</span>
                 </div>
               </div>
             </div>

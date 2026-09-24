@@ -25,15 +25,24 @@ const PATHS: Record<HighlightIconKey, React.ReactNode> = {
       <path d="M43 33c0-4.4-2.7-8-6-8" strokeWidth="1.6" />
     </>
   ),
+  // Drawn on a 24-unit grid and scaled, after Remix Icon's bus-line.
   transport: (
-    <>
-      <rect x="7" y="16" width="34" height="18" rx="3" />
-      <path d="M7 24h34M13 16v-4a2 2 0 012-2h18a2 2 0 012 2v4" />
-      <circle cx="15" cy="34" r="3.5" />
-      <circle cx="33" cy="34" r="3.5" />
-      <path d="M18.5 34h11" />
-      <path d="M11 20h4M19 20h10" />
-    </>
+    <g transform="scale(2)" strokeWidth="1.1">
+      <path d="M6 18v2.5M18 18v2.5" />
+      <rect x="4" y="3" width="16" height="15" rx="2" />
+      <path d="M4 11h16M4 7h16" />
+      <circle cx="8" cy="14.5" r="1" fill={GREEN} stroke="none" />
+      <circle cx="16" cy="14.5" r="1" fill={GREEN} stroke="none" />
+      <path d="M2 8v3M22 8v3" />
+    </g>
+  ),
+  // After Remix Icon's hotel-bed-line.
+  hostel: (
+    <g transform="scale(2)" strokeWidth="1.1">
+      <path d="M3 4v16M3 16h18v4" />
+      <path d="M11 16v-6h6a4 4 0 0 1 4 4v2" />
+      <circle cx="7" cy="11" r="2" />
+    </g>
   ),
   holistic: (
     <>
@@ -41,13 +50,13 @@ const PATHS: Record<HighlightIconKey, React.ReactNode> = {
       <path d="M24 20v14M18 27h12" strokeWidth="1.8" />
     </>
   ),
+  // After Lucide's flask-conical.
   labs: (
-    <>
-      <path d="M20 8h8M24 8v10l-10 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L24 18" />
-      <path d="M17 31h14M22 24h4" strokeWidth="1.6" />
-      <circle cx="21" cy="35" r="1.5" fill={GREEN} />
-      <circle cx="27" cy="33" r="1.5" fill={GREEN} />
-    </>
+    <g transform="scale(2)" strokeWidth="1.1">
+      <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+      <path d="M6.453 15h11.094" />
+      <path d="M8.5 2h7" />
+    </g>
   ),
   library: (
     <>

@@ -167,7 +167,7 @@ export interface HeroSlideItem {
 
 /** Which icon a highlight card draws; see `HighlightIcon`. */
 export type HighlightIconKey =
-  "classroom" | "faculty" | "transport" | "holistic" | "labs" | "library" | "sports" | "safety";
+  "classroom" | "faculty" | "transport" | "hostel" | "holistic" | "labs" | "library" | "sports" | "safety";
 
 /** One card of the strip that overlaps the hero. */
 export interface HighlightItem {
